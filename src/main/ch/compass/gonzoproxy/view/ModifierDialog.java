@@ -1,4 +1,4 @@
-package ch.compass.gonzoproxy.mvc.view;
+package ch.compass.gonzoproxy.view;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -17,9 +17,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import ch.compass.gonzoproxy.mvc.controller.RelayController;
-import ch.compass.gonzoproxy.mvc.model.RuleModel;
-import ch.compass.gonzoproxy.mvc.model.RuleSetModel;
+import ch.compass.gonzoproxy.controller.RelayController;
+import ch.compass.gonzoproxy.model.RuleModel;
+import ch.compass.gonzoproxy.model.RuleSetModel;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.Rule;
 import ch.compass.gonzoproxy.relay.modifier.RuleSet;

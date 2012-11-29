@@ -2,7 +2,7 @@ package ch.compass.gonzoproxy.relay.io.wrapper;
 
 import java.util.Arrays;
 
-import ch.compass.gonzoproxy.mvc.model.Packet;
+import ch.compass.gonzoproxy.model.Packet;
 
 public class EtNfcApduWrapper implements ApduWrapper{
 

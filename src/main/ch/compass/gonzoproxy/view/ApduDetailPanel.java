@@ -1,4 +1,4 @@
-package ch.compass.gonzoproxy.mvc.view;
+package ch.compass.gonzoproxy.view;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -17,10 +17,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
-import ch.compass.gonzoproxy.mvc.controller.RelayController;
-import ch.compass.gonzoproxy.mvc.model.DetailTableModel;
-import ch.compass.gonzoproxy.mvc.model.Field;
-import ch.compass.gonzoproxy.mvc.model.Packet;
+import ch.compass.gonzoproxy.controller.RelayController;
+import ch.compass.gonzoproxy.model.DetailTableModel;
+import ch.compass.gonzoproxy.model.Field;
+import ch.compass.gonzoproxy.model.Packet;
 
 public class ApduDetailPanel extends JPanel {
 	private JTable table_detail;

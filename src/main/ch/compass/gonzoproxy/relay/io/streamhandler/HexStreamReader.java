@@ -7,8 +7,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.LinkedTransferQueue;
 
 import ch.compass.gonzoproxy.GonzoProxy;
-import ch.compass.gonzoproxy.mvc.model.ForwardingType;
-import ch.compass.gonzoproxy.mvc.model.Packet;
+import ch.compass.gonzoproxy.model.ForwardingType;
+import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.io.extractor.ApduExtractor;
 
 public class HexStreamReader implements Runnable {

@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
 
-import ch.compass.gonzoproxy.mvc.model.Field;
+import ch.compass.gonzoproxy.model.Field;
 
 
 public class YamlTemplatesTest extends TestCase {

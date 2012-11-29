@@ -2,8 +2,8 @@ package ch.compass.gonzoproxy.relay.io.wrapper;
 
 import java.util.Arrays;
 
-import ch.compass.gonzoproxy.mvc.model.Field;
-import ch.compass.gonzoproxy.mvc.model.Packet;
+import ch.compass.gonzoproxy.model.Field;
+import ch.compass.gonzoproxy.model.Packet;
 
 public class LibNfcApduWrapper implements ApduWrapper {
 

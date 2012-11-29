@@ -1,4 +1,4 @@
-package ch.compass.gonzoproxy.mvc.model;
+package ch.compass.gonzoproxy.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;

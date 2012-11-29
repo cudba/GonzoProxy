@@ -1,6 +1,6 @@
 package ch.compass.gonzoproxy.relay.io.wrapper;
 
-import ch.compass.gonzoproxy.mvc.model.Packet;
+import ch.compass.gonzoproxy.model.Packet;
 
 public interface ApduWrapper {
 

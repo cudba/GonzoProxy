@@ -3,7 +3,7 @@ package ch.compass.gonzoproxy.relay.io.streamhandler;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import ch.compass.gonzoproxy.mvc.model.Packet;
+import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.io.wrapper.ApduWrapper;
 
 

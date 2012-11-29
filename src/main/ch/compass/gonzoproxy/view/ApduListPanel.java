@@ -1,4 +1,4 @@
-package ch.compass.gonzoproxy.mvc.view;
+package ch.compass.gonzoproxy.view;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -23,11 +23,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import ch.compass.gonzoproxy.mvc.controller.RelayController;
-import ch.compass.gonzoproxy.mvc.listener.SessionListener;
-import ch.compass.gonzoproxy.mvc.model.ApduTableModel;
-import ch.compass.gonzoproxy.mvc.model.Packet;
-import ch.compass.gonzoproxy.mvc.model.SessionModel;
+import ch.compass.gonzoproxy.controller.RelayController;
+import ch.compass.gonzoproxy.listener.SessionListener;
+import ch.compass.gonzoproxy.model.ApduTableModel;
+import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.SessionModel;
 
 public class ApduListPanel extends JPanel {
 

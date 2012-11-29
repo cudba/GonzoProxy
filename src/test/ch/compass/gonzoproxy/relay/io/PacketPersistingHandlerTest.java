@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import ch.compass.gonzoproxy.mvc.model.Packet;
+import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.parser.ParsingHandler;
 
 public class PacketPersistingHandlerTest {

@@ -1,4 +1,4 @@
-package ch.compass.gonzoproxy.mvc.controller;
+package ch.compass.gonzoproxy.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,9 +10,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
-import ch.compass.gonzoproxy.mvc.model.SessionModel;
-import ch.compass.gonzoproxy.mvc.model.Packet;
-import ch.compass.gonzoproxy.mvc.model.SessionSettings;
+import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.SessionModel;
+import ch.compass.gonzoproxy.model.SessionSettings;
+import ch.compass.gonzoproxy.relay.RelayHandler;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.Rule;
 

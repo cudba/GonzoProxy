@@ -1,4 +1,4 @@
-package ch.compass.gonzoproxy.mvc.view;
+package ch.compass.gonzoproxy.view;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import ch.compass.gonzoproxy.mvc.controller.RelayController;
+import ch.compass.gonzoproxy.controller.RelayController;
 
 
 public class NewSessionDialog extends JDialog {

@@ -2,7 +2,7 @@ package ch.compass.gonzoproxy.utils;
 
 import java.util.ArrayList;
 
-import ch.compass.gonzoproxy.mvc.model.Field;
+import ch.compass.gonzoproxy.model.Field;
 
 public class PacketUtils {
 

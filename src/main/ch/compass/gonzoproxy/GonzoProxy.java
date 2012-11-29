@@ -1,7 +1,7 @@
 package ch.compass.gonzoproxy;
 
-import ch.compass.gonzoproxy.mvc.controller.RelayController;
-import ch.compass.gonzoproxy.mvc.view.GonzoProxyFrame;
+import ch.compass.gonzoproxy.controller.RelayController;
+import ch.compass.gonzoproxy.view.GonzoProxyFrame;
 
 public class GonzoProxy {
 

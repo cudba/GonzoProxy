@@ -1,4 +1,4 @@
-package ch.compass.gonzoproxy.mvc.view;
+package ch.compass.gonzoproxy.view;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -12,9 +12,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import ch.compass.gonzoproxy.mvc.controller.RelayController;
-import ch.compass.gonzoproxy.mvc.model.Field;
-import ch.compass.gonzoproxy.mvc.model.Packet;
+import ch.compass.gonzoproxy.controller.RelayController;
+import ch.compass.gonzoproxy.model.Field;
+import ch.compass.gonzoproxy.model.Packet;
+
 import javax.swing.border.EmptyBorder;
 import javax.swing.JCheckBox;
 

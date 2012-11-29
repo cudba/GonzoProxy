@@ -1,23 +1,22 @@
-package ch.compass.gonzoproxy.mvc.model;
+package ch.compass.gonzoproxy.model;
 
 import javax.swing.table.AbstractTableModel;
 
-import ch.compass.gonzoproxy.mvc.listener.SessionListener;
+import ch.compass.gonzoproxy.listener.SessionListener;
 
-public class DetailTableModel extends AbstractTableModel {
+public class ApduTableModel extends AbstractTableModel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1437358812481945385L;
-	private Packet apdu;
-	private SessionModel data;
-	private String[] columnNames = { "Field", "Value", "Description" };
-	  
-	public DetailTableModel(Packet apdu, SessionModel data) {
-		this.apdu = apdu;
-		this.data = data;
-		this.data.addSessionListener(createListener());
+	private SessionModel session;
+	String[] columnNames;;
+
+	public ApduTableModel(SessionModel session, String[] columnNames) {
+		this.session = session;
+		this.columnNames = columnNames;
+		this.session.addSessionListener(createListener());
 	}
 
 	private SessionListener createListener() {
@@ -25,24 +24,28 @@ public class DetailTableModel extends AbstractTableModel {
 			
 			@Override
 			public void sessionChanged() {
-				
+				updateTable();
 			}
 			
 			@Override
 			public void packetReceived(Packet receivedPacket) {
-				
+				updateTable();
 			}
 			
 			@Override
 			public void packetCleared() {
-				DetailTableModel.this.setApdu(new Packet(new byte[0]));
+				updateTable();
 			}
 
 			@Override
 			public void newList() {
-				
+				updateTable();
 			}
 		};
+	}
+
+	private void updateTable() {
+		fireTableDataChanged();
 	}
 
 	public String getColumnName(int col) {
@@ -56,28 +59,27 @@ public class DetailTableModel extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return apdu.getFields().size();
+		return session.getPacketList().size();
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Field field = apdu.getFields().get(rowIndex);
+		Packet apdu = session.getPacketList().get(rowIndex);
 
 		switch (columnIndex) {
 		case 0:
-			return field.getName();
+			return rowIndex;
 		case 1:
-			return field.getValue();
+			return apdu.getType().getId();
 		case 2:
-			return field.getDescription();
+			return apdu.getPacketFromFields();
+		case 3:
+			return apdu.toAscii();
+		case 4:
+			return apdu.getDescription();
 		}
 		return null;
 
-	}
-
-	public void setApdu(Packet editApdu) {
-		this.apdu = editApdu;
-		fireTableDataChanged();
 	}
 
 }

@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import ch.compass.gonzoproxy.mvc.model.Packet;
-import ch.compass.gonzoproxy.mvc.model.Field;
+import ch.compass.gonzoproxy.model.Field;
+import ch.compass.gonzoproxy.model.Packet;
 
 public class TemplateValidatorTest {
 	

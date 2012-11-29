@@ -2,8 +2,8 @@ package ch.compass.gonzoproxy.relay.parser;
 
 import java.util.ArrayList;
 
-import ch.compass.gonzoproxy.mvc.model.Packet;
-import ch.compass.gonzoproxy.mvc.model.Field;
+import ch.compass.gonzoproxy.model.Field;
+import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.utils.PacketUtils;
 
 public class TemplateValidator {

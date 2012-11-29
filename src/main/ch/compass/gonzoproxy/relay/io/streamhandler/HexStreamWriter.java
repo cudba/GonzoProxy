@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.TransferQueue;
 
 import ch.compass.gonzoproxy.GonzoProxy;
-import ch.compass.gonzoproxy.mvc.model.Packet;
+import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.io.wrapper.ApduWrapper;
 
 public class HexStreamWriter implements Runnable {

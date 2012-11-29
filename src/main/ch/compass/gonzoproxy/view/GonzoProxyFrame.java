@@ -1,4 +1,4 @@
-package ch.compass.gonzoproxy.mvc.view;
+package ch.compass.gonzoproxy.view;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -20,9 +20,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import ch.compass.gonzoproxy.mvc.controller.RelayController;
-import ch.compass.gonzoproxy.mvc.model.SessionModel;
-import ch.compass.gonzoproxy.mvc.model.Packet;
+import ch.compass.gonzoproxy.controller.RelayController;
+import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.SessionModel;
 
 public class GonzoProxyFrame extends JFrame {
 

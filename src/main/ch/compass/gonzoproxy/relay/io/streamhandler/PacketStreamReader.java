@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.LinkedTransferQueue;
 
-import ch.compass.gonzoproxy.mvc.model.ForwardingType;
-import ch.compass.gonzoproxy.mvc.model.Packet;
+import ch.compass.gonzoproxy.model.ForwardingType;
+import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.io.extractor.ApduExtractor;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
 

@@ -1,10 +1,10 @@
-package ch.compass.gonzoproxy.mvc.controller;
+package ch.compass.gonzoproxy.relay;
 
 import java.util.concurrent.LinkedTransferQueue;
 
-import ch.compass.gonzoproxy.mvc.model.SessionModel;
-import ch.compass.gonzoproxy.mvc.model.Packet;
-import ch.compass.gonzoproxy.mvc.model.SessionSettings;
+import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.SessionModel;
+import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.relay.io.CommunicationHandler;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.parser.ParsingHandler;

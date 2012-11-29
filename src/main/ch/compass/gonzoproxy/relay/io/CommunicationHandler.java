@@ -11,9 +11,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedTransferQueue;
 
-import ch.compass.gonzoproxy.mvc.model.ForwardingType;
-import ch.compass.gonzoproxy.mvc.model.Packet;
-import ch.compass.gonzoproxy.mvc.model.SessionSettings;
+import ch.compass.gonzoproxy.model.ForwardingType;
+import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamReader;
 import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamWriter;
 

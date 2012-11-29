@@ -3,8 +3,8 @@ package ch.compass.gonzoproxy.relay.io.extractor;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedTransferQueue;
 
-import ch.compass.gonzoproxy.mvc.model.ForwardingType;
-import ch.compass.gonzoproxy.mvc.model.Packet;
+import ch.compass.gonzoproxy.model.ForwardingType;
+import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
 
 public class EtNfcApduExtractor implements ApduExtractor {
