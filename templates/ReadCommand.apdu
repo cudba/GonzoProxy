@@ -1,0 +1,10 @@
+packetDescription: Read Command
+fields:
+- name: CLA
+  value: 00
+- name: INS
+  value: b2
+- name: P1
+  description: Record Number
+- name: P2
+- name: Le

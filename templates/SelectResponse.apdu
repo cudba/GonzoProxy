@@ -1,0 +1,17 @@
+packetDescription: Select Response
+fields:
+- name: FCI 
+  value: 6f
+  description: A BER-TLV coded constructed object
+- name: Lc
+  description: Content Length
+- name: Ci
+  value: 84
+  description: DF Name AID
+- name: DF Content
+- name: Ci
+  value: a5
+  description: FCI Proprietary Template
+- name: FCI Content
+- name: Status Byte 1
+- name: Status Byte 2

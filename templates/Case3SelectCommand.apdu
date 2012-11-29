@@ -1,0 +1,13 @@
+packetDescription: Case 3 Select Command
+fields:
+- name: CLA
+  value: 00
+- name: INS
+  value: a4
+- name: P1
+- name: P2
+  description: 00 first occurrence, 02 next occurrence
+- name: Lc
+  description: Length
+- name: Data
+  description: Application Identifier

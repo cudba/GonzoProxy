@@ -1,0 +1,15 @@
+packetDescription: Get Processing Options
+fields:
+- name: CLA
+  value: 80
+- name: INS
+  value: a8
+- name: P1
+  value: 00
+- name: P2
+  value: 00
+- name: Lc
+  description: Length
+- name: Data
+  description: Processing Options Data Object List (PDOL)
+- name: Le

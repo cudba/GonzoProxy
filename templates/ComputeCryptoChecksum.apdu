@@ -1,0 +1,15 @@
+packetDescription: Compute Cryptographic Checksum
+fields:
+- name: CLA
+  value: 80
+- name: INS
+  value: 2a
+- name: P1
+  value: 82
+- name: P2
+  value: 80
+- name: Lc
+  description: Length
+- name: Data
+  description: Unpredictable Number Data Object List (UDOL)
+- name: Le
