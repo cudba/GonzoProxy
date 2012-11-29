@@ -2,10 +2,8 @@ package ch.compass.gonzoproxy.model;
 
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
-import java.util.prefs.Preferences;
 
 import ch.compass.gonzoproxy.listener.SessionListener;
-import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 
 public class SessionModel {
 

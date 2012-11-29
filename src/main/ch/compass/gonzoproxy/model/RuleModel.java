@@ -9,6 +9,8 @@ import ch.compass.gonzoproxy.relay.modifier.Rule;
 
 public class RuleModel extends AbstractTableModel{
 
+	private static final long serialVersionUID = 3327345381172706548L;
+	
 	private String[] columnNames = { "Field", "Old value", "New value", "is active" };
 	private ArrayList<Rule> rules = new ArrayList<Rule>();
 	
@@ -46,6 +48,7 @@ public class RuleModel extends AbstractTableModel{
 		return null;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
     public Class getColumnClass(int column) {
         switch (column) {
