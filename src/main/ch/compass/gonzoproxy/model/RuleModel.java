@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
-import ch.compass.gonzoproxy.relay.modifier.Rule;
+import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 
 
 public class RuleModel extends AbstractTableModel{
@@ -12,7 +12,7 @@ public class RuleModel extends AbstractTableModel{
 	private static final long serialVersionUID = 3327345381172706548L;
 	
 	private String[] columnNames = { "Field", "Old value", "New value", "is active" };
-	private ArrayList<Rule> rules = new ArrayList<Rule>();
+	private ArrayList<FieldRule> rules = new ArrayList<FieldRule>();
 	
 	
 	public String getColumnName(int col) {
@@ -32,7 +32,7 @@ public class RuleModel extends AbstractTableModel{
 	@Override
 	public Object getValueAt(int row, int column) {
 		
-		Rule rule = rules.get(row);
+		FieldRule rule = rules.get(row);
 
 		switch (column) {
 		case 0:
@@ -65,7 +65,7 @@ public class RuleModel extends AbstractTableModel{
         }
     }
 	
-	public void setRules(ArrayList<Rule> rules){
+	public void setRules(ArrayList<FieldRule> rules){
 		this.rules = rules;
 		fireTableDataChanged();
 	}

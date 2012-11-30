@@ -29,7 +29,7 @@ public class LibNfcApduExtractor implements ApduExtractor {
 			byte[] plainpacket = ByteArraysUtils.trim(buffer, startIndex, size);
 			Packet packet = splitPacket(plainpacket);
 			packet.setType(forwardingType);
-			packetQueue.tryTransfer(packet);
+			packetQueue.offer(packet);
 		}
 
 		byte[] singlePacket = ByteArraysUtils.trim(buffer, endIndex, readBytes - endIndex);
@@ -37,7 +37,7 @@ public class LibNfcApduExtractor implements ApduExtractor {
 		if (packetIsComplete(singlePacket)) {
 			Packet apdu = splitPacket(singlePacket);
 			apdu.setType(forwardingType);
-			packetQueue.add(apdu);
+			packetQueue.offer(apdu);
 			return new byte[0];
 		} else {
 			return singlePacket;

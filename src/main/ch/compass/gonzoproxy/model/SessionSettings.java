@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 import ch.compass.gonzoproxy.listener.SessionListener;
+import ch.compass.gonzoproxy.listener.TrapListener;
 
 public class SessionSettings {
 	
@@ -11,6 +12,7 @@ public class SessionSettings {
 			this.getClass().getName());
 	
 	private ArrayList<SessionListener> sessionListeners = new ArrayList<SessionListener>();
+	private TrapListener trapListener;
 	
 	private Boolean commandTrapped = false;
 	private Boolean responseTrapped = false;
@@ -43,20 +45,23 @@ public class SessionSettings {
 		}
 	}
 	
-	public Boolean isResponseTrapped() {
+	public Boolean responseIsTrapped() {
 		return responseTrapped;
 	}
 
-	public Boolean isCommandTrapped() {
+	public Boolean commandIsTrapped() {
 		return commandTrapped;
 	}
 
 	public void setCommandTrapped(Boolean cmdTrap) {
 		this.commandTrapped = cmdTrap;
+		trapListener.commandTrapped();
+		
 	}
 
 	public void setResponseTrapped(Boolean resTrap) {
 		this.responseTrapped = resTrap;
+		trapListener.responseTrapped();
 	}
 
 	public void sendOneCommand(boolean send) {
@@ -81,5 +86,9 @@ public class SessionSettings {
 	
 	public String getMode() {
 		return mode;
+	}
+
+	public void setTrapListener(TrapListener trapListener) {
+		this.trapListener = trapListener;
 	}
 }

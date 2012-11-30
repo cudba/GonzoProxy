@@ -21,8 +21,8 @@ import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.model.RuleModel;
 import ch.compass.gonzoproxy.model.RuleSetModel;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
-import ch.compass.gonzoproxy.relay.modifier.Rule;
-import ch.compass.gonzoproxy.relay.modifier.RuleSet;
+import ch.compass.gonzoproxy.relay.modifier.FieldRule;
+import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class ModifierDialog extends JDialog {
 
@@ -33,9 +33,9 @@ public class ModifierDialog extends JDialog {
 	private JList<String> listRuleSet;
 	private RuleModel ruleModel;
 	private PacketModifier modifier;
-	protected RuleSet editRuleSet;
+	protected PacketRule editRuleSet;
 	private JCheckBox chckbxUpdateLengthAutomatically;
-	protected Rule editRule;
+	protected FieldRule editRule;
 
 	public ModifierDialog(RelayController controller) {
 		this.controller = controller;
@@ -118,11 +118,11 @@ public class ModifierDialog extends JDialog {
 		contentPane.add(btnDeleteSelectedRule, gbc_btnDeleteSelectedRule);
 	}
 
-	protected void setEditRule(Rule rule) {
+	protected void setEditRule(FieldRule rule) {
 		this.editRule = rule;
 	}
 
-	protected void setEditRuleSet(RuleSet ruleSet) {
+	protected void setEditRuleSet(PacketRule ruleSet) {
 		// TODO Auto-generated method stub
 		this.editRuleSet = ruleSet;
 		chckbxUpdateLengthAutomatically.setSelected(ruleSet

@@ -11,15 +11,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedTransferQueue;
 
+import ch.compass.gonzoproxy.listener.TrapListener;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamReader;
 import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamWriter;
+import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamWriter.State;
 
 public class CommunicationHandler implements Runnable {
-
-	private boolean sessionIsAlive = true;
 
 	private ExecutorService threadPool = Executors.newFixedThreadPool(4);
 
@@ -34,49 +34,58 @@ public class CommunicationHandler implements Runnable {
 	private HexStreamReader responseStreamReader;
 	private HexStreamWriter responseStreamWriter;
 
-	private LinkedTransferQueue<Packet> receiverQueue;
-	private LinkedTransferQueue<Packet> senderQueue;
 
-	private LinkedTransferQueue<Packet> commandSenderQueue = new LinkedTransferQueue<Packet>();
-	private LinkedTransferQueue<Packet> responseSenderQueue = new LinkedTransferQueue<Packet>();
+
+	private LinkedTransferQueue<Packet> receiverQueue;
+
+	private LinkedTransferQueue<Packet> responseSenderQueue;
+
+	private LinkedTransferQueue<Packet> commandSenderQueue;
 
 	public CommunicationHandler(SessionSettings sessionSettings,
 			LinkedTransferQueue<Packet> receiverQueue,
-			LinkedTransferQueue<Packet> senderQueue) {
+			LinkedTransferQueue<Packet> commandSenderQueue, LinkedTransferQueue<Packet> responseSenderQueue) {
 		this.sessionSettings = sessionSettings;
 		this.receiverQueue = receiverQueue;
-		this.senderQueue = senderQueue;
+		this.commandSenderQueue = commandSenderQueue;
+		this.responseSenderQueue = responseSenderQueue;
 	}
 
 	@Override
 	public void run() {
-
+		setTrapListener();
 		establishConnection();
 		try {
 			initCommandStreamHandlers();
 			initResponseStreamHandlers();
 			startCommunication();
-			hanleSenderQueue();
-		} catch (IOException | InterruptedException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	private void hanleSenderQueue() throws InterruptedException {
-		while (sessionIsAlive) {
-			Packet sendingPacket = senderQueue.take();
-			switch (sendingPacket.getType()) {
-			case COMMAND:
-				commandSenderQueue.tryTransfer(sendingPacket);
-				break;
-
-			case RESPONSE:
-				responseSenderQueue.tryTransfer(sendingPacket);
-				break;
+	private void setTrapListener() {
+		sessionSettings.setTrapListener(new TrapListener() {
+			
+			@Override
+			public void responseTrapped() {
+				if(sessionSettings.responseIsTrapped()){
+					responseStreamWriter.setState(State.TRAP);
+				}else {
+					responseStreamWriter.setState(State.FORWARDING);
+				}
 			}
-		}
-
+			
+			@Override
+			public void commandTrapped() {
+				if(sessionSettings.commandIsTrapped()) {
+					commandStreamWriter.setState(State.TRAP);
+				}else {
+					commandStreamWriter.setState(State.FORWARDING);
+				}
+			}
+		});
 	}
 
 	private void startCommunication() {
@@ -110,9 +119,8 @@ public class CommunicationHandler implements Runnable {
 	}
 
 	public void killSession() {
-		sessionIsAlive = false;
-		threadPool.shutdownNow();
 		closeSockets();
+		threadPool.shutdownNow();
 	}
 
 	private void establishConnection() {
@@ -146,4 +154,5 @@ public class CommunicationHandler implements Runnable {
 			// TODO: status update connection closed
 		}
 	}
-}
+}	
+

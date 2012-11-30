@@ -4,15 +4,15 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractListModel;
 
-import ch.compass.gonzoproxy.relay.modifier.RuleSet;
+import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 
 public class RuleSetModel extends AbstractListModel<String>{
 	
 	private static final long serialVersionUID = 8749844876110276715L;
-	private ArrayList<RuleSet> rules;
+	private ArrayList<PacketRule> rules;
 
-	public RuleSetModel(ArrayList<RuleSet> rules) {
+	public RuleSetModel(ArrayList<PacketRule> rules) {
 		this.rules = rules;
 	}
 

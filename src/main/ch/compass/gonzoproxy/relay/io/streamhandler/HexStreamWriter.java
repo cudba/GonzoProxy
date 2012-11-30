@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TransferQueue;
 
 import ch.compass.gonzoproxy.GonzoProxy;
@@ -11,11 +12,17 @@ import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.io.wrapper.ApduWrapper;
 
 public class HexStreamWriter implements Runnable {
+	
+	public enum State {
+		TRAP,
+		FORWARDING;
+	}
 
 	private PacketStreamWriter streamWriter;
 
 	private OutputStream outputStream;
 	private String mode;
+	private State state = State.FORWARDING;
 
 	private TransferQueue<Packet> senderQueue;
 
@@ -35,8 +42,15 @@ public class HexStreamWriter implements Runnable {
 	private void sendPackets() {
 		while (true) {
 			try {
-				Packet packet = senderQueue.take();
-				streamWriter.sendPacket(outputStream, packet);
+				switch (state) {
+				case TRAP:
+					Thread.yield();
+					break;
+				case FORWARDING:
+					Packet packet = senderQueue.poll(200, TimeUnit.MILLISECONDS);
+					if(packet != null)
+					streamWriter.sendPacket(outputStream, packet);
+				}
 			} catch (InterruptedException | IOException e) {
 			}
 		}
@@ -69,5 +83,8 @@ public class HexStreamWriter implements Runnable {
 		}
 		return null;
 	}
-
+	
+	public void setState(State state) {
+		this.state = state;
+	}
 }

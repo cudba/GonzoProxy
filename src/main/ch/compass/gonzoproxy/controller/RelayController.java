@@ -15,7 +15,7 @@ import ch.compass.gonzoproxy.model.SessionModel;
 import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.relay.RelayHandler;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
-import ch.compass.gonzoproxy.relay.modifier.Rule;
+import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 
 public class RelayController {
 	
@@ -83,12 +83,12 @@ public class RelayController {
 
 	public void addModifierRule(String packetName, String fieldName,
 			String originalValue, String replacedValue, Boolean updateLength) {
-		Rule fieldRule = new Rule(fieldName, originalValue, replacedValue);
+		FieldRule fieldRule = new FieldRule(fieldName, originalValue, replacedValue);
 		packetModifier.addRule(packetName, fieldRule, updateLength);
 	}
 
 	public void changeCommandTrap() {
-		if (sessionSettings.isCommandTrapped()) {
+		if (sessionSettings.commandIsTrapped()) {
 			sessionSettings.setCommandTrapped(false);
 		} else {
 			sessionSettings.setCommandTrapped(true);
@@ -96,7 +96,7 @@ public class RelayController {
 	}
 
 	public void changeResponseTrap() {
-		if (sessionSettings.isResponseTrapped()) {
+		if (sessionSettings.responseIsTrapped()) {
 			sessionSettings.setResponseTrapped(false);
 		} else {
 			sessionSettings.setResponseTrapped(true);

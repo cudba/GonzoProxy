@@ -19,7 +19,7 @@ public class PacketModifier {
 	private static final String REGEX_FILE = "resources/regex_rules.dat";
 	private static final String MODIFIER_FILE = "resources/modifier_rules.dat";
 	
-	private ArrayList<RuleSet> packetRules = new ArrayList<RuleSet>();
+	private ArrayList<PacketRule> packetRules = new ArrayList<PacketRule>();
 	private HashMap<String, Boolean> packetRegex = new HashMap<String, Boolean>();
 	
 	public PacketModifier() {
@@ -30,7 +30,7 @@ public class PacketModifier {
 	}
 
 	public Packet modifyByRule(Packet originalPacket) {
-		for (RuleSet modifier : packetRules) {
+		for (PacketRule modifier : packetRules) {
 			if (ruleSetMatches(modifier, originalPacket)) {
 				return applyRules(modifier, originalPacket);
 			}
@@ -53,13 +53,13 @@ public class PacketModifier {
 		return modifiedPacket;
 	}
 
-	public void addRule(String packetName, Rule fieldRule, Boolean updateLength) {
-		RuleSet existingRuleSet = findRuleSet(packetName);
+	public void addRule(String packetName, FieldRule fieldRule, Boolean updateLength) {
+		PacketRule existingRuleSet = findRuleSet(packetName);
 		if (existingRuleSet != null) {
 			existingRuleSet.add(fieldRule);
 			existingRuleSet.shouldUpdateLength(updateLength);
 		} else {
-			RuleSet createdRuleSet = new RuleSet(packetName);
+			PacketRule createdRuleSet = new PacketRule(packetName);
 			createdRuleSet.add(fieldRule);
 			packetRules.add(createdRuleSet);
 			createdRuleSet.shouldUpdateLength(updateLength);
@@ -72,24 +72,24 @@ public class PacketModifier {
 		saveRegex();
 	}
 
-	public ArrayList<RuleSet> getRuleSets() {
+	public ArrayList<PacketRule> getRuleSets() {
 		return packetRules;
 	}
 
-	private RuleSet findRuleSet(String packetName) {
-		for (RuleSet existingModifier : packetRules) {
+	private PacketRule findRuleSet(String packetName) {
+		for (PacketRule existingModifier : packetRules) {
 			if (existingModifier.getCorrespondingPacket().equals(packetName))
 				return existingModifier;
 		}
 		return null;
 	}
 
-	private Packet applyRules(RuleSet modifier, Packet originalPacket) {
+	private Packet applyRules(PacketRule modifier, Packet originalPacket) {
 
 		Packet modifiedPacket = originalPacket.clone();
 
 		for (Field field : modifiedPacket.getFields()) {
-			Rule rule = modifier.findMatchingRule(field);
+			FieldRule rule = modifier.findMatchingRule(field);
 
 			if (rule != null && rule.isActive()) {
 				int fieldLengthDiff;
@@ -125,7 +125,7 @@ public class PacketModifier {
 		return modifiedPacket;
 	}
 
-	private boolean shouldUpdateContentLength(RuleSet modifier, Field field) {
+	private boolean shouldUpdateContentLength(PacketRule modifier, Field field) {
 		return modifier.shouldUpdateContentLength() && field.getName().toUpperCase().contains(PacketUtils.CONTENT_DATA);
 	}
 
@@ -159,7 +159,7 @@ public class PacketModifier {
 		return diff;
 	}
 
-	private boolean ruleSetMatches(RuleSet existingRuleSet,
+	private boolean ruleSetMatches(PacketRule existingRuleSet,
 			Packet originalPacket) {
 		return existingRuleSet.getCorrespondingPacket().equals(
 				originalPacket.getDescription());
@@ -204,10 +204,10 @@ public class PacketModifier {
 			File modifierFile = new File(MODIFIER_FILE);
 			FileInputStream fin = new FileInputStream(modifierFile);
 			ObjectInputStream ois = new ObjectInputStream(fin);
-			packetRules = (ArrayList<RuleSet>) ois.readObject();
+			packetRules = (ArrayList<PacketRule>) ois.readObject();
 			ois.close();
 		} catch (IOException | ClassNotFoundException e) {
-			packetRules = new ArrayList<RuleSet>();
+			packetRules = new ArrayList<PacketRule>();
 			System.out.println("Modifier File not found !");
 		}
 	}

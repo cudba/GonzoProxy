@@ -15,10 +15,10 @@ public class PacketModifierTest {
 
 		PacketModifier packetModifier = new PacketModifier();
 
-		Rule rule = new Rule("Modified Field", "0f", "a5");
+		FieldRule rule = new FieldRule("Modified Field", "0f", "a5");
 		packetModifier.addRule("Modified Packet", rule, false);
 
-		Rule actualAddedRule = packetModifier.getRuleSets().get(0).getRules()
+		FieldRule actualAddedRule = packetModifier.getRuleSets().get(0).getRules()
 				.get(0);
 		assertEquals(rule, actualAddedRule);
 	}
@@ -27,10 +27,10 @@ public class PacketModifierTest {
 	public void testAddExistingRule() {
 		PacketModifier packetModifier = new PacketModifier();
 
-		Rule rule = new Rule("Modified Field", "0f", "a5");
+		FieldRule rule = new FieldRule("Modified Field", "0f", "a5");
 		packetModifier.addRule("Modified Packet", rule, false);
 
-		Rule addedRule = new Rule("Modified Field", "0f", "ff");
+		FieldRule addedRule = new FieldRule("Modified Field", "0f", "ff");
 		packetModifier.addRule("Modified Packet", addedRule, false);
 		
 		int actualRuleSetCount = packetModifier.getRuleSets().size();
@@ -38,7 +38,7 @@ public class PacketModifierTest {
 		
 		assertEquals(1, actualRuleSetCount);
 		assertEquals(2, actualRuleCount);
-		Rule actualAddedRule = packetModifier.getRuleSets().get(0)
+		FieldRule actualAddedRule = packetModifier.getRuleSets().get(0)
 				.getRules().get(0);
 		assertEquals(addedRule, actualAddedRule);
 	}
@@ -48,7 +48,7 @@ public class PacketModifierTest {
 
 		PacketModifier packetModifier = new PacketModifier();
 
-		Rule rule = new Rule("Modified Field", "0f", "a5");
+		FieldRule rule = new FieldRule("Modified Field", "0f", "a5");
 
 		packetModifier.addRule("Modified Packet", rule, false);
 
@@ -80,7 +80,7 @@ public class PacketModifierTest {
 
 		PacketModifier packetModifier = new PacketModifier();
 
-		Rule rule = new Rule("Modified Field", "", "a5");
+		FieldRule rule = new FieldRule("Modified Field", "", "a5");
 
 		packetModifier.addRule("Modified Packet", rule, false);
 
@@ -111,7 +111,7 @@ public class PacketModifierTest {
 	public void testNoModificationWithInactiveRule() {
 		PacketModifier packetModifier = new PacketModifier();
 
-		Rule rule = new Rule("Modified Field", "0f", "a5");
+		FieldRule rule = new FieldRule("Modified Field", "0f", "a5");
 		rule.setActive(false);
 
 		packetModifier.addRule("Modified Packet", rule, false);
@@ -140,7 +140,7 @@ public class PacketModifierTest {
 
 		PacketModifier packetModifier = new PacketModifier();
 
-		Rule rule = new Rule("Modified Field", "0f c7", "a5");
+		FieldRule rule = new FieldRule("Modified Field", "0f c7", "a5");
 
 		packetModifier.addRule("Modified Packet", rule, true);
 
@@ -181,7 +181,7 @@ public class PacketModifierTest {
 
 		PacketModifier packetModifier = new PacketModifier();
 
-		Rule rule = new Rule("Modified Field", "0f c7", "a5 c7 84");
+		FieldRule rule = new FieldRule("Modified Field", "0f c7", "a5 c7 84");
 
 		packetModifier.addRule("Modified Packet", rule, false);
 

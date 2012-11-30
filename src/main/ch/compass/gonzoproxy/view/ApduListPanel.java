@@ -150,7 +150,7 @@ public class ApduListPanel extends JPanel {
 			}
 		};
 		table_apduList.setModel(new ApduTableModel(currentSession,
-				new String[] { "#", "Type", "APDU", "ASCII", "Description" }));
+				new String[] { "#", "Type", "Packet", "ASCII", "Description" }));
 
 		table_apduList.getSelectionModel().addListSelectionListener(
 				new ListSelectionListener() {
@@ -196,7 +196,7 @@ public class ApduListPanel extends JPanel {
 		btnTrapCmd
 				.setIcon(new ImageIcon(
 						ApduListPanel.class
-								.getResource("/ch/compass/gonzoproxy/mvc/view/icons/right.png")));
+								.getResource("/ch/compass/gonzoproxy/view/icons/right.png")));
 		btnTrapCmd.addActionListener(new ActionListener() {
 
 			@Override
@@ -215,7 +215,7 @@ public class ApduListPanel extends JPanel {
 		btnTrapRes
 				.setIcon(new ImageIcon(
 						ApduListPanel.class
-								.getResource("/ch/compass/gonzoproxy/mvc/view/icons/left.png")));
+								.getResource("/ch/compass/gonzoproxy/view/icons/left.png")));
 		btnTrapRes.addActionListener(new ActionListener() {
 
 			@Override
@@ -233,7 +233,7 @@ public class ApduListPanel extends JPanel {
 		btnSendCmd
 				.setIcon(new ImageIcon(
 						ApduListPanel.class
-								.getResource("/ch/compass/gonzoproxy/mvc/view/icons/refresh.png")));
+								.getResource("/ch/compass/gonzoproxy/view/icons/refresh.png")));
 		btnSendCmd.setToolTipText("Send trapped command");
 		GridBagConstraints gbc_btnSendCmd = new GridBagConstraints();
 		gbc_btnSendCmd.insets = new Insets(0, 0, 0, 5);
@@ -258,7 +258,7 @@ public class ApduListPanel extends JPanel {
 		btnSendRes
 				.setIcon(new ImageIcon(
 						ApduListPanel.class
-								.getResource("/ch/compass/gonzoproxy/mvc/view/icons/refresh.png")));
+								.getResource("/ch/compass/gonzoproxy/view/icons/refresh.png")));
 		GridBagConstraints gbc_btnSendRes = new GridBagConstraints();
 		gbc_btnSendRes.insets = new Insets(0, 0, 0, 5);
 		gbc_btnSendRes.gridx = 3;
@@ -268,7 +268,7 @@ public class ApduListPanel extends JPanel {
 		btnClear = new JButton("");
 		btnClear.setToolTipText("Cancel session");
 		btnClear.setIcon(new ImageIcon(ApduListPanel.class
-				.getResource("/ch/compass/gonzoproxy/mvc/view/icons/cross.png")));
+				.getResource("/ch/compass/gonzoproxy/view/icons/cross.png")));
 		btnClear.addActionListener(new ActionListener() {
 
 			@Override

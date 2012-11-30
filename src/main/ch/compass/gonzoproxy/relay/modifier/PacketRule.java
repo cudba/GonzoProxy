@@ -5,17 +5,17 @@ import java.util.ArrayList;
 
 import ch.compass.gonzoproxy.model.Field;
 
-public class RuleSet implements Serializable {
+public class PacketRule implements Serializable {
 
 	private static final long serialVersionUID = -3893571727728725384L;
 
 	private String correspondingPacket;
 
-	private ArrayList<Rule> rules = new ArrayList<Rule>();
+	private ArrayList<FieldRule> rules = new ArrayList<FieldRule>();
 
 	private Boolean updateLength;
 
-	public RuleSet(String correspondingPacket) {
+	public PacketRule(String correspondingPacket) {
 		this.correspondingPacket = correspondingPacket;
 	}
 
@@ -27,23 +27,23 @@ public class RuleSet implements Serializable {
 		this.correspondingPacket = correspondingPacket;
 	}
 
-	public void add(Rule rule) {
+	public void add(FieldRule rule) {
 		rules.add(rule);
 	}
 
-	public ArrayList<Rule> getRules() {
+	public ArrayList<FieldRule> getRules() {
 		return rules;
 	}
 
-	public Rule findMatchingRule(Field field) {
-		for (Rule rule : rules) {
+	public FieldRule findMatchingRule(Field field) {
+		for (FieldRule rule : rules) {
 			if (isMatchingRule(field, rule))
 				return rule;
 		}
 		return null;
 	}
 
-	private boolean isMatchingRule(Field field, Rule rule) {
+	private boolean isMatchingRule(Field field, FieldRule rule) {
 		return field.getName().equals(rule.getCorrespondingField())
 				&& field.getValue().contains(rule.getOriginalValue());
 	}
@@ -59,7 +59,7 @@ public class RuleSet implements Serializable {
 
 	@Override
 	public boolean equals(Object object) {
-		return ((RuleSet) object).getCorrespondingPacket().equals(
+		return ((PacketRule) object).getCorrespondingPacket().equals(
 				correspondingPacket);
 	}
 }

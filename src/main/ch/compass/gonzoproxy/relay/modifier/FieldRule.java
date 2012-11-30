@@ -2,7 +2,7 @@ package ch.compass.gonzoproxy.relay.modifier;
 
 import java.io.Serializable;
 
-public class Rule implements Serializable {
+public class FieldRule implements Serializable {
 
 	private static final long serialVersionUID = 5194499674217471000L;
 
@@ -11,7 +11,7 @@ public class Rule implements Serializable {
 	private String replacedValue;
 	private boolean isActive = true;
 
-	public Rule(String correspondingField, String originalValue,
+	public FieldRule(String correspondingField, String originalValue,
 			String replacedValue) {
 		this.correspondingField = correspondingField;
 		this.originalValue = originalValue;
@@ -52,7 +52,7 @@ public class Rule implements Serializable {
 
 	@Override
 	public boolean equals(Object object) {
-		Rule rule = (Rule) object;
+		FieldRule rule = (FieldRule) object;
 		return correspondingField.equals(rule.getCorrespondingField())
 				&& originalValue.equals(rule.getOriginalValue());
 	}
