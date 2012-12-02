@@ -15,7 +15,7 @@ public class LibNfcApduWrapper implements ApduWrapper {
 		this.preamble = computePreamble(apdu);
 
 
-		this.plainApdu = apdu.getPacketAsBytes();
+		this.plainApdu = apdu.getPacketDataAsBytes();
 
 		int newSize = preamble.length + plainApdu.length + trailer.length;
 
