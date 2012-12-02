@@ -28,6 +28,8 @@ public class RelayHandler implements Runnable {
 
 	private SessionSettings sessionSettings;
 
+	private Thread communicationHandlerThread;
+
 	@Override
 	public void run() {
 		sessionIsAlive = true;
@@ -43,30 +45,35 @@ public class RelayHandler implements Runnable {
 	}
 
 	public void killSession() {
-		if (communicationHandler != null)
+		if (communicationHandler != null){
 			communicationHandler.killSession();
-		
+			communicationHandlerThread.interrupt();
+		}
 		sessionIsAlive = false;
 	}
 
 	private void startCommunication() {
 		communicationHandler = new CommunicationHandler(sessionSettings,
 				receiverQueue, commandSenderQueue, responseSenderQueue);
-		new Thread(communicationHandler).start();
+		communicationHandlerThread = new Thread(communicationHandler);
+		communicationHandlerThread.start();
 	}
 
 	private void handleRelayData() {
 
 		while (sessionIsAlive) {
 			try {
+				System.out.println("Queue: " + receiverQueue.toString());
 				Packet receivedPacket = receiverQueue.take();
+				System.out.println("Receiving: " + new String(receivedPacket.getPreamble()) + receivedPacket);
 
 				Packet sendingPacket = processPacket(receivedPacket,
 						sessionModel);
+				System.out.println("Sending: " + new String(receivedPacket.getPreamble()) + sendingPacket.getPacketFromFields());
 				addToSenderQueue(sendingPacket);
 
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		}
 
