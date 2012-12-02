@@ -29,11 +29,15 @@ public class Packet implements Serializable, Cloneable {
 	public String getPacketAsString() {
 		return mergeFields();
 	}
+	
+	public ArrayList<Field> getFields() {
+		return fields;
+	}
 
 	private String mergeFields() {
 		StringBuilder mergedFields = new StringBuilder();
 
-		for (Field field : this.getFields()) {
+		for (Field field : fields) {
 			mergedFields.append(field.getValue() + " ");
 		}
 		return mergedFields.substring(0, mergedFields.length() - 1);
@@ -49,10 +53,6 @@ public class Packet implements Serializable, Cloneable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public ArrayList<Field> getFields() {
-		return fields;
 	}
 
 	public void setFields(ArrayList<Field> fields) {

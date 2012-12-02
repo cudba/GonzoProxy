@@ -2,7 +2,6 @@ package ch.compass.gonzoproxy.relay.io.wrapper;
 
 import java.util.Arrays;
 
-import ch.compass.gonzoproxy.model.Field;
 import ch.compass.gonzoproxy.model.Packet;
 
 public class LibNfcApduWrapper implements ApduWrapper {
@@ -15,18 +14,8 @@ public class LibNfcApduWrapper implements ApduWrapper {
 		this.trailer = apdu.getTrailer();
 		this.preamble = computePreamble(apdu);
 
-		StringBuilder mergedFields = new StringBuilder();
 
-		for (Field field : apdu.getFields()) {
-			mergedFields.append(field.getValue() + " ");
-		}
-
-		this.plainApdu = mergedFields.substring(0, mergedFields.length() - 1)
-				.getBytes();
-
-		// plainApdu = mergedFields.toString().getBytes();
-
-		// TODO compute new size of APDU and put into preamble
+		this.plainApdu = apdu.getPacketAsBytes();
 
 		int newSize = preamble.length + plainApdu.length + trailer.length;
 
