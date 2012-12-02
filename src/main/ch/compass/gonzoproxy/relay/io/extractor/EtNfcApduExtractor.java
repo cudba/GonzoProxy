@@ -11,13 +11,13 @@ public class EtNfcApduExtractor implements ApduExtractor {
 
 	private static final char EOC = '\n';
 
-	private static final char DELIMITER = '#';
+	private static final String DELIMITER = "#";
 
 
 	public byte[] extractPacketsToQueue(byte[] buffer, LinkedTransferQueue<Packet> apduQueue,
 			int readBytes, ForwardingType forwardingType) {
 		ArrayList<Integer> indices = ByteArraysUtils.getDelimiterIndices(buffer,
-				DELIMITER);
+				DELIMITER.getBytes());
 
 		int startIndex = 0;
 		int endIndex = 0;
