@@ -26,6 +26,7 @@ public class RelayController {
 	private String[] modes;
 
 	private RelayHandler relayHandler = new RelayHandler();
+	private Thread relayHandlerThread;
 
 	public RelayController() {
 		loadModes();
@@ -48,9 +49,11 @@ public class RelayController {
 	}
 
 	public void startRelaySession() {
+		relayHandler = new RelayHandler();
 		relayHandler.setSessionParameters(sessionModel, sessionSettings,
 				packetModifier);
-		new Thread(relayHandler).start();
+		relayHandlerThread = new Thread(relayHandler);
+		relayHandlerThread.start();
 	}
 
 	public void newSession(String portListen, String remoteHost,
@@ -71,6 +74,9 @@ public class RelayController {
 
 	public void clearRunningSession() {
 		relayHandler.killSession();
+		if(relayHandlerThread != null){
+			relayHandlerThread.interrupt();
+		}
 	}
 
 	//
