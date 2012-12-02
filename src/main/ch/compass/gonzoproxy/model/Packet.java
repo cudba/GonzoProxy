@@ -139,4 +139,8 @@ public class Packet implements Serializable, Cloneable {
 	public void isModified(boolean isModified) {
 		this.isModified = isModified;
 	}
+
+	public void clearFields() {
+		fields.clear();
+	}
 }

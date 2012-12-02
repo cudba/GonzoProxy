@@ -4,20 +4,39 @@ import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 import ch.compass.gonzoproxy.listener.SessionListener;
+import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.listener.TrapListener;
 
 public class SessionSettings {
 	
+	public enum SessionState {
+		DISCONNECTED("disconnected"),
+		CONNECTING("connecting..."),
+		FORWARDING("forwarding"),
+		TRAP("trapped"),
+		COMMAND_TRAP("command trapped"),
+		RESPONSE_TRAP("response trapped");
+		
+		private String description;
+
+		private SessionState(String description) {
+			this.description = description;
+		}
+		
+		public String getDescription() {
+			return description;
+		}
+	}
+	
+	private SessionState sessionState = SessionState.DISCONNECTED;
+	
 	private Preferences sessionPrefs = Preferences.userRoot().node(
 			this.getClass().getName());
 	
+	private ArrayList<StateListener> stateListeners = new ArrayList<StateListener>();
 	private ArrayList<SessionListener> sessionListeners = new ArrayList<SessionListener>();
 	private TrapListener trapListener;
 	
-	private Boolean commandTrapped = false;
-	private Boolean responseTrapped = false;
-	private Boolean sendOneCommand;
-	private Boolean sendOneResponse;
 	private String mode;
 	
 	public void setSession(int listenPort, String remoteHost, int remotePort) {
@@ -44,42 +63,15 @@ public class SessionSettings {
 			listener.sessionChanged();
 		}
 	}
-	
-	public Boolean responseIsTrapped() {
-		return responseTrapped;
+
+	public void sendOneCommand() {
+		trapListener.sendOneCommand();
 	}
 
-	public Boolean commandIsTrapped() {
-		return commandTrapped;
+	public void sendOneResponse() {
+		trapListener.sendOneResponse();
 	}
 
-	public void setCommandTrapped(Boolean cmdTrap) {
-		this.commandTrapped = cmdTrap;
-		trapListener.commandTrapped();
-		
-	}
-
-	public void setResponseTrapped(Boolean resTrap) {
-		this.responseTrapped = resTrap;
-		trapListener.responseTrapped();
-	}
-
-	public void sendOneCommand(boolean send) {
-		this.sendOneCommand = send;
-	}
-
-	public void sendOneResponse(boolean send) {
-		this.sendOneResponse = send;
-	}
-
-	public Boolean shouldSendOneCommand() {
-		return sendOneCommand;
-	}
-
-	public Boolean shouldSendOneResponse() {
-		return sendOneResponse;
-	}
-	
 	public void setMode(String mode) {
 		this.mode = mode;
 	}
@@ -90,5 +82,31 @@ public class SessionSettings {
 
 	public void setTrapListener(TrapListener trapListener) {
 		this.trapListener = trapListener;
+	}
+	
+	public SessionState getSessionState() {
+		return sessionState;
+	}
+	
+	public void setSessionState(SessionState sessionState) {
+		this.sessionState = sessionState;
+		notifyStateListeners();
+	}
+
+	public void addSessionStateListener(
+			StateListener stateListener) {
+		stateListeners.add(stateListener);
+	}
+	
+	private void notifyStateListeners() {
+		for (StateListener stateListener : stateListeners) {
+			stateListener.sessionStateChanged(sessionState.getDescription());
+		}
+	}
+
+	public void setTrapState(SessionState sessionState) {
+		this.sessionState = sessionState;
+		notifyStateListeners();
+		trapListener.checkTrapChanged();
 	}
 }

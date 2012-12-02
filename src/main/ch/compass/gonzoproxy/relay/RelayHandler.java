@@ -1,8 +1,8 @@
 package ch.compass.gonzoproxy.relay;
 
+import java.util.ArrayList;
 import java.util.concurrent.LinkedTransferQueue;
 
-import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
 import ch.compass.gonzoproxy.model.SessionSettings;
@@ -11,7 +11,7 @@ import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.parser.ParsingHandler;
 
 public class RelayHandler implements Runnable {
-
+	
 	private boolean sessionIsAlive = true;
 
 	private LinkedTransferQueue<Packet> receiverQueue = new LinkedTransferQueue<Packet>();
@@ -28,11 +28,25 @@ public class RelayHandler implements Runnable {
 
 	private SessionSettings sessionSettings;
 
-	public RelayHandler(SessionModel sessionModel,
+	@Override
+	public void run() {
+		sessionIsAlive = true;
+		startCommunication();
+		handleRelayData();
+	}
+
+	public void setSessionParameters(SessionModel sessionModel,
 			SessionSettings sessionSettings, PacketModifier packetModifier) {
 		this.sessionModel = sessionModel;
 		this.sessionSettings = sessionSettings;
 		this.packetModifier = packetModifier;
+	}
+
+	public void killSession() {
+		if (communicationHandler != null)
+			communicationHandler.killSession();
+		
+		sessionIsAlive = false;
 	}
 
 	private void startCommunication() {
@@ -68,18 +82,6 @@ public class RelayHandler implements Runnable {
 		return processedPacket;
 	}
 
-	@Override
-	public void run() {
-		startCommunication();
-		handleRelayData();
-	}
-
-	public void killSession() {
-		communicationHandler.killSession();
-		sessionIsAlive = false;
-
-	}
-
 	private void addToSenderQueue(Packet sendingPacket) {
 		switch (sendingPacket.getType()) {
 		case COMMAND:
@@ -93,18 +95,11 @@ public class RelayHandler implements Runnable {
 
 	}
 
-	private void handleTraps(Packet sendingPacket) {
-		if (sendingPacket.getType() == ForwardingType.COMMAND) {
-			while (sessionSettings.commandIsTrapped()
-					&& !sessionSettings.shouldSendOneCommand()) {
-				Thread.yield();
-			}
-		} else {
-			while (sessionSettings.responseIsTrapped()
-					&& !sessionSettings.shouldSendOneResponse()) {
-				Thread.yield();
-			}
+	public void reParse(ArrayList<Packet> loadedPacketStream) {
+
+		for (Packet packet : loadedPacketStream) {
+			packet.clearFields();
+			parsingHandler.tryParse(packet);
 		}
 	}
-
 }

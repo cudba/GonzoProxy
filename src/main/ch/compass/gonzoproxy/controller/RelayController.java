@@ -13,18 +13,19 @@ import java.util.ResourceBundle;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
 import ch.compass.gonzoproxy.model.SessionSettings;
+import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
 import ch.compass.gonzoproxy.relay.RelayHandler;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 
 public class RelayController {
-	
+
 	private PacketModifier packetModifier = new PacketModifier();
 	private SessionModel sessionModel = new SessionModel();
 	private SessionSettings sessionSettings = new SessionSettings();
 	private String[] modes;
 
-	private RelayHandler relayHandler;
+	private RelayHandler relayHandler = new RelayHandler();
 
 	public RelayController() {
 		loadModes();
@@ -47,13 +48,14 @@ public class RelayController {
 	}
 
 	public void startRelaySession() {
-		relayHandler = new RelayHandler(sessionModel, sessionSettings, packetModifier);
+		relayHandler.setSessionParameters(sessionModel, sessionSettings,
+				packetModifier);
 		new Thread(relayHandler).start();
 	}
 
 	public void newSession(String portListen, String remoteHost,
 			String remotePort, String mode) {
-		clearOldSession();
+		clearRunningSession();
 		generateNewSessionDescription(portListen, remoteHost, remotePort, mode);
 		startRelaySession();
 
@@ -67,15 +69,14 @@ public class RelayController {
 		sessionSettings.setMode(mode);
 	}
 
-	public void clearOldSession() {
-		if (relayHandler != null) {
-			relayHandler.killSession();
-		}
+	public void clearRunningSession() {
+		relayHandler.killSession();
 	}
-//
-//	public void stopRelaySession() {
-//		relaySession.stopForwarder();
-//	}
+
+	//
+	// public void stopRelaySession() {
+	// relaySession.stopForwarder();
+	// }
 
 	public SessionModel getSessionModel() {
 		return sessionModel;
@@ -83,32 +84,55 @@ public class RelayController {
 
 	public void addModifierRule(String packetName, String fieldName,
 			String originalValue, String replacedValue, Boolean updateLength) {
-		FieldRule fieldRule = new FieldRule(fieldName, originalValue, replacedValue);
+		FieldRule fieldRule = new FieldRule(fieldName, originalValue,
+				replacedValue);
 		packetModifier.addRule(packetName, fieldRule, updateLength);
 	}
 
-	public void changeCommandTrap() {
-		if (sessionSettings.commandIsTrapped()) {
-			sessionSettings.setCommandTrapped(false);
-		} else {
-			sessionSettings.setCommandTrapped(true);
+	public void commandTrapChanged() {
+		switch (sessionSettings.getSessionState()) {
+		case COMMAND_TRAP:
+			sessionSettings.setTrapState(SessionState.FORWARDING);
+			break;
+		case FORWARDING:
+			sessionSettings.setTrapState(SessionState.COMMAND_TRAP);
+			break;
+		case RESPONSE_TRAP:
+			sessionSettings.setTrapState(SessionState.TRAP);
+			break;
+		case TRAP:
+			sessionSettings.setTrapState(SessionState.RESPONSE_TRAP);
+			break;
+		default:
+			break;
 		}
 	}
 
-	public void changeResponseTrap() {
-		if (sessionSettings.responseIsTrapped()) {
-			sessionSettings.setResponseTrapped(false);
-		} else {
-			sessionSettings.setResponseTrapped(true);
+	public void responseTrapChanged() {
+		switch (sessionSettings.getSessionState()) {
+		case RESPONSE_TRAP:
+			sessionSettings.setTrapState(SessionState.FORWARDING);
+			break;
+		case FORWARDING:
+			sessionSettings.setTrapState(SessionState.RESPONSE_TRAP);
+			break;
+		case COMMAND_TRAP:
+			sessionSettings.setTrapState(SessionState.TRAP);
+			break;
+		case TRAP:
+			sessionSettings.setTrapState(SessionState.COMMAND_TRAP);
+			break;
+		default:
+			break;
 		}
 	}
 
 	public void sendOneCmd() {
-		sessionSettings.sendOneCommand(true);
+		sessionSettings.sendOneCommand();
 	}
 
 	public void sendOneRes() {
-		sessionSettings.sendOneResponse(true);
+		sessionSettings.sendOneResponse();
 	}
 
 	public String[] getModes() {
@@ -117,11 +141,13 @@ public class RelayController {
 
 	@SuppressWarnings("unchecked")
 	public void openFile(File file) {
-		FileInputStream fin;
-		try {
-			fin = new FileInputStream(file);
-			ObjectInputStream ois = new ObjectInputStream(fin);
-			sessionModel.addList((ArrayList<Packet>) ois.readObject());
+		clearRunningSession();
+		try (FileInputStream fin = new FileInputStream(file);
+				ObjectInputStream ois = new ObjectInputStream(fin)) {
+			ArrayList<Packet> loadedPacketStream = (ArrayList<Packet>) ois
+					.readObject();
+			relayHandler.reParse(loadedPacketStream);
+			sessionModel.addList(loadedPacketStream);
 			ois.close();
 		} catch (Exception e) {
 			e.printStackTrace();

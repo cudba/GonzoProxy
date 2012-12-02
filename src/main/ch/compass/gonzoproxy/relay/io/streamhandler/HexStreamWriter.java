@@ -12,10 +12,9 @@ import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.io.wrapper.ApduWrapper;
 
 public class HexStreamWriter implements Runnable {
-	
+
 	public enum State {
-		TRAP,
-		FORWARDING;
+		TRAP, FORWARDING, SEND_ONE;
 	}
 
 	private PacketStreamWriter streamWriter;
@@ -47,9 +46,18 @@ public class HexStreamWriter implements Runnable {
 					Thread.yield();
 					break;
 				case FORWARDING:
-					Packet packet = senderQueue.poll(200, TimeUnit.MILLISECONDS);
-					if(packet != null)
-					streamWriter.sendPacket(outputStream, packet);
+					Packet sendingPacket = senderQueue.poll(200,
+							TimeUnit.MILLISECONDS);
+					if (sendingPacket != null)
+						streamWriter.sendPacket(outputStream, sendingPacket);
+					break;
+				case SEND_ONE:
+					Packet sendOnePacket = senderQueue.poll(200,
+							TimeUnit.MILLISECONDS);
+					if (sendOnePacket != null)
+						streamWriter.sendPacket(outputStream, sendOnePacket);
+						state = State.TRAP;
+					break;
 				}
 			} catch (InterruptedException | IOException e) {
 			}
@@ -83,7 +91,7 @@ public class HexStreamWriter implements Runnable {
 		}
 		return null;
 	}
-	
+
 	public void setState(State state) {
 		this.state = state;
 	}

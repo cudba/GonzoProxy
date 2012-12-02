@@ -1,7 +1,6 @@
 package ch.compass.gonzoproxy.model;
 
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
 
 import ch.compass.gonzoproxy.listener.SessionListener;
 
@@ -9,8 +8,6 @@ public class SessionModel {
 
 	private ArrayList<SessionListener> sessionListeners = new ArrayList<SessionListener>();
 	private ArrayList<Packet> sessionData = new ArrayList<Packet>();
-	private Semaphore lock = new Semaphore(1);
-	
 
 
 	public void addSessionListener(SessionListener listener) {
@@ -18,14 +15,8 @@ public class SessionModel {
 	}
 
 	public void addPacket(Packet data) {
-		try {
-			lock.acquire();
-			sessionData.add(data);
-			lock.release();
-			notifyPacketReceived(data);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		sessionData.add(data);
+		notifyPacketReceived(data);
 	}
 
 	public ArrayList<Packet> getPacketList() {

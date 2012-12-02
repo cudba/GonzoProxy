@@ -15,6 +15,7 @@ import ch.compass.gonzoproxy.listener.TrapListener;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionSettings;
+import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
 import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamReader;
 import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamWriter;
 import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamWriter.State;
@@ -54,6 +55,7 @@ public class CommunicationHandler implements Runnable {
 	@Override
 	public void run() {
 		setTrapListener();
+		sessionSettings.setSessionState(SessionState.CONNECTING);
 		establishConnection();
 		try {
 			initCommandStreamHandlers();
@@ -62,28 +64,27 @@ public class CommunicationHandler implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		sessionSettings.setSessionState(SessionState.FORWARDING);
 
 	}
 
 	private void setTrapListener() {
 		sessionSettings.setTrapListener(new TrapListener() {
 			
+
 			@Override
-			public void responseTrapped() {
-				if(sessionSettings.responseIsTrapped()){
-					responseStreamWriter.setState(State.TRAP);
-				}else {
-					responseStreamWriter.setState(State.FORWARDING);
-				}
+			public void checkTrapChanged() {
+				checkForTraps();
 			}
-			
+
 			@Override
-			public void commandTrapped() {
-				if(sessionSettings.commandIsTrapped()) {
-					commandStreamWriter.setState(State.TRAP);
-				}else {
-					commandStreamWriter.setState(State.FORWARDING);
-				}
+			public void sendOneCommand() {
+				commandStreamWriter.setState(State.SEND_ONE);
+			}
+
+			@Override
+			public void sendOneResponse() {
+				responseStreamWriter.setState(State.SEND_ONE);
 			}
 		});
 	}
@@ -152,6 +153,28 @@ public class CommunicationHandler implements Runnable {
 			target.close();
 		} catch (IOException e) {
 			// TODO: status update connection closed
+		}
+	}
+	
+	private void checkForTraps() {
+		switch (sessionSettings.getSessionState()) {
+		case TRAP:
+			commandStreamWriter.setState(State.TRAP);
+			responseStreamWriter.setState(State.TRAP);
+			break;
+		case RESPONSE_TRAP:
+			responseStreamWriter.setState(State.TRAP);
+			commandStreamWriter.setState(State.FORWARDING);
+			break;
+		case COMMAND_TRAP:
+			commandStreamWriter.setState(State.TRAP);
+			responseStreamWriter.setState(State.FORWARDING);
+			break;
+		case FORWARDING:
+			commandStreamWriter.setState(State.FORWARDING);
+			responseStreamWriter.setState(State.FORWARDING);
+		default:
+			break;
 		}
 	}
 }	

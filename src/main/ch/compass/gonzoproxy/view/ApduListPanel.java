@@ -25,6 +25,7 @@ import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.listener.SessionListener;
+import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.ApduTableModel;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
@@ -63,6 +64,19 @@ public class ApduListPanel extends JPanel {
 		this.lsl = listSelectionListener;
 		initUi();
 		updateSessionPrefs();
+		registerSessionStateNotifier();
+	}
+
+	private void registerSessionStateNotifier() {
+		controller.getSessionSettings().addSessionStateListener(new StateListener() {
+			
+			@Override
+			public void sessionStateChanged(String state) {
+				//TODO: set status to "state"
+				System.out.println("State changed : " + state);
+			}
+		});
+		
 	}
 
 	private SessionListener createListener() {
@@ -201,7 +215,7 @@ public class ApduListPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.changeCommandTrap();
+				controller.commandTrapChanged();
 			}
 		});
 		GridBagConstraints gbc_btnTrapCmd = new GridBagConstraints();
@@ -220,7 +234,7 @@ public class ApduListPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.changeResponseTrap();
+				controller.responseTrapChanged();
 			}
 		});
 
@@ -273,7 +287,7 @@ public class ApduListPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.clearOldSession();
+				controller.clearRunningSession();
 			}
 		});
 
