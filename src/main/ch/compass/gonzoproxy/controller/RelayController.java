@@ -14,7 +14,7 @@ import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
 import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
-import ch.compass.gonzoproxy.relay.RelayHandler;
+import ch.compass.gonzoproxy.relay.RelaySessionHandler;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 
@@ -25,7 +25,6 @@ public class RelayController {
 	private SessionSettings sessionSettings = new SessionSettings();
 	private String[] modes;
 
-	private RelayHandler relayHandler = new RelayHandler();
 	private Thread relayHandlerThread;
 
 	public RelayController() {
@@ -49,7 +48,7 @@ public class RelayController {
 	}
 
 	public void startRelaySession() {
-		relayHandler = new RelayHandler();
+		RelaySessionHandler relayHandler = new RelaySessionHandler();
 		relayHandler.setSessionParameters(sessionModel, sessionSettings,
 				packetModifier);
 		relayHandlerThread = new Thread(relayHandler);
@@ -59,12 +58,12 @@ public class RelayController {
 	public void newSession(String portListen, String remoteHost,
 			String remotePort, String mode) {
 		clearRunningSession();
-		generateNewSessionDescription(portListen, remoteHost, remotePort, mode);
+		generateNewSessionParameters(portListen, remoteHost, remotePort, mode);
 		startRelaySession();
 
 	}
 
-	private void generateNewSessionDescription(String portListen,
+	private void generateNewSessionParameters(String portListen,
 			String remoteHost, String remotePort, String mode) {
 		sessionSettings.setSession(Integer.parseInt(portListen), remoteHost,
 				Integer.parseInt(remotePort));
@@ -73,10 +72,8 @@ public class RelayController {
 	}
 
 	public void clearRunningSession() {
-		relayHandler.killSession();
-		if(relayHandlerThread != null){
+		if (relayHandlerThread != null && relayHandlerThread.isAlive()) 
 			relayHandlerThread.interrupt();
-		}
 	}
 
 	//
@@ -147,12 +144,13 @@ public class RelayController {
 
 	@SuppressWarnings("unchecked")
 	public void openFile(File file) {
+		RelaySessionHandler fakedRelay = new RelaySessionHandler();
 		clearRunningSession();
 		try (FileInputStream fin = new FileInputStream(file);
 				ObjectInputStream ois = new ObjectInputStream(fin)) {
 			ArrayList<Packet> loadedPacketStream = (ArrayList<Packet>) ois
 					.readObject();
-			relayHandler.reParse(loadedPacketStream);
+			fakedRelay.reParse(loadedPacketStream);
 			sessionModel.addList(loadedPacketStream);
 			ois.close();
 		} catch (Exception e) {

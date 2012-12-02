@@ -10,9 +10,8 @@ import ch.compass.gonzoproxy.relay.io.CommunicationHandler;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.parser.ParsingHandler;
 
-public class RelayHandler implements Runnable {
+public class RelaySessionHandler implements Runnable {
 	
-	private boolean sessionIsAlive = true;
 
 	private LinkedTransferQueue<Packet> receiverQueue = new LinkedTransferQueue<Packet>();
 
@@ -32,7 +31,6 @@ public class RelayHandler implements Runnable {
 
 	@Override
 	public void run() {
-		sessionIsAlive = true;
 		startCommunication();
 		handleRelayData();
 	}
@@ -44,12 +42,17 @@ public class RelayHandler implements Runnable {
 		this.packetModifier = packetModifier;
 	}
 
-	public void killSession() {
+	private void killSession() {
 		if (communicationHandler != null){
-			communicationHandler.killSession();
-			communicationHandlerThread.interrupt();
+			try {
+				communicationHandler.killSession();
+				communicationHandlerThread.interrupt();
+				communicationHandlerThread.join();
+			} catch (InterruptedException e) {
+				System.out.println("couldnt terminate com handler, thread is being shut down");
+			}
+			System.out.println("com handler died");
 		}
-		sessionIsAlive = false;
 	}
 
 	private void startCommunication() {
@@ -61,19 +64,17 @@ public class RelayHandler implements Runnable {
 
 	private void handleRelayData() {
 
-		while (sessionIsAlive) {
+		while (!Thread.currentThread().isInterrupted()) {
 			try {
-				System.out.println("Queue: " + receiverQueue.toString());
 				Packet receivedPacket = receiverQueue.take();
-				System.out.println("Receiving: " + new String(receivedPacket.getPreamble()) + receivedPacket);
 
 				Packet sendingPacket = processPacket(receivedPacket,
 						sessionModel);
-				System.out.println("Sending: " + new String(receivedPacket.getPreamble()) + sendingPacket.getPacketFromFields());
 				addToSenderQueue(sendingPacket);
 
 			} catch (InterruptedException e) {
-//				e.printStackTrace();
+				killSession();
+				Thread.currentThread().interrupt();
 			}
 		}
 

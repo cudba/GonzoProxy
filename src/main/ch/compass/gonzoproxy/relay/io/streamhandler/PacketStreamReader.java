@@ -22,33 +22,31 @@ public class PacketStreamReader {
 	public void readPackets(InputStream inputStream,
 			LinkedTransferQueue<Packet> receiverQueue,
 			ForwardingType forwardingType) throws IOException {
-		while (true) {
-			byte[] buffer = new byte[BUFFER_SIZE];
+		byte[] buffer = new byte[BUFFER_SIZE];
 
-			int length = 0;
-			int readBytes = 0;
+		int length = 0;
+		int readBytes = 0;
 
-			boolean readCompleted = false;
+		boolean readCompleted = false;
 
-			while (!readCompleted) {
+		while (!readCompleted) {
 
-				if (length == buffer.length) {
-					ByteArraysUtils.enlarge(buffer);
-				}
+			if (length == buffer.length) {
+				ByteArraysUtils.enlarge(buffer);
+			}
 
-				if ((readBytes = inputStream.read(buffer, length, buffer.length
-						- length)) != -1) {
-					length += readBytes;
-					buffer = extractor.extractPacketsToQueue(buffer,
-							receiverQueue, length, forwardingType);
-				}
+			if ((readBytes = inputStream.read(buffer, length, buffer.length
+					- length)) != -1) {
+				length += readBytes;
+				buffer = extractor.extractPacketsToQueue(buffer, receiverQueue,
+						length, forwardingType);
+			}
 
-				readCompleted = buffer.length == 0;
+			readCompleted = buffer.length == 0;
 
-				if (!readCompleted) {
-					length = buffer.length;
-					buffer = ByteArraysUtils.enlarge(buffer, BUFFER_SIZE);
-				}
+			if (!readCompleted) {
+				length = buffer.length;
+				buffer = ByteArraysUtils.enlarge(buffer, BUFFER_SIZE);
 			}
 		}
 	}

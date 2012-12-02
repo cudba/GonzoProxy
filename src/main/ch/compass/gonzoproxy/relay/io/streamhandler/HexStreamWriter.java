@@ -39,7 +39,7 @@ public class HexStreamWriter implements Runnable {
 	}
 
 	private void sendPackets() {
-		while (true) {
+		while (!Thread.currentThread().isInterrupted()) {
 			try {
 				switch (state) {
 				case TRAP:
@@ -60,6 +60,7 @@ public class HexStreamWriter implements Runnable {
 					break;
 				}
 			} catch (InterruptedException | IOException e) {
+				Thread.currentThread().interrupt();
 			}
 		}
 

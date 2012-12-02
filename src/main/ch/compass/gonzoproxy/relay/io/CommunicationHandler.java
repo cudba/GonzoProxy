@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TimeUnit;
 
 import ch.compass.gonzoproxy.listener.TrapListener;
 import ch.compass.gonzoproxy.model.ForwardingType;
@@ -62,7 +63,7 @@ public class CommunicationHandler implements Runnable {
 			initResponseStreamHandlers();
 			startCommunication();
 		} catch (IOException e) {
-			e.printStackTrace();
+			sessionSettings.setSessionState(SessionState.DISCONNECTED);
 		}
 		sessionSettings.setSessionState(SessionState.FORWARDING);
 
@@ -119,9 +120,15 @@ public class CommunicationHandler implements Runnable {
 				responseSenderQueue, sessionSettings.getMode());
 	}
 
-	public void killSession() {
+	public void killSession() throws InterruptedException {
 		closeSockets();
 		threadPool.shutdownNow();
+		if(threadPool.awaitTermination(2, TimeUnit.SECONDS)){
+			System.out.println("consumer / producer threads closed successfully");
+		}else {
+			System.out.println("consumer / producer not closed in time");
+		}
+		sessionSettings.setSessionState(SessionState.DISCONNECTED);
 	}
 
 	private void establishConnection() {

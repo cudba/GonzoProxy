@@ -38,9 +38,11 @@ public class HexStreamReader implements Runnable {
 
 	private void readPackets() {
 		try {
-			streamReader
-					.readPackets(inputStream, receiverQueue, forwardingType);
+			while (!Thread.currentThread().isInterrupted())
+				streamReader.readPackets(inputStream, receiverQueue,
+						forwardingType);
 		} catch (IOException e) {
+			Thread.currentThread().interrupt();
 		}
 	}
 
