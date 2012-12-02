@@ -18,18 +18,19 @@ public class Packet implements Serializable, Cloneable {
 	private ForwardingType type;
 	private int size;
 
-	private byte[] streamInput;
-
-	public Packet(byte[] streamInput) {
-		this.streamInput = streamInput;
-	}
-
 	public byte[] getOriginalPacketData() {
 		return originalPacketData;
 	}
+	
+	public byte[] getPacketAsBytes(){
+		return mergeFields().getBytes();
+	}
 
-	public String getPacketFromFields() {
+	public String getPacketAsString() {
+		return mergeFields();
+	}
 
+	private String mergeFields() {
 		StringBuilder mergedFields = new StringBuilder();
 
 		for (Field field : this.getFields()) {
@@ -73,7 +74,7 @@ public class Packet implements Serializable, Cloneable {
 
 	public String toAscii() {
 		StringBuffer sb = new StringBuffer("");
-		String ascii = getPacketFromFields().replaceAll("\\s", "");
+		String ascii = getPacketAsString().replaceAll("\\s", "");
 		String[] strArr = ascii.split("(?<=\\G..)");
 
 		for (String a : strArr) {
@@ -101,10 +102,6 @@ public class Packet implements Serializable, Cloneable {
 		return size;
 	}
 
-	public byte[] getStreamInput() {
-		return streamInput;
-	}
-
 	public void setTrailer(byte[] trailer) {
 		this.trailer = trailer;
 	}
@@ -119,7 +116,7 @@ public class Packet implements Serializable, Cloneable {
 
 	@Override
 	public Packet clone() {
-		Packet clonedPacket = new Packet(streamInput);
+		Packet clonedPacket = new Packet();
 		clonedPacket.setDescription(description);
 		clonedPacket.setPreamble(preamble);
 		clonedPacket.setOriginalPacketData(originalPacketData);

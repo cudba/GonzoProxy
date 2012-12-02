@@ -53,8 +53,7 @@ public class PacketModifierTest {
 		packetModifier.addRule("Modified Packet", rule, false);
 
 		String fakePlainApdu = "00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		String libnfcInput = "C-APDU 000d: 00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		Packet receivedPacket = new Packet(libnfcInput.getBytes());
+		Packet receivedPacket = new Packet();
 		receivedPacket.setOriginalPacketData(fakePlainApdu.getBytes());
 		receivedPacket.setDescription("Modified Packet");
 
@@ -85,8 +84,7 @@ public class PacketModifierTest {
 		packetModifier.addRule("Modified Packet", rule, false);
 
 		String fakePlainApdu = "00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		String libnfcInput = "C-APDU 000d: 00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		Packet receivedPacket = new Packet(libnfcInput.getBytes());
+		Packet receivedPacket = new Packet();
 		receivedPacket.setOriginalPacketData(fakePlainApdu.getBytes());
 		receivedPacket.setDescription("Modified Packet");
 
@@ -117,8 +115,7 @@ public class PacketModifierTest {
 		packetModifier.addRule("Modified Packet", rule, false);
 
 		String fakePlainApdu = "00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		String libnfcInput = "C-APDU 000d: 00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		Packet receivedPacket = new Packet(libnfcInput.getBytes());
+		Packet receivedPacket = new Packet();
 		receivedPacket.setOriginalPacketData(fakePlainApdu.getBytes());
 		receivedPacket.setDescription("Modified Packet");
 
@@ -145,8 +142,7 @@ public class PacketModifierTest {
 		packetModifier.addRule("Modified Packet", rule, true);
 
 		String fakePlainApdu = "00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		String libnfcInput = "C-APDU 000d: 00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		Packet receivedPacket = new Packet(libnfcInput.getBytes());
+		Packet receivedPacket = new Packet();
 		receivedPacket.setOriginalPacketData(fakePlainApdu.getBytes());
 		receivedPacket.setDescription("Modified Packet");
 
@@ -186,8 +182,7 @@ public class PacketModifierTest {
 		packetModifier.addRule("Modified Packet", rule, false);
 
 		String fakePlainApdu = "00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		String libnfcInput = "C-APDU 000d: 00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		Packet receivedPacket = new Packet(libnfcInput.getBytes());
+		Packet receivedPacket = new Packet();
 		receivedPacket.setOriginalPacketData(fakePlainApdu.getBytes());
 		receivedPacket.setDescription("Modified Packet");
 

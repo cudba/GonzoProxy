@@ -57,7 +57,7 @@ public class RelayController {
 
 	public void newSession(String portListen, String remoteHost,
 			String remotePort, String mode) {
-		clearRunningSession();
+		stopRunningSession();
 		generateNewSessionParameters(portListen, remoteHost, remotePort, mode);
 		startRelaySession();
 
@@ -71,7 +71,7 @@ public class RelayController {
 		sessionSettings.setMode(mode);
 	}
 
-	public void clearRunningSession() {
+	public void stopRunningSession() {
 		if (relayHandlerThread != null && relayHandlerThread.isAlive()) 
 			relayHandlerThread.interrupt();
 	}
@@ -145,7 +145,7 @@ public class RelayController {
 	@SuppressWarnings("unchecked")
 	public void openFile(File file) {
 		RelaySessionHandler fakedRelay = new RelaySessionHandler();
-		clearRunningSession();
+		stopRunningSession();
 		try (FileInputStream fin = new FileInputStream(file);
 				ObjectInputStream ois = new ObjectInputStream(fin)) {
 			ArrayList<Packet> loadedPacketStream = (ArrayList<Packet>) ois

@@ -21,7 +21,7 @@ public class ParsingHandlerTest {
 
 		String fakePlainPacket = "00 a4 04 00 07 d2 76 00 00 85 01 01 00";
 		String libnfcInput = "C-Packet 000d: 00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		Packet packet = new Packet(libnfcInput.getBytes());
+		Packet packet = new Packet();
 		packet.setOriginalPacketData(fakePlainPacket.getBytes());
 
 		parserHanlder.tryParse(packet);
@@ -44,7 +44,7 @@ public class ParsingHandlerTest {
 
 		String fakePlainPacket = "00 a4 04 00 07 d2 76 00 00 85 01 00";
 		String libnfcInput = "C-Packet 000c: 00 a4 04 00 07 d2 76 00 00 85 01 00";
-		Packet packet = new Packet(libnfcInput.getBytes());
+		Packet packet = new Packet();
 		packet.setOriginalPacketData(fakePlainPacket.getBytes());
 
 		parserHanlder.tryParse(packet);
@@ -68,7 +68,7 @@ public class ParsingHandlerTest {
 
 		String fakePlainPacket = "ff ff ff ff";
 		String libnfcInput = "C-Packet 0004: ff ff ff ff";
-		Packet packet = new Packet(libnfcInput.getBytes());
+		Packet packet = new Packet();
 		packet.setOriginalPacketData(fakePlainPacket.getBytes());
 
 		parserHanlder.tryParse(packet);
@@ -84,7 +84,7 @@ public class ParsingHandlerTest {
 
 		String fakePlainPacket = "77 07 82 00 07 94 76 00 0a 85";
 		String libnfcInput = "#R-Packet 000a: 77 07 8200 07 94 76 00 0a 85";
-		Packet packet = new Packet(libnfcInput.getBytes());
+		Packet packet = new Packet();
 		packet.setOriginalPacketData(fakePlainPacket.getBytes());
 
 		parserHanlder.tryParse(packet);
@@ -109,7 +109,7 @@ public class ParsingHandlerTest {
 		String fakePlainPacket = "6f 2f 84 0e 32 50 41 59 2e 53 59 53 2e 44 44 46 30 31 a5 1d bf 0c 1a 61 18 4f 07 a0 00 00 00 04 10 10 87 01 01 50 0a 4d 61 73 74 65 72 43 61 72 64 90 00";
 		String libnfcInput = "#R-Packet 0033: 6f 2f 84 0e 32 50 41 59 2e 53 59 53 2e 44 44 46 30 31 a5 1d bf 0c 1a 61 18 4f 07 a0 00 00 00 04 10 10 87 01 01 50 0a 4d 61 73 74 65 72 43 61 72 64 90 00";
 
-		Packet packet = new Packet(libnfcInput.getBytes());
+		Packet packet = new Packet();
 		packet.setOriginalPacketData(fakePlainPacket.getBytes());
 
 		parserHanlder.tryParse(packet);

@@ -16,8 +16,7 @@ public class TemplateValidatorTest {
 		TemplateValidator templateValidator = new TemplateValidator();
 		
 		String processingApduFake = "00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		String libnfcInput = "C-APDU 000d: 00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		Packet apdu = new Packet(libnfcInput.getBytes());
+		Packet apdu = new Packet();
 		apdu.setOriginalPacketData(processingApduFake.getBytes());
 		
 		PacketTemplate templateFake = new PacketTemplate();
@@ -32,8 +31,7 @@ public class TemplateValidatorTest {
 		TemplateValidator templateValidator = new TemplateValidator();
 		
 		String processingApduFake = "00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		String libnfcInput = "C-APDU 000d: 00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-		Packet apdu = new Packet(libnfcInput.getBytes());
+		Packet apdu = new Packet();
 		apdu.setOriginalPacketData(processingApduFake.getBytes());
 		
 		PacketTemplate templateFake = new PacketTemplate();

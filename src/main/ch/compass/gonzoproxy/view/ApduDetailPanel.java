@@ -38,7 +38,7 @@ public class ApduDetailPanel extends JPanel {
 
 	public ApduDetailPanel(RelayController controller) {
 		this.controller = controller;
-		this.editApdu = new Packet(new byte[0]);
+		this.editApdu = new Packet();
 		this.editField = new Field();
 		this.detailTableModel = new DetailTableModel(editApdu,
 				controller.getSessionModel());

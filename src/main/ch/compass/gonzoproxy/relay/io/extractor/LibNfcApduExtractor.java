@@ -53,7 +53,7 @@ public class LibNfcApduExtractor implements ApduExtractor {
 		byte[] preamble = getApduPreamble(rawApdu, size);
 		byte[] plainApdu = getPlainPacket(rawApdu, size);
 		byte[] trailer = getPacketTrailer(rawApdu, size);
-		Packet newApdu = new Packet(rawApdu);
+		Packet newApdu = new Packet();
 		newApdu.setPreamble(preamble);
 		newApdu.setOriginalPacketData(plainApdu);
 		newApdu.setTrailer(trailer);
