@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 import ch.compass.gonzoproxy.model.Field;
 import ch.compass.gonzoproxy.model.Packet;
-import ch.compass.gonzoproxy.utils.FileUtils;
+import ch.compass.gonzoproxy.utils.PersistingUtils;
 import ch.compass.gonzoproxy.utils.PacketUtils;
 
 public class PacketModifier {
@@ -189,7 +189,7 @@ public class PacketModifier {
 	private void loadModifiers(){
 		File modifierFile = new File(MODIFIER_FILE);
 		try {
-			packetRules = (ArrayList<PacketRule>) FileUtils.loadFile(modifierFile);
+			packetRules = (ArrayList<PacketRule>) PersistingUtils.loadFile(modifierFile);
 			
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
@@ -212,7 +212,7 @@ public class PacketModifier {
 
 	public void persistRules() throws IOException {
 		File modifierFile = new File(MODIFIER_FILE);
-		FileUtils.saveFile(modifierFile, packetRules);
+		PersistingUtils.saveFile(modifierFile, packetRules);
 	}
 
 }

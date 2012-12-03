@@ -9,12 +9,12 @@ import ch.compass.gonzoproxy.listener.TrapListener;
 public class SessionSettings {
 	
 	public enum SessionState {
-		DISCONNECTED("disconnected"),
-		CONNECTING("connecting..."),
-		FORWARDING("forwarding"),
-		TRAP("trapped"),
-		COMMAND_TRAP("command trapped"),
-		RESPONSE_TRAP("response trapped");
+		DISCONNECTED("Disconnected"),
+		CONNECTING("Connecting..."),
+		FORWARDING("Forwarding"),
+		TRAP("Trapped"),
+		COMMAND_TRAP("Command trapped"),
+		RESPONSE_TRAP("Response trapped");
 		
 		private String description;
 

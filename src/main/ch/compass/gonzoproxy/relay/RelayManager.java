@@ -16,8 +16,8 @@ import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
-import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamReader;
-import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamWriter;
+import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamReader;
+import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamWriter;
 
 public class RelayManager implements Runnable {
 	
@@ -82,9 +82,9 @@ public class RelayManager implements Runnable {
 				initiator.getInputStream());
 		OutputStream outputStream = new BufferedOutputStream(
 				target.getOutputStream());
-		HexStreamReader commandStreamReader = new HexStreamReader(inputStream,
+		PacketStreamReader commandStreamReader = new PacketStreamReader(inputStream,
 				relayDataHandler, sessionSettings, ForwardingType.COMMAND);
-		HexStreamWriter commandStreamWriter = new HexStreamWriter(outputStream,
+		PacketStreamWriter commandStreamWriter = new PacketStreamWriter(outputStream,
 				relayDataHandler, sessionSettings, ForwardingType.COMMAND);
 
 		threadPool.execute(commandStreamReader);
@@ -96,9 +96,9 @@ public class RelayManager implements Runnable {
 				target.getInputStream());
 		OutputStream outputStream = new BufferedOutputStream(
 				initiator.getOutputStream());
-		HexStreamReader responseStreamReader = new HexStreamReader(inputStream,
+		PacketStreamReader responseStreamReader = new PacketStreamReader(inputStream,
 				relayDataHandler, sessionSettings, ForwardingType.RESPONSE);
-		HexStreamWriter responseStreamWriter = new HexStreamWriter(
+		PacketStreamWriter responseStreamWriter = new PacketStreamWriter(
 				outputStream, relayDataHandler, sessionSettings,
 				ForwardingType.RESPONSE);
 

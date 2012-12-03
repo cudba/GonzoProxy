@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class FileUtils {
+public class PersistingUtils {
 
 	public static Object loadFile(File file) throws IOException,
 			ClassNotFoundException {

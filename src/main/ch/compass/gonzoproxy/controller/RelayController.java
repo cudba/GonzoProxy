@@ -18,7 +18,7 @@ import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
-import ch.compass.gonzoproxy.utils.FileUtils;
+import ch.compass.gonzoproxy.utils.PersistingUtils;
 
 public class RelayController {
 
@@ -152,7 +152,7 @@ public class RelayController {
 	
 	public void persistPackets(File file){
 		try {
-			FileUtils.saveFile(file, sessionModel.getPacketList());
+			PersistingUtils.saveFile(file, sessionModel.getPacketList());
 		} catch (IOException e) {
 			//TODO: SAVE FAILED
 			e.printStackTrace();
@@ -163,7 +163,7 @@ public class RelayController {
 	@SuppressWarnings("unchecked")
 	public void openPackets(File file){
 		try {
-			sessionModel.addList((ArrayList<Packet>) FileUtils.loadFile(file));
+			sessionModel.addList((ArrayList<Packet>) PersistingUtils.loadFile(file));
 		} catch (ClassNotFoundException | IOException e) {
 			// TODO couldnt open file
 			e.printStackTrace();
