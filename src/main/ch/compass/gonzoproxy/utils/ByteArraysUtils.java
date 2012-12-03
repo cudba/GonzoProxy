@@ -14,11 +14,20 @@ public class ByteArraysUtils {
 	}
 
 	public static ArrayList<Integer> getDelimiterIndices(byte[] buffer,
-			char delimiter) {
+			byte[] delimiter) {
+		boolean matches = true;
 		ArrayList<Integer> indices = new ArrayList<Integer>();
-		for (int i = 0; i < buffer.length; i++) {
-			if (buffer[i] == delimiter)
+		for (int i = 0; i < buffer.length - delimiter.length; i++) {
+			int currentIndex = i;
+			for (int j = 0; j < delimiter.length; j++) {
+				if (buffer[currentIndex] != delimiter[j])
+					matches = false;
+				currentIndex ++;
+			}
+			if(matches) {
 				indices.add(i);
+				i = currentIndex;
+			}
 
 		}
 		return indices;

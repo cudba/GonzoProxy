@@ -26,8 +26,7 @@ public class PacketPersistingHandlerTest {
 		
 		
 		String fakePlainApdu = "77 07 82 00 07 94 76 00 0a 85";
-		String libnfcInput = "#R-APDU 000a: 77 07 8200 07 94 76 00 0a 85";
-		Packet apdu = new Packet(libnfcInput.getBytes());
+		Packet apdu = new Packet();
 		apdu.setOriginalPacketData(fakePlainApdu.getBytes());
 
 		parserHanlder.tryParse(apdu);

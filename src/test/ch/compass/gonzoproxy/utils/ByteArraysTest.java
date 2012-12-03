@@ -45,10 +45,10 @@ public class ByteArraysTest {
 		expectedIndices.add(2);
 		expectedIndices.add(4);
 		
-		char delimiter = '#';
+		String delimiter = "#";
 		
 		byte[] testArray = new byte[]{'#', 'A', '#', 'B', '#', 'C'};
-		ArrayList<Integer> indices = ByteArraysUtils.getDelimiterIndices(testArray, delimiter);
+		ArrayList<Integer> indices = ByteArraysUtils.getDelimiterIndices(testArray, delimiter.getBytes());
 		assertEquals(expectedIndices.get(0), indices.get(0));
 	}
 	

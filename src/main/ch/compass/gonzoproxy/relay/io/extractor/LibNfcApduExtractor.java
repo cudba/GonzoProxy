@@ -11,13 +11,13 @@ public class LibNfcApduExtractor implements ApduExtractor {
 
 	private static final char EOC = '\n';
 
-	private static final char DELIMITER = '#';
+	private static final String DELIMITER = "#";
 
 
 	public byte[] extractPacketsToQueue(byte[] buffer, LinkedTransferQueue<Packet> packetQueue,
 			int readBytes, ForwardingType forwardingType) {
 		ArrayList<Integer> indices = ByteArraysUtils.getDelimiterIndices(buffer,
-				DELIMITER);
+				DELIMITER.getBytes());
 
 		int startIndex = 0;
 		int endIndex = 0;
@@ -53,7 +53,7 @@ public class LibNfcApduExtractor implements ApduExtractor {
 		byte[] preamble = getApduPreamble(rawApdu, size);
 		byte[] plainApdu = getPlainPacket(rawApdu, size);
 		byte[] trailer = getPacketTrailer(rawApdu, size);
-		Packet newApdu = new Packet(rawApdu);
+		Packet newApdu = new Packet();
 		newApdu.setPreamble(preamble);
 		newApdu.setOriginalPacketData(plainApdu);
 		newApdu.setTrailer(trailer);

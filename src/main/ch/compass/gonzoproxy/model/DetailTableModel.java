@@ -35,7 +35,7 @@ public class DetailTableModel extends AbstractTableModel {
 			
 			@Override
 			public void packetCleared() {
-				DetailTableModel.this.setApdu(new Packet(new byte[0]));
+				DetailTableModel.this.setApdu(new Packet());
 			}
 
 			@Override
