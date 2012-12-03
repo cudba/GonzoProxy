@@ -65,6 +65,18 @@ public class RuleModel extends AbstractTableModel{
         }
     }
 	
+	public boolean isCellEditable(int row, int column){
+		if(column == 3){
+			return true;
+		}
+		return false;
+	}
+	
+	public void setValueAt(Object value, int row, int column) {
+		rules.get(row).setActive((boolean) value);
+	}
+
+	
 	public void setRules(ArrayList<FieldRule> rules){
 		this.rules = rules;
 		fireTableDataChanged();
