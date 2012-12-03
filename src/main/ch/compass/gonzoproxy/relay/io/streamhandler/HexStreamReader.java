@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import ch.compass.gonzoproxy.GonzoProxy;
 import ch.compass.gonzoproxy.model.ForwardingType;
+import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.extractor.ApduExtractor;
 
@@ -15,17 +16,17 @@ public class HexStreamReader implements Runnable {
 	private PacketStreamReader streamReader;
 
 	private InputStream inputStream;
-	private String mode;
+	private SessionSettings sessionSettings;
 	private ForwardingType forwardingType;
 
 	private RelayDataHandler relayDataHandler;
 
 	public HexStreamReader(InputStream inputStream,
-			RelayDataHandler relayDataHandler, String mode,
+			RelayDataHandler relayDataHandler, SessionSettings sessionSettings,
 			ForwardingType forwardingType) {
 		this.inputStream = inputStream;
 		this.relayDataHandler = relayDataHandler;
-		this.mode = mode;
+		this.sessionSettings = sessionSettings;
 		this.forwardingType = forwardingType;
 		configureStreamReader();
 	}
@@ -52,7 +53,7 @@ public class HexStreamReader implements Runnable {
 		Enumeration<String> keys = bundle.getKeys();
 		while (keys.hasMoreElements()) {
 			String element = keys.nextElement();
-			if (element.contains(helper) && element.contains(mode)) {
+			if (element.contains(helper) && element.contains(sessionSettings.getMode())) {
 				try {
 					return cl.loadClass(bundle.getString(element))
 							.newInstance();

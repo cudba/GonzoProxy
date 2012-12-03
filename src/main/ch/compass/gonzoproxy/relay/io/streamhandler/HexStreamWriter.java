@@ -6,8 +6,10 @@ import java.util.Enumeration;
 import java.util.ResourceBundle;
 
 import ch.compass.gonzoproxy.GonzoProxy;
+import ch.compass.gonzoproxy.listener.TrapListener;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.wrapper.ApduWrapper;
 
@@ -20,20 +22,39 @@ public class HexStreamWriter implements Runnable {
 	private PacketStreamWriter streamWriter;
 
 	private OutputStream outputStream;
-	private String mode;
+	private SessionSettings sessionSettings;
 	private State state = State.FORWARDING;
 
 	private RelayDataHandler relayDataHandler;
 
-	private ForwardingType type;
+	private ForwardingType forwardingType;
 
 	public HexStreamWriter(OutputStream outputStream,
-			RelayDataHandler relayDataHandler, String mode, ForwardingType type) {
+			RelayDataHandler relayDataHandler, SessionSettings sessionSettings,
+			ForwardingType type) {
 		this.outputStream = outputStream;
 		this.relayDataHandler = relayDataHandler;
-		this.mode = mode;
-		this.type = type;
+		this.sessionSettings = sessionSettings;
+		this.forwardingType = type;
+		addTrapListener();
 		configureStreamWriter();
+	}
+
+	private void addTrapListener() {
+		sessionSettings.setTrapListener(new TrapListener() {
+
+			@Override
+			public void sendOnePacket(ForwardingType type) {
+				if (forwardingType == type) {
+					state = State.SEND_ONE;
+				}
+			}
+
+			@Override
+			public void checkTrapChanged() {
+				checkForTraps();
+			}
+		});
 	}
 
 	@Override
@@ -49,15 +70,17 @@ public class HexStreamWriter implements Runnable {
 					Thread.yield();
 					break;
 				case FORWARDING:
-					Packet sendingPacket = relayDataHandler.poll(type);
+					Packet sendingPacket = relayDataHandler
+							.poll(forwardingType);
 					if (sendingPacket != null)
 						streamWriter.sendPacket(outputStream, sendingPacket);
 					break;
 				case SEND_ONE:
-					Packet sendOnePacket = relayDataHandler.poll(type);
+					Packet sendOnePacket = relayDataHandler
+							.poll(forwardingType);
 					if (sendOnePacket != null)
 						streamWriter.sendPacket(outputStream, sendOnePacket);
-						state = State.TRAP;
+					state = State.TRAP;
 					break;
 				}
 			} catch (InterruptedException | IOException e) {
@@ -81,7 +104,8 @@ public class HexStreamWriter implements Runnable {
 		Enumeration<String> keys = bundle.getKeys();
 		while (keys.hasMoreElements()) {
 			String element = keys.nextElement();
-			if (element.contains(helper) && element.contains(mode)) {
+			if (element.contains(helper)
+					&& element.contains(sessionSettings.getMode())) {
 				try {
 					return cl.loadClass(bundle.getString(element))
 							.newInstance();
@@ -94,7 +118,30 @@ public class HexStreamWriter implements Runnable {
 		return null;
 	}
 
-	public void setState(State state) {
-		this.state = state;
+	private void checkForTraps() {
+		switch (sessionSettings.getSessionState()) {
+		case TRAP:
+			state = State.TRAP;
+			break;
+		case RESPONSE_TRAP:
+			if (forwardingType == ForwardingType.RESPONSE) {
+				state = State.TRAP;
+			} else {
+				state = State.FORWARDING;
+			}
+			break;
+		case COMMAND_TRAP:
+			if (forwardingType == ForwardingType.COMMAND) {
+				state = State.TRAP;
+			} else {
+				state = State.FORWARDING;
+			}
+			break;
+		case FORWARDING:
+			state = State.FORWARDING;
+			break;
+		default:
+			break;
+		}
 	}
 }

@@ -11,46 +11,36 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import ch.compass.gonzoproxy.listener.TrapListener;
+import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamReader;
 import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamWriter;
-import ch.compass.gonzoproxy.relay.io.streamhandler.HexStreamWriter.State;
 
 public class RelayManager implements Runnable {
+	
+	private boolean sessionIsAlive = false;
 
-	private ExecutorService threadPool = Executors.newFixedThreadPool(5);
+	private ExecutorService threadPool; 
 
 	private ServerSocket serverSocket;
 	private Socket initiator;
 	private Socket target;
-	private SessionSettings sessionSettings;
+	private SessionSettings sessionSettings = new SessionSettings();;
 
-	private RelayDataHandler relayDataHandler;
-
-	private HexStreamWriter responseStreamWriter;
-	private HexStreamReader responseStreamReader;
-
-	private HexStreamWriter commandStreamWriter;
-	private HexStreamReader commandStreamReader;
-
-	
-	public RelayManager(RelayDataHandler relayDataHandler,
-			SessionSettings sessionSettings) {
-		this.relayDataHandler = relayDataHandler;
-		this.sessionSettings = sessionSettings;
-	}
+	private RelayDataHandler relayDataHandler = new RelayDataHandler();
 
 	@Override
 	public void run() {
-		setTrapListener();
+		threadPool = Executors.newFixedThreadPool(5);
 		threadPool.execute(relayDataHandler);
 		sessionSettings.setSessionState(SessionState.CONNECTING);
 		establishConnection();
 		initProducerConsumer();
+		sessionIsAlive = true;
+		sessionSettings.setSessionState(SessionState.FORWARDING);
 	}
 
 	private void initProducerConsumer() {
@@ -60,7 +50,6 @@ public class RelayManager implements Runnable {
 		} catch (IOException e) {
 			sessionSettings.setSessionState(SessionState.DISCONNECTED);
 		}
-		sessionSettings.setSessionState(SessionState.FORWARDING);
 	}
 
 	private void establishConnection() {
@@ -93,12 +82,10 @@ public class RelayManager implements Runnable {
 				initiator.getInputStream());
 		OutputStream outputStream = new BufferedOutputStream(
 				target.getOutputStream());
-		commandStreamReader = new HexStreamReader(inputStream,
-				relayDataHandler, sessionSettings.getMode(),
-				ForwardingType.COMMAND);
-		commandStreamWriter = new HexStreamWriter(outputStream,
-				relayDataHandler, sessionSettings.getMode(),
-				ForwardingType.COMMAND);
+		HexStreamReader commandStreamReader = new HexStreamReader(inputStream,
+				relayDataHandler, sessionSettings, ForwardingType.COMMAND);
+		HexStreamWriter commandStreamWriter = new HexStreamWriter(outputStream,
+				relayDataHandler, sessionSettings, ForwardingType.COMMAND);
 
 		threadPool.execute(commandStreamReader);
 		threadPool.execute(commandStreamWriter);
@@ -109,11 +96,10 @@ public class RelayManager implements Runnable {
 				target.getInputStream());
 		OutputStream outputStream = new BufferedOutputStream(
 				initiator.getOutputStream());
-		responseStreamReader = new HexStreamReader(inputStream,
-				relayDataHandler, sessionSettings.getMode(),
-				ForwardingType.RESPONSE);
-		responseStreamWriter = new HexStreamWriter(outputStream,
-				relayDataHandler, sessionSettings.getMode(),
+		HexStreamReader responseStreamReader = new HexStreamReader(inputStream,
+				relayDataHandler, sessionSettings, ForwardingType.RESPONSE);
+		HexStreamWriter responseStreamWriter = new HexStreamWriter(
+				outputStream, relayDataHandler, sessionSettings,
 				ForwardingType.RESPONSE);
 
 		threadPool.execute(responseStreamReader);
@@ -121,19 +107,22 @@ public class RelayManager implements Runnable {
 	}
 
 	public void killSession() {
-		closeSockets();
-		threadPool.shutdownNow();
-		try {
-			if (threadPool.awaitTermination(2, TimeUnit.SECONDS)) {
-				System.out
-						.println("consumer / producer threads closed successfully");
-			} else {
-				System.out.println("consumer / producer not closed in time");
+		if (sessionIsAlive) {
+			closeSockets();
+			threadPool.shutdownNow();
+			try {
+				if (threadPool.awaitTermination(2, TimeUnit.SECONDS)) {
+					System.out
+							.println("consumer / producer threads closed successfully");
+				} else {
+					System.out
+							.println("consumer / producer not closed in time");
+				}
+			} catch (InterruptedException e) {
+				System.out.println("error while closing worker threads");
 			}
-		} catch (InterruptedException e) {
-			System.out.println("error while closing worker threads");
+			sessionSettings.setSessionState(SessionState.DISCONNECTED);
 		}
-		sessionSettings.setSessionState(SessionState.DISCONNECTED);
 	}
 
 	private void closeSockets() {
@@ -145,46 +134,77 @@ public class RelayManager implements Runnable {
 		}
 	}
 
-	private void setTrapListener() {
-		sessionSettings.setTrapListener(new TrapListener() {
-
-			@Override
-			public void checkTrapChanged() {
-				checkForTraps();
-			}
-
-			@Override
-			public void sendOneCommand() {
-				commandStreamWriter.setState(State.SEND_ONE);
-			}
-
-			@Override
-			public void sendOneResponse() {
-				responseStreamWriter.setState(State.SEND_ONE);
-			}
-		});
+	public void generateNewSessionParameters(String portListen,
+			String remoteHost, String remotePort, String mode) {
+		sessionSettings.setSession(Integer.parseInt(portListen), remoteHost,
+				Integer.parseInt(remotePort));
+		sessionSettings.setMode(mode);
 	}
 
-	private void checkForTraps() {
+	public void commandTrapChanged() {
 		switch (sessionSettings.getSessionState()) {
-		case TRAP:
-			commandStreamWriter.setState(State.TRAP);
-			responseStreamWriter.setState(State.TRAP);
-			break;
-		case RESPONSE_TRAP:
-			responseStreamWriter.setState(State.TRAP);
-			commandStreamWriter.setState(State.FORWARDING);
-			break;
 		case COMMAND_TRAP:
-			commandStreamWriter.setState(State.TRAP);
-			responseStreamWriter.setState(State.FORWARDING);
+			sessionSettings.setTrapState(SessionState.FORWARDING);
 			break;
 		case FORWARDING:
-			commandStreamWriter.setState(State.FORWARDING);
-			responseStreamWriter.setState(State.FORWARDING);
+			sessionSettings.setTrapState(SessionState.COMMAND_TRAP);
+			break;
+		case RESPONSE_TRAP:
+			sessionSettings.setTrapState(SessionState.TRAP);
+			break;
+		case TRAP:
+			sessionSettings.setTrapState(SessionState.RESPONSE_TRAP);
+			break;
 		default:
 			break;
 		}
+	}
+
+	public void responseTrapChanged() {
+		switch (sessionSettings.getSessionState()) {
+		case RESPONSE_TRAP:
+			sessionSettings.setTrapState(SessionState.FORWARDING);
+			break;
+		case FORWARDING:
+			sessionSettings.setTrapState(SessionState.RESPONSE_TRAP);
+			break;
+		case COMMAND_TRAP:
+			sessionSettings.setTrapState(SessionState.TRAP);
+			break;
+		case TRAP:
+			sessionSettings.setTrapState(SessionState.COMMAND_TRAP);
+			break;
+		default:
+			break;
+		}
+	}
+
+	public void sendOneCmd() {
+		sessionSettings.sendOneCommand();
+	}
+
+	public void sendOneRes() {
+		sessionSettings.sendOneResponse();
+	}
+
+	public void setDataHandler(RelayDataHandler relayDataHandler) {
+		this.relayDataHandler = relayDataHandler;
+	}
+
+	public int getCurrentListenPort() {
+		return sessionSettings.getListenPort();
+	}
+
+	public String getCurrentRemoteHost() {
+		return sessionSettings.getRemoteHost();
+	}
+
+	public int getCurrentRemotePort() {
+		return sessionSettings.getRemotePort();
+	}
+
+	public void addSessionStateListener(StateListener stateListener) {
+		sessionSettings.addSessionStateListener(stateListener);
 	}
 
 }
