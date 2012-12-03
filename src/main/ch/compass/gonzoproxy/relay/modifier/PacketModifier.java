@@ -47,7 +47,7 @@ public class PacketModifier {
 				String originalPacketData = new String(modifiedPacket.getOriginalPacketData());
 				originalPacketData = originalPacketData.replaceAll(regex, "");
 				modifiedPacket.setOriginalPacketData(originalPacketData.getBytes());
-				modifiedPacket.isModified(true);
+				modifiedPacket.setModified(true);
 			}
 		}
 		return modifiedPacket;
@@ -119,7 +119,7 @@ public class PacketModifier {
 					field.replaceValue(rule.getOriginalValue(),
 							rule.getReplacedValue());
 				}
-				modifiedPacket.isModified(true);
+				modifiedPacket.setModified(true);
 			}
 		}
 		return modifiedPacket;

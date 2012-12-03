@@ -82,7 +82,7 @@ public class Packet implements Serializable, Cloneable {
 		return isModified;
 	}
 
-	public void isModified(boolean isModified) {
+	public void setModified(boolean isModified) {
 		this.isModified = isModified;
 	}
 
