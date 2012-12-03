@@ -13,7 +13,7 @@ public class PacketRule implements Serializable {
 
 	private ArrayList<FieldRule> rules = new ArrayList<FieldRule>();
 
-	private Boolean updateLength;
+	private Boolean updateLength =  false;
 
 	public PacketRule(String correspondingPacket) {
 		this.correspondingPacket = correspondingPacket;

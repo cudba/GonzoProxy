@@ -18,6 +18,7 @@ import ch.compass.gonzoproxy.model.Packet;
 
 import javax.swing.border.EmptyBorder;
 import javax.swing.JCheckBox;
+import java.awt.Color;
 
 public class AddNewModifierDialog extends JDialog {
 	private static final long serialVersionUID = -1789866876175936281L;
@@ -105,6 +106,8 @@ public class AddNewModifierDialog extends JDialog {
 			gbc_lblOldValue.gridy = 2;
 			contentPane.add(lblOldValue, gbc_lblOldValue);
 			textFieldOldValue = new JTextField();
+			textFieldOldValue.setInputVerifier(new FieldRuleVerifier());
+			textFieldOldValue.addCaretListener(new FieldRuleVerifier());
 			GridBagConstraints gbc_textFieldOldValue = new GridBagConstraints();
 			gbc_textFieldOldValue.insets = new Insets(0, 0, 5, 0);
 			gbc_textFieldOldValue.fill = GridBagConstraints.HORIZONTAL;
@@ -120,6 +123,8 @@ public class AddNewModifierDialog extends JDialog {
 			gbc_lblNewValue.gridy = 3;
 			contentPane.add(lblNewValue, gbc_lblNewValue);
 			textFieldNewValue = new JTextField();
+			textFieldNewValue.setInputVerifier(new FieldRuleVerifier());
+			textFieldNewValue.addCaretListener(new FieldRuleVerifier());
 			GridBagConstraints gbc_textFieldNewValue = new GridBagConstraints();
 			gbc_textFieldNewValue.insets = new Insets(0, 0, 5, 0);
 			gbc_textFieldNewValue.fill = GridBagConstraints.HORIZONTAL;
@@ -132,12 +137,17 @@ public class AddNewModifierDialog extends JDialog {
 				
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					String oldValue = textFieldOldValue.getText();
-					if(chckbxReplaceWhole.isSelected()){
-						oldValue = "";
+					
+					if(textFieldOldValue.getInputVerifier().verify(textFieldOldValue) && textFieldNewValue.getInputVerifier().verify(textFieldNewValue)){
+						
+						String oldValue = textFieldOldValue.getText();
+						if(chckbxReplaceWhole.isSelected()){
+							oldValue = "";
+						}
+						controller.addModifierRule(editApdu.getDescription(), field.getName(), oldValue, textFieldNewValue.getText(), chckbxUpdateLengthAutomatically.isSelected());
+						AddNewModifierDialog.this.dispose();
 					}
-					controller.addModifierRule(editApdu.getDescription(), field.getName(), oldValue, textFieldNewValue.getText(), chckbxUpdateLengthAutomatically.isSelected());
-					AddNewModifierDialog.this.dispose();
+					
 				}
 			});
 			

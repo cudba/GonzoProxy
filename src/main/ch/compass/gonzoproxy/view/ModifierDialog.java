@@ -1,8 +1,11 @@
 package ch.compass.gonzoproxy.view;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -23,6 +26,7 @@ import ch.compass.gonzoproxy.model.RuleSetModel;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
+import java.awt.FlowLayout;
 
 public class ModifierDialog extends JDialog {
 
@@ -30,16 +34,25 @@ public class ModifierDialog extends JDialog {
 	private JPanel contentPane;
 	private JTable tableRules;
 	private RelayController controller;
-	private JList<String> listRuleSet;
-	private RuleModel ruleModel;
+	private JList<String> listPacketRule;
+	private RuleModel fieldRuleModel;
 	private PacketModifier modifier;
-	protected PacketRule editRuleSet;
+	protected PacketRule editPacketRule;
 	private JCheckBox chckbxUpdateLengthAutomatically;
-	protected FieldRule editRule;
+	protected FieldRule editFieldRule;
+	private JPanel panel;
+	private JButton btnDeleteSelectedFieldRule;
+	private JButton btnDeleteSelectedPacketRule;
+	private RuleSetModel packetRuleModel;
+	private FieldRule dummyFieldRule;
+	private PacketRule dummyPacketRule;
+	private JButton btnClose;
 
 	public ModifierDialog(RelayController controller) {
 		this.controller = controller;
 		this.modifier = controller.getPacketModifier();
+		this.dummyFieldRule = new FieldRule("", "", "");
+		this.dummyPacketRule = new PacketRule("");
 		initGui();
 	}
 
@@ -48,7 +61,8 @@ public class ModifierDialog extends JDialog {
 		setResizable(true);
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setTitle("Modifiers for parsable packets");
-		setBounds(100, 100, 457, 225);
+		setBounds(100, 100, 850, 225);
+		setMinimumSize(new Dimension(780, 150));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -68,18 +82,25 @@ public class ModifierDialog extends JDialog {
 		gbc_scrollPane_1.gridy = 0;
 		contentPane.add(scrollPane_1, gbc_scrollPane_1);
 
-		listRuleSet = new JList<String>(
-				new RuleSetModel(modifier.getRuleSets()));
-		listRuleSet.addListSelectionListener(new ListSelectionListener() {
+		packetRuleModel = new RuleSetModel(modifier.getRuleSets());
+		listPacketRule = new JList<String>(packetRuleModel);
+		listPacketRule.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
 			public void valueChanged(ListSelectionEvent arg0) {
-				setEditRuleSet(modifier.getRuleSets().get(
-						listRuleSet.getSelectedIndex()));
-				ruleModel.setRules(editRuleSet.getRules());
+				int index = listPacketRule.getSelectedIndex();
+				if (index == -1) {
+					setEditRuleSet(dummyPacketRule);
+					setEditRule(dummyFieldRule);
+					fieldRuleModel.setRules(dummyPacketRule.getRules());
+				} else {
+					setEditRuleSet(modifier.getRuleSets().get(
+							listPacketRule.getSelectedIndex()));
+					fieldRuleModel.setRules(editPacketRule.getRules());
+				}
 			}
 		});
-		scrollPane_1.setViewportView(listRuleSet);
+		scrollPane_1.setViewportView(listPacketRule);
 
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
@@ -89,19 +110,35 @@ public class ModifierDialog extends JDialog {
 		gbc_scrollPane.gridy = 0;
 		contentPane.add(scrollPane, gbc_scrollPane);
 
-		ruleModel = new RuleModel();
-		tableRules = new JTable(ruleModel);
+		fieldRuleModel = new RuleModel();
+		tableRules = new JTable(fieldRuleModel);
 		tableRules.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				JTable target = (JTable) e.getSource();
 				int row = target.getSelectedRow();
-				setEditRule(editRuleSet.getRules().get(row));
+				if (row == -1) {
+					setEditRule(dummyFieldRule);
+				} else {
+					setEditRule(editPacketRule.getRules().get(row));
+				}
+
 			}
 		});
 		scrollPane.setViewportView(tableRules);
 
 		chckbxUpdateLengthAutomatically = new JCheckBox(
 				"Update Content Length automatically");
+		chckbxUpdateLengthAutomatically.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(chckbxUpdateLengthAutomatically.isSelected()){
+					editPacketRule.shouldUpdateLength(true);
+				}else{
+					editPacketRule.shouldUpdateLength(false);
+				}				
+			}
+		});
 		GridBagConstraints gbc_chckbxUpdateLengthAutomatically = new GridBagConstraints();
 		gbc_chckbxUpdateLengthAutomatically.anchor = GridBagConstraints.WEST;
 		gbc_chckbxUpdateLengthAutomatically.insets = new Insets(0, 0, 0, 5);
@@ -110,23 +147,62 @@ public class ModifierDialog extends JDialog {
 		contentPane.add(chckbxUpdateLengthAutomatically,
 				gbc_chckbxUpdateLengthAutomatically);
 
-		JButton btnDeleteSelectedRule = new JButton("Delete selected rule");
-		GridBagConstraints gbc_btnDeleteSelectedRule = new GridBagConstraints();
-		gbc_btnDeleteSelectedRule.anchor = GridBagConstraints.EAST;
-		gbc_btnDeleteSelectedRule.gridx = 1;
-		gbc_btnDeleteSelectedRule.gridy = 1;
-		contentPane.add(btnDeleteSelectedRule, gbc_btnDeleteSelectedRule);
+		panel = new JPanel();
+		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.anchor = GridBagConstraints.EAST;
+		gbc_panel.fill = GridBagConstraints.VERTICAL;
+		gbc_panel.gridx = 1;
+		gbc_panel.gridy = 1;
+		contentPane.add(panel, gbc_panel);
+		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+
+		btnDeleteSelectedPacketRule = new JButton("Delete selected ruleset");
+		btnDeleteSelectedPacketRule.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				modifier.getRuleSets().remove(editPacketRule);
+				packetRuleModel.setRules(modifier.getRuleSets());
+				if(listPacketRule.getSelectedIndex() < modifier.getRuleSets().size()){
+					setEditRuleSet(modifier.getRuleSets().get(listPacketRule.getSelectedIndex()));
+					fieldRuleModel.setRules(editPacketRule.getRules());
+				}else{
+					fieldRuleModel.setRules(dummyPacketRule.getRules());
+					setEditRuleSet(dummyPacketRule);
+				}
+				setEditRule(dummyFieldRule);
+			}
+		});
+		panel.add(btnDeleteSelectedPacketRule);
+
+		btnDeleteSelectedFieldRule = new JButton("Delete selected rule");
+		btnDeleteSelectedFieldRule.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				editPacketRule.getRules().remove(editFieldRule);
+				fieldRuleModel.setRules(editPacketRule.getRules());
+			}
+		});
+		panel.add(btnDeleteSelectedFieldRule);
+		
+		btnClose = new JButton("Close");
+		btnClose.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		panel.add(btnClose);
 	}
 
 	protected void setEditRule(FieldRule rule) {
-		this.editRule = rule;
+		this.editFieldRule = rule;
 	}
 
 	protected void setEditRuleSet(PacketRule ruleSet) {
-		// TODO Auto-generated method stub
-		this.editRuleSet = ruleSet;
-		chckbxUpdateLengthAutomatically.setSelected(ruleSet
-				.shouldUpdateContentLength());
+		this.editPacketRule = ruleSet;
+			chckbxUpdateLengthAutomatically.setSelected(ruleSet
+					.shouldUpdateContentLength());
 	}
 
 }

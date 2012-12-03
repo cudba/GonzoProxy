@@ -25,5 +25,10 @@ public class RuleSetModel extends AbstractListModel<String>{
 	public int getSize() {
 		return rules.size();
 	}
+	
+	public void setRules(ArrayList<PacketRule> rules) {
+		this.rules = rules;
+		fireContentsChanged(this, 0, rules.size());
+	}
 
 }
