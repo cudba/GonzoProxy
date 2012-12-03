@@ -3,7 +3,6 @@ package ch.compass.gonzoproxy.model;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
-import ch.compass.gonzoproxy.listener.SessionListener;
 import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.listener.TrapListener;
 

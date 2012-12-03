@@ -176,9 +176,9 @@ public class ApduDetailPanel extends JPanel {
 		gbc_panelStatus2.gridy = 1;
 		add(panelStatus2, gbc_panelStatus2);
 		GridBagLayout gbl_panelStatus2 = new GridBagLayout();
-		gbl_panelStatus2.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
+		gbl_panelStatus2.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_panelStatus2.rowHeights = new int[]{0, 0};
-		gbl_panelStatus2.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panelStatus2.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gbl_panelStatus2.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		panelStatus2.setLayout(gbl_panelStatus2);
 		
@@ -187,7 +187,7 @@ public class ApduDetailPanel extends JPanel {
 		GridBagConstraints gbc_lblListenport = new GridBagConstraints();
 		gbc_lblListenport.anchor = GridBagConstraints.EAST;
 		gbc_lblListenport.insets = new Insets(0, 0, 0, 5);
-		gbc_lblListenport.gridx = 0;
+		gbc_lblListenport.gridx = 1;
 		gbc_lblListenport.gridy = 0;
 		panelStatus2.add(lblListenport, gbc_lblListenport);
 		
@@ -195,7 +195,7 @@ public class ApduDetailPanel extends JPanel {
 		lblLPort.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_label_1 = new GridBagConstraints();
 		gbc_label_1.insets = new Insets(0, 0, 0, 5);
-		gbc_label_1.gridx = 1;
+		gbc_label_1.gridx = 2;
 		gbc_label_1.gridy = 0;
 		panelStatus2.add(lblLPort, gbc_label_1);
 		
@@ -203,7 +203,7 @@ public class ApduDetailPanel extends JPanel {
 		lblRemotehost.setHorizontalAlignment(SwingConstants.RIGHT);
 		GridBagConstraints gbc_lblRemotehost = new GridBagConstraints();
 		gbc_lblRemotehost.insets = new Insets(0, 0, 0, 5);
-		gbc_lblRemotehost.gridx = 2;
+		gbc_lblRemotehost.gridx = 3;
 		gbc_lblRemotehost.gridy = 0;
 		panelStatus2.add(lblRemotehost, gbc_lblRemotehost);
 		
@@ -211,7 +211,7 @@ public class ApduDetailPanel extends JPanel {
 		lblRHost.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_label_3 = new GridBagConstraints();
 		gbc_label_3.insets = new Insets(0, 0, 0, 5);
-		gbc_label_3.gridx = 3;
+		gbc_label_3.gridx = 4;
 		gbc_label_3.gridy = 0;
 		panelStatus2.add(lblRHost, gbc_label_3);
 		
@@ -219,14 +219,14 @@ public class ApduDetailPanel extends JPanel {
 		lblRemoteport.setHorizontalAlignment(SwingConstants.RIGHT);
 		GridBagConstraints gbc_lblRemoteport = new GridBagConstraints();
 		gbc_lblRemoteport.insets = new Insets(0, 0, 0, 5);
-		gbc_lblRemoteport.gridx = 4;
+		gbc_lblRemoteport.gridx = 5;
 		gbc_lblRemoteport.gridy = 0;
 		panelStatus2.add(lblRemoteport, gbc_lblRemoteport);
 		
 		lblRPort = new JLabel("");
 		lblRPort.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_label_5 = new GridBagConstraints();
-		gbc_label_5.gridx = 5;
+		gbc_label_5.gridx = 6;
 		gbc_label_5.gridy = 0;
 		panelStatus2.add(lblRPort, gbc_label_5);
 

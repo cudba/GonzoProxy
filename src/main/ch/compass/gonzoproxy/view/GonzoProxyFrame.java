@@ -93,7 +93,9 @@ public class GonzoProxyFrame extends JFrame {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					if (file.getName().endsWith(".gonzo")) {
+						//TODO
 						controller.openFile(file);
+						controller.openPackets(file);
 					}else{
 						JOptionPane.showMessageDialog(GonzoProxyFrame.this,
 							    "Wrong filetype, .gonzo expected",
@@ -117,7 +119,9 @@ public class GonzoProxyFrame extends JFrame {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					if (file.getName().endsWith(".gonzo")) {
+						//TODO
 						controller.saveFile(file);
+						controller.persistPackets(file);
 					}else{
 						JOptionPane.showMessageDialog(GonzoProxyFrame.this,
 							    "Wrong filetype, .gonzo expected",
@@ -136,7 +140,7 @@ public class GonzoProxyFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				GonzoProxyFrame.this.dispose();
+				dispose();
 			}
 		});
 		mnFile.add(mntmExit);
@@ -144,7 +148,7 @@ public class GonzoProxyFrame extends JFrame {
 		mnTools = new JMenu("Tools");
 		menuBar.add(mnTools);
 
-		mntmModifier = new JMenuItem("Modifier");
+		mntmModifier = new JMenuItem("Post-Parse Modifier");
 		mntmModifier.addActionListener(new ActionListener() {
 
 			@Override
@@ -155,7 +159,7 @@ public class GonzoProxyFrame extends JFrame {
 		});
 		mnTools.add(mntmModifier);
 
-		mntmLoadTemplate = new JMenuItem("Load template");
+		mntmLoadTemplate = new JMenuItem("Pre-Parse Modifier");
 		mnTools.add(mntmLoadTemplate);
 
 		mnHelp = new JMenu("Help");

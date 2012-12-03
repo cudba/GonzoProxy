@@ -192,9 +192,10 @@ public class ModifierDialog extends JDialog {
 		});
 		panel.add(btnDeleteSelectedFieldRule);
 		
-		btnClose = new JButton("Close");
+		btnClose = new JButton("Save and close");
 		btnClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				controller.persistRules();
 				dispose();
 			}
 		});

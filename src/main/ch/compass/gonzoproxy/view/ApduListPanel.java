@@ -12,12 +12,10 @@ import java.util.Enumeration;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
-import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
@@ -25,7 +23,6 @@ import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.listener.SessionListener;
-import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.ApduTableModel;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
@@ -49,6 +46,7 @@ public class ApduListPanel extends JPanel {
 	private JButton btnSendRes;
 	private JButton btnClear;
 	private JButton btnSendCmd;
+	private JButton btnReparsePackets;
 
 	public ApduListPanel(RelayController controller,
 			ListSelectionListener listSelectionListener) {
@@ -168,7 +166,7 @@ public class ApduListPanel extends JPanel {
 		gbl_panel_options.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
 		gbl_panel_options.rowHeights = new int[] { 0, 0 };
 		gbl_panel_options.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0,
-				0.0, 0.0, 0.0, Double.MIN_VALUE };
+				0.0, 1.0, 0.0, Double.MIN_VALUE };
 		gbl_panel_options.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		panel_options.setLayout(gbl_panel_options);
 
@@ -263,6 +261,18 @@ public class ApduListPanel extends JPanel {
 		gbc_btnClear.gridx = 4;
 		gbc_btnClear.gridy = 0;
 		panel_options.add(btnClear, gbc_btnClear);
+		
+		btnReparsePackets = new JButton("Reparse packets");
+		btnReparsePackets.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				controller.reparsePackets();
+				currentSession.addList(currentSession.getPacketList());
+			}
+		});
+		GridBagConstraints gbc_btnReparsePackets = new GridBagConstraints();
+		gbc_btnReparsePackets.gridx = 6;
+		gbc_btnReparsePackets.gridy = 0;
+		panel_options.add(btnReparsePackets, gbc_btnReparsePackets);
 	}
 
 	private void configureTable(JTable table) {
