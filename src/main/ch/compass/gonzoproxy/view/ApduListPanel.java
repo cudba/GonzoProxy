@@ -12,12 +12,10 @@ import java.util.Enumeration;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
-import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
@@ -25,7 +23,6 @@ import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.listener.SessionListener;
-import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.ApduTableModel;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;

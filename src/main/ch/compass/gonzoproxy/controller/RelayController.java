@@ -19,6 +19,7 @@ import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
+import ch.compass.gonzoproxy.utils.FileUtils;
 
 public class RelayController {
 
@@ -88,6 +89,7 @@ public class RelayController {
 		FieldRule fieldRule = new FieldRule(fieldName, originalValue,
 				replacedValue);
 		packetModifier.addRule(packetName, fieldRule, updateLength);
+		persistRules();
 	}
 
 	public void commandTrapChanged() {
@@ -172,10 +174,6 @@ public class RelayController {
 		}
 	}
 
-	public PacketModifier getPacketModifier() {
-		return packetModifier;
-	}
-
 	public SessionSettings getSessionSettings() {
 		return sessionSettings;
 	}
@@ -185,18 +183,33 @@ public class RelayController {
 	}
 
 	public void persistRules() {
-		// TODO Auto-generated method stub
+		try {
+			packetModifier.persistRules();
+		} catch (IOException e) {
+			//TODO: save failed notification
+			e.printStackTrace();
+		}
 		
 	}
 	
 	public void persistPackets(File file){
-		// TODO Auto-generated method stub
+		try {
+			FileUtils.saveFile(file, sessionModel.getPacketList());
+		} catch (IOException e) {
+			//TODO: SAVE FAILED
+			e.printStackTrace();
+		}
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void openPackets(File file){
-		// TODO Auto-generated method stub
-
+		try {
+			sessionModel.addList((ArrayList<Packet>) FileUtils.loadFile(file));
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO couldnt open file
+			e.printStackTrace();
+		}
 	}
 
 }
