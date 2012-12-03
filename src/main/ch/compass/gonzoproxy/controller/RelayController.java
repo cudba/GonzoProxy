@@ -138,16 +138,19 @@ public class RelayController {
 	public String[] getModes() {
 		return modes;
 	}
-
+	
+	public void reparsePackets(){
+		RelayDataHandler fakedDataHandler = new RelayDataHandler();
+		fakedDataHandler.reParse(sessionModel.getPacketList());
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void openFile(File file) {
-		RelayDataHandler fakedRelay = new RelayDataHandler();
 		stopRunningSession();
 		try (FileInputStream fin = new FileInputStream(file);
 				ObjectInputStream ois = new ObjectInputStream(fin)) {
 			ArrayList<Packet> loadedPacketStream = (ArrayList<Packet>) ois
 					.readObject();
-			fakedRelay.reParse(loadedPacketStream);
 			sessionModel.addList(loadedPacketStream);
 			ois.close();
 		} catch (Exception e) {
