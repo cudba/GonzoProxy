@@ -7,27 +7,27 @@ import javax.swing.AbstractListModel;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 
-public class RuleSetModel extends AbstractListModel<String>{
+public class PacketRuleModel extends AbstractListModel<String>{
 	
 	private static final long serialVersionUID = 8749844876110276715L;
-	private ArrayList<PacketRule> rules;
+	private ArrayList<PacketRule> packetRules;
 
-	public RuleSetModel(ArrayList<PacketRule> rules) {
-		this.rules = rules;
+	public PacketRuleModel(ArrayList<PacketRule> rules) {
+		this.packetRules = rules;
 	}
 
 	@Override
 	public String getElementAt(int index) {
-		return rules.get(index).getCorrespondingPacket();
+		return packetRules.get(index).getCorrespondingPacket();
 	}
 
 	@Override
 	public int getSize() {
-		return rules.size();
+		return packetRules.size();
 	}
 	
 	public void setRules(ArrayList<PacketRule> rules) {
-		this.rules = rules;
+		this.packetRules = rules;
 		fireContentsChanged(this, 0, rules.size());
 	}
 

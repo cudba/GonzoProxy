@@ -7,12 +7,12 @@ import javax.swing.table.AbstractTableModel;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 
 
-public class RuleModel extends AbstractTableModel{
+public class FieldRuleModel extends AbstractTableModel{
 
 	private static final long serialVersionUID = 3327345381172706548L;
 	
 	private String[] columnNames = { "Field", "Old value", "New value", "Active" };
-	private ArrayList<FieldRule> rules = new ArrayList<FieldRule>();
+	private ArrayList<FieldRule> fieldRules = new ArrayList<FieldRule>();
 	
 	
 	public String getColumnName(int col) {
@@ -26,23 +26,23 @@ public class RuleModel extends AbstractTableModel{
 
 	@Override
 	public int getRowCount() {
-		return rules.size();
+		return fieldRules.size();
 	}
 
 	@Override
 	public Object getValueAt(int row, int column) {
 		
-		FieldRule rule = rules.get(row);
+		FieldRule fieldRule = fieldRules.get(row);
 
 		switch (column) {
 		case 0:
-			return rule.getCorrespondingField();
+			return fieldRule.getCorrespondingField();
 		case 1:
-			return rule.getOriginalValue();
+			return fieldRule.getOriginalValue();
 		case 2:
-			return rule.getReplacedValue();
+			return fieldRule.getReplacedValue();
 		case 3:
-			return rule.isActive();
+			return fieldRule.isActive();
 		}
 		
 		return null;
@@ -73,12 +73,12 @@ public class RuleModel extends AbstractTableModel{
 	}
 	
 	public void setValueAt(Object value, int row, int column) {
-		rules.get(row).setActive((boolean) value);
+		fieldRules.get(row).setActive((boolean) value);
 	}
 
 	
 	public void setRules(ArrayList<FieldRule> rules){
-		this.rules = rules;
+		this.fieldRules = rules;
 		fireTableDataChanged();
 	}
 

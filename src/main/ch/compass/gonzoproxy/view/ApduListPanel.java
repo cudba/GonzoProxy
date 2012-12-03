@@ -23,7 +23,7 @@ import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.listener.SessionListener;
-import ch.compass.gonzoproxy.model.ApduTableModel;
+import ch.compass.gonzoproxy.model.PacketTableModel;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
 
@@ -129,7 +129,7 @@ public class ApduListPanel extends JPanel {
 				return c;
 			}
 		};
-		table_apduList.setModel(new ApduTableModel(currentSession,
+		table_apduList.setModel(new PacketTableModel(currentSession,
 				new String[] { "#", "Type", "Packet", "ASCII", "Description" }));
 
 		table_apduList.getSelectionModel().addListSelectionListener(

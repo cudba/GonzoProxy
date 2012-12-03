@@ -4,7 +4,7 @@ import javax.swing.table.AbstractTableModel;
 
 import ch.compass.gonzoproxy.listener.SessionListener;
 
-public class ApduTableModel extends AbstractTableModel {
+public class PacketTableModel extends AbstractTableModel {
 
 	/**
 	 * 
@@ -13,7 +13,7 @@ public class ApduTableModel extends AbstractTableModel {
 	private SessionModel session;
 	String[] columnNames;;
 
-	public ApduTableModel(SessionModel session, String[] columnNames) {
+	public PacketTableModel(SessionModel session, String[] columnNames) {
 		this.session = session;
 		this.columnNames = columnNames;
 		this.session.addSessionListener(createListener());
@@ -59,19 +59,19 @@ public class ApduTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Packet apdu = session.getPacketList().get(rowIndex);
+		Packet packet = session.getPacketList().get(rowIndex);
 
 		switch (columnIndex) {
 		case 0:
 			return rowIndex;
 		case 1:
-			return apdu.getType().getId();
+			return packet.getType().getId();
 		case 2:
-			return apdu.getPacketDataAsString();
+			return packet.getPacketDataAsString();
 		case 3:
-			return apdu.toAscii();
+			return packet.toAscii();
 		case 4:
-			return apdu.getDescription();
+			return packet.getDescription();
 		}
 		return null;
 

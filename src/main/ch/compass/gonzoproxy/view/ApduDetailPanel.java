@@ -19,7 +19,7 @@ import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.listener.StateListener;
-import ch.compass.gonzoproxy.model.DetailTableModel;
+import ch.compass.gonzoproxy.model.PacketDetailTableModel;
 import ch.compass.gonzoproxy.model.Field;
 import ch.compass.gonzoproxy.model.Packet;
 import javax.swing.SwingConstants;
@@ -34,7 +34,7 @@ public class ApduDetailPanel extends JPanel {
 	private Packet editApdu;
 	private RelayController controller;
 
-	private DetailTableModel detailTableModel;
+	private PacketDetailTableModel detailTableModel;
 
 	private Field editField;
 
@@ -50,7 +50,7 @@ public class ApduDetailPanel extends JPanel {
 		this.controller = controller;
 		this.editApdu = new Packet();
 		this.editField = new Field();
-		this.detailTableModel = new DetailTableModel(editApdu,
+		this.detailTableModel = new PacketDetailTableModel(editApdu,
 				controller.getSessionModel());
 		initGui();
 		updateSessionPrefs();
