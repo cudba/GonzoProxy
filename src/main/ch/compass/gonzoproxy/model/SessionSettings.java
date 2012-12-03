@@ -34,7 +34,6 @@ public class SessionSettings {
 			this.getClass().getName());
 	
 	private ArrayList<StateListener> stateListeners = new ArrayList<StateListener>();
-	private ArrayList<SessionListener> sessionListeners = new ArrayList<SessionListener>();
 	private TrapListener trapListener;
 	
 	private String mode;
@@ -43,7 +42,7 @@ public class SessionSettings {
 		sessionPrefs.putInt("listenPort", listenPort);
 		sessionPrefs.put("remoteHost", remoteHost);
 		sessionPrefs.putInt("remotePort", remotePort);
-		notifySessionChanged();
+		notifyStateListeners();
 	}
 
 	public int getListenPort() {
@@ -58,12 +57,6 @@ public class SessionSettings {
 		return sessionPrefs.getInt("remotePort", 4321);
 	}
 	
-	private void notifySessionChanged() {
-		for (SessionListener listener : sessionListeners) {
-			listener.sessionChanged();
-		}
-	}
-
 	public void sendOneCommand() {
 		trapListener.sendOneCommand();
 	}

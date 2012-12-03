@@ -45,12 +45,6 @@ public class ApduListPanel extends JPanel {
 	private JPanel panel_table;
 	private JScrollPane scrollPane_0;
 	private JTable table_apduList;
-	private JLabel lblListenport;
-	private JLabel lblLPort;
-	private JLabel lblRemotehost;
-	private JLabel lblRHost;
-	private JLabel lblRemoteport;
-	private JLabel lblRPort;
 	private ListSelectionListener lsl;
 	private JButton btnSendRes;
 	private JButton btnClear;
@@ -63,29 +57,10 @@ public class ApduListPanel extends JPanel {
 		currentSession.addSessionListener(createListener());
 		this.lsl = listSelectionListener;
 		initUi();
-		updateSessionPrefs();
-		registerSessionStateNotifier();
-	}
-
-	private void registerSessionStateNotifier() {
-		controller.getSessionSettings().addSessionStateListener(new StateListener() {
-			
-			@Override
-			public void sessionStateChanged(String state) {
-				//TODO: set status to "state"
-				System.out.println("State changed : " + state);
-			}
-		});
-		
 	}
 
 	private SessionListener createListener() {
 		return new SessionListener() {
-
-			@Override
-			public void sessionChanged() {
-				updateSessionPrefs();
-			}
 
 			@Override
 			public void packetCleared() {
@@ -101,13 +76,6 @@ public class ApduListPanel extends JPanel {
 
 			}
 		};
-	}
-
-	protected void updateSessionPrefs() {
-		lblLPort.setText(Integer.toString(controller.getSessionSettings().getListenPort()));
-		lblRPort.setText(Integer.toString(controller.getSessionSettings().getRemotePort()));
-		lblRHost.setText(controller.getSessionSettings().getRemoteHost());
-
 	}
 
 	private void initUi() {
@@ -197,11 +165,10 @@ public class ApduListPanel extends JPanel {
 		gbc_panel_options.gridy = 1;
 		add(panel_options, gbc_panel_options);
 		GridBagLayout gbl_panel_options = new GridBagLayout();
-		gbl_panel_options.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0 };
+		gbl_panel_options.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
 		gbl_panel_options.rowHeights = new int[] { 0, 0 };
 		gbl_panel_options.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0,
-				0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+				0.0, 0.0, 0.0, Double.MIN_VALUE };
 		gbl_panel_options.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		panel_options.setLayout(gbl_panel_options);
 
@@ -296,56 +263,6 @@ public class ApduListPanel extends JPanel {
 		gbc_btnClear.gridx = 4;
 		gbc_btnClear.gridy = 0;
 		panel_options.add(btnClear, gbc_btnClear);
-
-		lblListenport = new JLabel("Listenport: ");
-		lblListenport.setHorizontalAlignment(SwingConstants.RIGHT);
-		GridBagConstraints gbc_lblListenport = new GridBagConstraints();
-		gbc_lblListenport.anchor = GridBagConstraints.EAST;
-		gbc_lblListenport.insets = new Insets(0, 0, 0, 5);
-		gbc_lblListenport.gridx = 6;
-		gbc_lblListenport.gridy = 0;
-		panel_options.add(lblListenport, gbc_lblListenport);
-
-		lblLPort = new JLabel("port");
-		GridBagConstraints gbc_lblLPort = new GridBagConstraints();
-		gbc_lblLPort.anchor = GridBagConstraints.WEST;
-		gbc_lblLPort.insets = new Insets(0, 0, 0, 5);
-		gbc_lblLPort.gridx = 7;
-		gbc_lblLPort.gridy = 0;
-		panel_options.add(lblLPort, gbc_lblLPort);
-
-		lblRemotehost = new JLabel("Remotehost: ");
-		lblRemotehost.setHorizontalAlignment(SwingConstants.RIGHT);
-		GridBagConstraints gbc_lblRemotehost = new GridBagConstraints();
-		gbc_lblRemotehost.anchor = GridBagConstraints.EAST;
-		gbc_lblRemotehost.insets = new Insets(0, 0, 0, 5);
-		gbc_lblRemotehost.gridx = 8;
-		gbc_lblRemotehost.gridy = 0;
-		panel_options.add(lblRemotehost, gbc_lblRemotehost);
-
-		lblRHost = new JLabel("host");
-		GridBagConstraints gbc_lblRHost = new GridBagConstraints();
-		gbc_lblRHost.anchor = GridBagConstraints.WEST;
-		gbc_lblRHost.insets = new Insets(0, 0, 0, 5);
-		gbc_lblRHost.gridx = 9;
-		gbc_lblRHost.gridy = 0;
-		panel_options.add(lblRHost, gbc_lblRHost);
-
-		lblRemoteport = new JLabel("Remoteport: ");
-		lblRemoteport.setHorizontalAlignment(SwingConstants.RIGHT);
-		GridBagConstraints gbc_lblRemoteport = new GridBagConstraints();
-		gbc_lblRemoteport.anchor = GridBagConstraints.EAST;
-		gbc_lblRemoteport.insets = new Insets(0, 0, 0, 5);
-		gbc_lblRemoteport.gridx = 10;
-		gbc_lblRemoteport.gridy = 0;
-		panel_options.add(lblRemoteport, gbc_lblRemoteport);
-
-		lblRPort = new JLabel("remPort");
-		GridBagConstraints gbc_lblRPort = new GridBagConstraints();
-		gbc_lblRPort.anchor = GridBagConstraints.WEST;
-		gbc_lblRPort.gridx = 11;
-		gbc_lblRPort.gridy = 0;
-		panel_options.add(lblRPort, gbc_lblRPort);
 	}
 
 	private void configureTable(JTable table) {

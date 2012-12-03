@@ -24,11 +24,6 @@ public class DetailTableModel extends AbstractTableModel {
 		return new SessionListener() {
 			
 			@Override
-			public void sessionChanged() {
-				
-			}
-			
-			@Override
 			public void packetReceived(Packet receivedPacket) {
 				
 			}

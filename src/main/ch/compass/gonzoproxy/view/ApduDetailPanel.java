@@ -18,9 +18,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
+import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.DetailTableModel;
 import ch.compass.gonzoproxy.model.Field;
 import ch.compass.gonzoproxy.model.Packet;
+import javax.swing.SwingConstants;
 
 public class ApduDetailPanel extends JPanel {
 	private JTable table_detail;
@@ -36,6 +38,14 @@ public class ApduDetailPanel extends JPanel {
 
 	private Field editField;
 
+	private JLabel lblRPort;
+
+	private JLabel lblRHost;
+
+	private JLabel lblLPort;
+
+	private JLabel lblStatus;
+
 	public ApduDetailPanel(RelayController controller) {
 		this.controller = controller;
 		this.editApdu = new Packet();
@@ -43,22 +53,41 @@ public class ApduDetailPanel extends JPanel {
 		this.detailTableModel = new DetailTableModel(editApdu,
 				controller.getSessionModel());
 		initGui();
-
+		updateSessionPrefs();
+		registerSessionStateNotifier();
+	}
+	
+	private void registerSessionStateNotifier() {
+		controller.getSessionSettings().addSessionStateListener(new StateListener() {
+			
+			@Override
+			public void sessionStateChanged(String state) {
+				lblStatus.setText(state);
+				updateSessionPrefs();
+			}
+		});
+		
+	}
+	
+	protected void updateSessionPrefs() {
+		lblLPort.setText(Integer.toString(controller.getSessionSettings().getListenPort()));
+		lblRPort.setText(Integer.toString(controller.getSessionSettings().getRemotePort()));
+		lblRHost.setText(controller.getSessionSettings().getRemoteHost());
 	}
 
 	private void initGui() {
 		setBorder(new TitledBorder(null, "APDU Detail", TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 0 };
+		gridBagLayout.columnWidths = new int[] { 300, 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.insets = new Insets(0, 0, 0, 5);
+		gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 0;
@@ -82,6 +111,7 @@ public class ApduDetailPanel extends JPanel {
 
 		JPanel panel = new JPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.insets = new Insets(0, 0, 5, 0);
 		gbc_panel.fill = GridBagConstraints.BOTH;
 		gbc_panel.gridx = 1;
 		gbc_panel.gridy = 0;
@@ -129,6 +159,76 @@ public class ApduDetailPanel extends JPanel {
 
 		textPane_ascii = new JTextPane();
 		scrollPane_ascii.setViewportView(textPane_ascii);
+		
+		lblStatus = new JLabel("");
+		lblStatus.setHorizontalAlignment(SwingConstants.LEFT);
+		GridBagConstraints gbc_lblStatus = new GridBagConstraints();
+		gbc_lblStatus.anchor = GridBagConstraints.WEST;
+		gbc_lblStatus.insets = new Insets(0, 0, 0, 5);
+		gbc_lblStatus.gridx = 0;
+		gbc_lblStatus.gridy = 1;
+		add(lblStatus, gbc_lblStatus);
+		
+		JPanel panelStatus2 = new JPanel();
+		GridBagConstraints gbc_panelStatus2 = new GridBagConstraints();
+		gbc_panelStatus2.fill = GridBagConstraints.BOTH;
+		gbc_panelStatus2.gridx = 1;
+		gbc_panelStatus2.gridy = 1;
+		add(panelStatus2, gbc_panelStatus2);
+		GridBagLayout gbl_panelStatus2 = new GridBagLayout();
+		gbl_panelStatus2.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
+		gbl_panelStatus2.rowHeights = new int[]{0, 0};
+		gbl_panelStatus2.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panelStatus2.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		panelStatus2.setLayout(gbl_panelStatus2);
+		
+		JLabel lblListenport = new JLabel("Listenport:");
+		lblListenport.setHorizontalAlignment(SwingConstants.RIGHT);
+		GridBagConstraints gbc_lblListenport = new GridBagConstraints();
+		gbc_lblListenport.anchor = GridBagConstraints.EAST;
+		gbc_lblListenport.insets = new Insets(0, 0, 0, 5);
+		gbc_lblListenport.gridx = 0;
+		gbc_lblListenport.gridy = 0;
+		panelStatus2.add(lblListenport, gbc_lblListenport);
+		
+		lblLPort = new JLabel("");
+		lblLPort.setHorizontalAlignment(SwingConstants.LEFT);
+		GridBagConstraints gbc_label_1 = new GridBagConstraints();
+		gbc_label_1.insets = new Insets(0, 0, 0, 5);
+		gbc_label_1.gridx = 1;
+		gbc_label_1.gridy = 0;
+		panelStatus2.add(lblLPort, gbc_label_1);
+		
+		JLabel lblRemotehost = new JLabel("  Remotehost:");
+		lblRemotehost.setHorizontalAlignment(SwingConstants.RIGHT);
+		GridBagConstraints gbc_lblRemotehost = new GridBagConstraints();
+		gbc_lblRemotehost.insets = new Insets(0, 0, 0, 5);
+		gbc_lblRemotehost.gridx = 2;
+		gbc_lblRemotehost.gridy = 0;
+		panelStatus2.add(lblRemotehost, gbc_lblRemotehost);
+		
+		lblRHost = new JLabel("");
+		lblRHost.setHorizontalAlignment(SwingConstants.LEFT);
+		GridBagConstraints gbc_label_3 = new GridBagConstraints();
+		gbc_label_3.insets = new Insets(0, 0, 0, 5);
+		gbc_label_3.gridx = 3;
+		gbc_label_3.gridy = 0;
+		panelStatus2.add(lblRHost, gbc_label_3);
+		
+		JLabel lblRemoteport = new JLabel("  Remoteport:");
+		lblRemoteport.setHorizontalAlignment(SwingConstants.RIGHT);
+		GridBagConstraints gbc_lblRemoteport = new GridBagConstraints();
+		gbc_lblRemoteport.insets = new Insets(0, 0, 0, 5);
+		gbc_lblRemoteport.gridx = 4;
+		gbc_lblRemoteport.gridy = 0;
+		panelStatus2.add(lblRemoteport, gbc_lblRemoteport);
+		
+		lblRPort = new JLabel("");
+		lblRPort.setHorizontalAlignment(SwingConstants.LEFT);
+		GridBagConstraints gbc_label_5 = new GridBagConstraints();
+		gbc_label_5.gridx = 5;
+		gbc_label_5.gridy = 0;
+		panelStatus2.add(lblRPort, gbc_label_5);
 
 		// textPane_ascii.setEnabled(false);
 		// textPane_hex.setEnabled(false);
@@ -172,13 +272,13 @@ public class ApduDetailPanel extends JPanel {
 			TableColumn tb = (TableColumn) a.nextElement();
 			switch (i) {
 			case 0:
-				tb.setPreferredWidth(45);
+				tb.setPreferredWidth(60);
 				break;
 			case 1:
-				tb.setPreferredWidth(250);
+				tb.setPreferredWidth(200);
 				break;
 			case 2:
-				tb.setPreferredWidth(250);
+				tb.setPreferredWidth(200);
 				break;
 			}
 

@@ -25,7 +25,7 @@ public class PacketModifier {
 	public PacketModifier() {
 		
 		// freaks out with tests cause used same command and rules, have to fix it first ;)
-//		loadModifiers();
+		loadModifiers();
 //		loadRegex();
 	}
 

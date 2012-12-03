@@ -11,7 +11,7 @@ public class RuleModel extends AbstractTableModel{
 
 	private static final long serialVersionUID = 3327345381172706548L;
 	
-	private String[] columnNames = { "Field", "Old value", "New value", "is active" };
+	private String[] columnNames = { "Field", "Old value", "New value", "Active" };
 	private ArrayList<FieldRule> rules = new ArrayList<FieldRule>();
 	
 	

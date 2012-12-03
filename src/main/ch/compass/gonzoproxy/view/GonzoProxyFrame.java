@@ -59,7 +59,7 @@ public class GonzoProxyFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		setTitle("Gonzo Proxy");
-		setMinimumSize(new Dimension(750, 450));
+		setMinimumSize(new Dimension(850, 450));
 
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);

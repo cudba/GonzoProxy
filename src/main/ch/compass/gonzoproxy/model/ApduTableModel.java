@@ -23,11 +23,6 @@ public class ApduTableModel extends AbstractTableModel {
 		return new SessionListener() {
 			
 			@Override
-			public void sessionChanged() {
-				updateTable();
-			}
-			
-			@Override
 			public void packetReceived(Packet receivedPacket) {
 				updateTable();
 			}
