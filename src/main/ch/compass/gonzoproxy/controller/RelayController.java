@@ -14,9 +14,10 @@ import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
 import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
-import ch.compass.gonzoproxy.relay.RelaySessionHandler;
-import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
+import ch.compass.gonzoproxy.relay.RelayManager;
+import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
+import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 
 public class RelayController {
 
@@ -25,7 +26,7 @@ public class RelayController {
 	private SessionSettings sessionSettings = new SessionSettings();
 	private String[] modes;
 
-	private Thread relayHandlerThread;
+	private RelayManager relayManager;
 
 	public RelayController() {
 		loadModes();
@@ -48,11 +49,11 @@ public class RelayController {
 	}
 
 	public void startRelaySession() {
-		RelaySessionHandler relayHandler = new RelaySessionHandler();
-		relayHandler.setSessionParameters(sessionModel, sessionSettings,
+		RelayDataHandler relayDataHandler = new RelayDataHandler();
+		relayDataHandler.setSessionParameters(sessionModel,
 				packetModifier);
-		relayHandlerThread = new Thread(relayHandler);
-		relayHandlerThread.start();
+		relayManager = new RelayManager(relayDataHandler, sessionSettings);
+		 new Thread(relayManager).start();
 	}
 
 	public void newSession(String portListen, String remoteHost,
@@ -72,14 +73,10 @@ public class RelayController {
 	}
 
 	public void stopRunningSession() {
-		if (relayHandlerThread != null && relayHandlerThread.isAlive()) 
-			relayHandlerThread.interrupt();
+		if (relayManager != null ){
+			relayManager.killSession();
+		}
 	}
-
-	//
-	// public void stopRelaySession() {
-	// relaySession.stopForwarder();
-	// }
 
 	public SessionModel getSessionModel() {
 		return sessionModel;
@@ -144,7 +141,7 @@ public class RelayController {
 
 	@SuppressWarnings("unchecked")
 	public void openFile(File file) {
-		RelaySessionHandler fakedRelay = new RelaySessionHandler();
+		RelayDataHandler fakedRelay = new RelayDataHandler();
 		stopRunningSession();
 		try (FileInputStream fin = new FileInputStream(file);
 				ObjectInputStream ois = new ObjectInputStream(fin)) {

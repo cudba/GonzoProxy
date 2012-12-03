@@ -1,17 +1,16 @@
-package ch.compass.gonzoproxy.relay;
+package ch.compass.gonzoproxy.relay.io;
 
 import java.util.ArrayList;
 import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TimeUnit;
 
+import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
-import ch.compass.gonzoproxy.model.SessionSettings;
-import ch.compass.gonzoproxy.relay.io.CommunicationHandler;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.parser.ParsingHandler;
 
-public class RelaySessionHandler implements Runnable {
-	
+public class RelayDataHandler implements Runnable {
 
 	private LinkedTransferQueue<Packet> receiverQueue = new LinkedTransferQueue<Packet>();
 
@@ -21,45 +20,17 @@ public class RelaySessionHandler implements Runnable {
 	private ParsingHandler parsingHandler = new ParsingHandler();
 	private PacketModifier packetModifier;
 
-	private CommunicationHandler communicationHandler;
-
 	private SessionModel sessionModel;
-
-	private SessionSettings sessionSettings;
-
-	private Thread communicationHandlerThread;
 
 	@Override
 	public void run() {
-		startCommunication();
 		handleRelayData();
 	}
 
 	public void setSessionParameters(SessionModel sessionModel,
-			SessionSettings sessionSettings, PacketModifier packetModifier) {
+			PacketModifier packetModifier) {
 		this.sessionModel = sessionModel;
-		this.sessionSettings = sessionSettings;
 		this.packetModifier = packetModifier;
-	}
-
-	private void killSession() {
-		if (communicationHandler != null){
-			try {
-				communicationHandler.killSession();
-				communicationHandlerThread.interrupt();
-				communicationHandlerThread.join();
-			} catch (InterruptedException e) {
-				System.out.println("couldnt terminate com handler, thread is being shut down");
-			}
-			System.out.println("com handler died");
-		}
-	}
-
-	private void startCommunication() {
-		communicationHandler = new CommunicationHandler(sessionSettings,
-				receiverQueue, commandSenderQueue, responseSenderQueue);
-		communicationHandlerThread = new Thread(communicationHandler);
-		communicationHandlerThread.start();
 	}
 
 	private void handleRelayData() {
@@ -73,7 +44,6 @@ public class RelaySessionHandler implements Runnable {
 				addToSenderQueue(sendingPacket);
 
 			} catch (InterruptedException e) {
-				killSession();
 				Thread.currentThread().interrupt();
 			}
 		}
@@ -109,5 +79,23 @@ public class RelaySessionHandler implements Runnable {
 			packet.clearFields();
 			parsingHandler.tryParse(packet);
 		}
+	}
+
+	public void offer(Packet packet) {
+		receiverQueue.offer(packet);
+	}
+
+	public Packet poll(ForwardingType type) throws InterruptedException {
+		Packet sendingPacket = null;
+		switch (type) {
+		case COMMAND:
+			sendingPacket = commandSenderQueue.poll(200, TimeUnit.MILLISECONDS);
+			break;
+		case RESPONSE:
+			sendingPacket = responseSenderQueue
+					.poll(200, TimeUnit.MILLISECONDS);
+			break;
+		}
+		return sendingPacket;
 	}
 }

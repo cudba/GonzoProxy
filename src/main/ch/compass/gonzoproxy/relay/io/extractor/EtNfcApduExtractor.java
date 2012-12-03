@@ -1,10 +1,10 @@
 package ch.compass.gonzoproxy.relay.io.extractor;
 
 import java.util.ArrayList;
-import java.util.concurrent.LinkedTransferQueue;
 
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
 
 public class EtNfcApduExtractor implements ApduExtractor {
@@ -14,7 +14,7 @@ public class EtNfcApduExtractor implements ApduExtractor {
 	private static final String DELIMITER = "#";
 
 
-	public byte[] extractPacketsToQueue(byte[] buffer, LinkedTransferQueue<Packet> apduQueue,
+	public byte[] extractPacketsToQueue(byte[] buffer, RelayDataHandler relayDataHandler,
 			int readBytes, ForwardingType forwardingType) {
 		ArrayList<Integer> indices = ByteArraysUtils.getDelimiterIndices(buffer,
 				DELIMITER.getBytes());
@@ -28,14 +28,14 @@ public class EtNfcApduExtractor implements ApduExtractor {
 			int size = endIndex - startIndex;
 			byte[] rawApdu = ByteArraysUtils.trim(buffer, startIndex, size);
 			Packet apdu = splitApdu(rawApdu);
-			apduQueue.add(apdu);
+			relayDataHandler.offer(apdu);
 		}
 
 		byte[] singleApdu = ByteArraysUtils.trim(buffer, endIndex, readBytes - endIndex);
 
 		if (apduIsComplete(singleApdu)) {
 			Packet apdu = splitApdu(singleApdu);
-			apduQueue.add(apdu);
+			relayDataHandler.offer(apdu);
 			return new byte[0];
 		} else {
 			return singleApdu;

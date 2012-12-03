@@ -2,10 +2,9 @@ package ch.compass.gonzoproxy.relay.io.streamhandler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.LinkedTransferQueue;
 
 import ch.compass.gonzoproxy.model.ForwardingType;
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.extractor.ApduExtractor;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
 
@@ -20,8 +19,8 @@ public class PacketStreamReader {
 	}
 
 	public void readPackets(InputStream inputStream,
-			LinkedTransferQueue<Packet> receiverQueue,
-			ForwardingType forwardingType) throws IOException {
+			RelayDataHandler relayDataHandler, ForwardingType forwardingType)
+			throws IOException {
 		byte[] buffer = new byte[BUFFER_SIZE];
 
 		int length = 0;
@@ -38,8 +37,8 @@ public class PacketStreamReader {
 			if ((readBytes = inputStream.read(buffer, length, buffer.length
 					- length)) != -1) {
 				length += readBytes;
-				buffer = extractor.extractPacketsToQueue(buffer, receiverQueue,
-						length, forwardingType);
+				buffer = extractor.extractPacketsToQueue(buffer,
+						relayDataHandler, length, forwardingType);
 			}
 
 			readCompleted = buffer.length == 0;

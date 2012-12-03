@@ -1,16 +1,14 @@
 package ch.compass.gonzoproxy.relay.io.extractor;
 
-import java.util.concurrent.LinkedTransferQueue;
-
 import ch.compass.gonzoproxy.model.ForwardingType;
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 
 public interface ApduExtractor {
 
 	/**
 	 * @param buffer contains the read bytes
 	 * 
-	 * @param apduQueue Queue to store APDUS
+	 * @param relayDataHandler Queue to store APDUS
 	 * 
 	 * @return 	Returns empty buffer if read is complete, in case some bytes are missing, a buffer 
 	 * 			containing the unfinished content is returned.
@@ -18,7 +16,7 @@ public interface ApduExtractor {
 	 * 					
 	 */
 	
-	public byte[] extractPacketsToQueue(byte[] buffer, LinkedTransferQueue<Packet> apduQueue,
+	public byte[] extractPacketsToQueue(byte[] buffer, RelayDataHandler relayDataHandler,
 			int readBytes, ForwardingType forwardingType);
 
 	public String getName();

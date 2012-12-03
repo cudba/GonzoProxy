@@ -1,10 +1,10 @@
 package ch.compass.gonzoproxy.relay.io.extractor;
 
 import java.util.ArrayList;
-import java.util.concurrent.LinkedTransferQueue;
 
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
 
 public class LibNfcApduExtractor implements ApduExtractor {
@@ -14,7 +14,7 @@ public class LibNfcApduExtractor implements ApduExtractor {
 	private static final String DELIMITER = "#";
 
 
-	public byte[] extractPacketsToQueue(byte[] buffer, LinkedTransferQueue<Packet> packetQueue,
+	public byte[] extractPacketsToQueue(byte[] buffer, RelayDataHandler relayDataHandler,
 			int readBytes, ForwardingType forwardingType) {
 		ArrayList<Integer> indices = ByteArraysUtils.getDelimiterIndices(buffer,
 				DELIMITER.getBytes());
@@ -29,7 +29,7 @@ public class LibNfcApduExtractor implements ApduExtractor {
 			byte[] plainpacket = ByteArraysUtils.trim(buffer, startIndex, size);
 			Packet packet = splitPacket(plainpacket);
 			packet.setType(forwardingType);
-			packetQueue.offer(packet);
+			relayDataHandler.offer(packet);
 		}
 
 		byte[] singlePacket = ByteArraysUtils.trim(buffer, endIndex, readBytes - endIndex);
@@ -37,7 +37,7 @@ public class LibNfcApduExtractor implements ApduExtractor {
 		if (packetIsComplete(singlePacket)) {
 			Packet apdu = splitPacket(singlePacket);
 			apdu.setType(forwardingType);
-			packetQueue.offer(apdu);
+			relayDataHandler.offer(apdu);
 			return new byte[0];
 		} else {
 			return singlePacket;

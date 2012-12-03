@@ -4,11 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
-import java.util.concurrent.LinkedTransferQueue;
 
 import ch.compass.gonzoproxy.GonzoProxy;
 import ch.compass.gonzoproxy.model.ForwardingType;
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.extractor.ApduExtractor;
 
 public class HexStreamReader implements Runnable {
@@ -19,13 +18,13 @@ public class HexStreamReader implements Runnable {
 	private String mode;
 	private ForwardingType forwardingType;
 
-	private LinkedTransferQueue<Packet> receiverQueue;
+	private RelayDataHandler relayDataHandler;
 
 	public HexStreamReader(InputStream inputStream,
-			LinkedTransferQueue<Packet> receiverQueue, String mode,
+			RelayDataHandler relayDataHandler, String mode,
 			ForwardingType forwardingType) {
 		this.inputStream = inputStream;
-		this.receiverQueue = receiverQueue;
+		this.relayDataHandler = relayDataHandler;
 		this.mode = mode;
 		this.forwardingType = forwardingType;
 		configureStreamReader();
@@ -39,7 +38,7 @@ public class HexStreamReader implements Runnable {
 	private void readPackets() {
 		try {
 			while (!Thread.currentThread().isInterrupted())
-				streamReader.readPackets(inputStream, receiverQueue,
+				streamReader.readPackets(inputStream, relayDataHandler,
 						forwardingType);
 		} catch (IOException e) {
 			Thread.currentThread().interrupt();

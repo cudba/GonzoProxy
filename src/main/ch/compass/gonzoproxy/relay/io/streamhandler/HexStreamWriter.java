@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TransferQueue;
 
 import ch.compass.gonzoproxy.GonzoProxy;
+import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.wrapper.ApduWrapper;
 
 public class HexStreamWriter implements Runnable {
@@ -23,13 +23,16 @@ public class HexStreamWriter implements Runnable {
 	private String mode;
 	private State state = State.FORWARDING;
 
-	private TransferQueue<Packet> senderQueue;
+	private RelayDataHandler relayDataHandler;
+
+	private ForwardingType type;
 
 	public HexStreamWriter(OutputStream outputStream,
-			TransferQueue<Packet> senderQueue, String mode) {
+			RelayDataHandler relayDataHandler, String mode, ForwardingType type) {
 		this.outputStream = outputStream;
-		this.senderQueue = senderQueue;
+		this.relayDataHandler = relayDataHandler;
 		this.mode = mode;
+		this.type = type;
 		configureStreamWriter();
 	}
 
@@ -46,14 +49,12 @@ public class HexStreamWriter implements Runnable {
 					Thread.yield();
 					break;
 				case FORWARDING:
-					Packet sendingPacket = senderQueue.poll(200,
-							TimeUnit.MILLISECONDS);
+					Packet sendingPacket = relayDataHandler.poll(type);
 					if (sendingPacket != null)
 						streamWriter.sendPacket(outputStream, sendingPacket);
 					break;
 				case SEND_ONE:
-					Packet sendOnePacket = senderQueue.poll(200,
-							TimeUnit.MILLISECONDS);
+					Packet sendOnePacket = relayDataHandler.poll(type);
 					if (sendOnePacket != null)
 						streamWriter.sendPacket(outputStream, sendOnePacket);
 						state = State.TRAP;
