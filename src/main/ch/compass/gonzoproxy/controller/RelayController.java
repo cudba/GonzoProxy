@@ -18,6 +18,7 @@ import ch.compass.gonzoproxy.relay.RelayManager;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
+import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class RelayController {
 
@@ -177,6 +178,25 @@ public class RelayController {
 
 	public SessionSettings getSessionSettings() {
 		return sessionSettings;
+	}
+
+	public ArrayList<PacketRule> getPacketRules() {
+		return packetModifier.getRuleSets();
+	}
+
+	public void persistRules() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void persistPackets(File file){
+		// TODO Auto-generated method stub
+
+	}
+	
+	public void openPackets(File file){
+		// TODO Auto-generated method stub
+
 	}
 
 }

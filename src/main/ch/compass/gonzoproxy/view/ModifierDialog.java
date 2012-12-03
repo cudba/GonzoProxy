@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -25,7 +26,6 @@ import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.model.RuleModel;
 import ch.compass.gonzoproxy.model.RuleSetModel;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
-import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class ModifierDialog extends JDialog {
@@ -35,7 +35,6 @@ public class ModifierDialog extends JDialog {
 	private JTable tableRules;
 	private JList<String> listPacketRule;
 	private RuleModel fieldRuleModel;
-	private PacketModifier modifier;
 	protected PacketRule editPacketRule;
 	private JCheckBox chckbxUpdateLengthAutomatically;
 	protected FieldRule editFieldRule;
@@ -45,10 +44,13 @@ public class ModifierDialog extends JDialog {
 	private RuleSetModel packetRuleModel;
 	private FieldRule dummyFieldRule;
 	private PacketRule dummyPacketRule;
+	private ArrayList<PacketRule> packetRules;
 	private JButton btnClose;
+	private RelayController controller;
 
 	public ModifierDialog(RelayController controller) {
-		this.modifier = controller.getPacketModifier();
+		this.controller = controller;
+		this.packetRules = controller.getPacketRules();
 		this.dummyFieldRule = new FieldRule("", "", "");
 		this.dummyPacketRule = new PacketRule("");
 		initGui();
@@ -80,7 +82,7 @@ public class ModifierDialog extends JDialog {
 		gbc_scrollPane_1.gridy = 0;
 		contentPane.add(scrollPane_1, gbc_scrollPane_1);
 
-		packetRuleModel = new RuleSetModel(modifier.getRuleSets());
+		packetRuleModel = new RuleSetModel(packetRules);
 		listPacketRule = new JList<String>(packetRuleModel);
 		listPacketRule.addListSelectionListener(new ListSelectionListener() {
 
@@ -92,7 +94,7 @@ public class ModifierDialog extends JDialog {
 					setEditRule(dummyFieldRule);
 					fieldRuleModel.setRules(dummyPacketRule.getRules());
 				} else {
-					setEditRuleSet(modifier.getRuleSets().get(
+					setEditRuleSet(packetRules.get(
 							listPacketRule.getSelectedIndex()));
 					fieldRuleModel.setRules(editPacketRule.getRules());
 				}
@@ -161,12 +163,14 @@ public class ModifierDialog extends JDialog {
 		btnDeleteSelectedPacketRule = new JButton("Delete selected ruleset");
 		btnDeleteSelectedPacketRule.addActionListener(new ActionListener() {
 
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				modifier.getRuleSets().remove(editPacketRule);
-				packetRuleModel.setRules(modifier.getRuleSets());
-				if(listPacketRule.getSelectedIndex() < modifier.getRuleSets().size()){
-					setEditRuleSet(modifier.getRuleSets().get(listPacketRule.getSelectedIndex()));
+				packetRules.remove(editPacketRule);
+				controller.persistRules();
+				packetRuleModel.setRules(packetRules);
+				if(listPacketRule.getSelectedIndex() < packetRules.size()){
+					setEditRuleSet(packetRules.get(listPacketRule.getSelectedIndex()));
 					fieldRuleModel.setRules(editPacketRule.getRules());
 				}else{
 					fieldRuleModel.setRules(dummyPacketRule.getRules());
