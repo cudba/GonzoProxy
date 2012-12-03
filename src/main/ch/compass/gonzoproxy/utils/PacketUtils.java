@@ -10,7 +10,7 @@ public class PacketUtils {
 	public static final int DEFAULT_FIELDLENGTH = 1;
 	public static final String CONTENT_LENGTH_FIELD = "Lc";
 	public static final String CONTENT_IDENTIFIER = "Ci";
-	public static final String CONTENT_DATA = "DATA";
+	public static final String CONTENT_DATA = "CONTENT";
 	
 	public static final int ENCODING_OFFSET = 2;
 	public static final int WHITESPACE_OFFSET = 1;

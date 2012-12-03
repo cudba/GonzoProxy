@@ -100,7 +100,6 @@ public class LibNfcApduExtractor implements ApduExtractor {
 				size[2] = plainPacket[i + 3];
 				size[3] = plainPacket[i + 4];
 				value = Integer.parseInt(new String(size), 16);
-				System.out.println("Size: " + value);
 				return value;
 			}
 		}

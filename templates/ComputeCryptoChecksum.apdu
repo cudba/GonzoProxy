@@ -10,6 +10,6 @@ fields:
   value: 80
 - name: Lc
   description: Length
-- name: Data
+- name: Content
   description: Unpredictable Number Data Object List (UDOL)
 - name: Le

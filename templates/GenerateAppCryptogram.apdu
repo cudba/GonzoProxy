@@ -9,6 +9,6 @@ fields:
   value: 00
 - name: Lc
   description: Length
-- name: Data
+- name: Content
   description: Card Risk Management Data Object List (CDOL)
 - name: Le

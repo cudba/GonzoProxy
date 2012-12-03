@@ -112,7 +112,7 @@ public class PacketModifier {
 					
 					updatePacketLenght(modifiedPacket, fieldLengthDiff);
 					
-					if (modifier.shouldUpdateContentLength()) {
+					if (shouldUpdateContentLength(modifier, field)) {
 						updateContentLengthField(modifiedPacket,
 								fieldLengthDiff);
 					}

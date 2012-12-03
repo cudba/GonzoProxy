@@ -1,6 +1,6 @@
 packetDescription: Select Response - File not found
 fields:
-- name: S1
+- name: Status Byte 1
   value: 6a
-- name: S2
+- name: Status Byte 2
   value: 82

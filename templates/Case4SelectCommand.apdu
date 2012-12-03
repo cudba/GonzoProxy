@@ -9,7 +9,7 @@ fields:
   description: 00 first occurrence, 02 next occurrence
 - name: Lc
   description: Length
-- name: Data
+- name: Content
   description: Application Identifier
 - name: Le
   value: 00

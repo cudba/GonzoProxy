@@ -10,6 +10,6 @@ fields:
   value: 00
 - name: Lc
   description: Length
-- name: Data
+- name: Content
   description: Processing Options Data Object List (PDOL)
 - name: Le
