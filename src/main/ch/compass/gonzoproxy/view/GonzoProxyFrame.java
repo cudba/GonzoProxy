@@ -43,9 +43,9 @@ public class GonzoProxyFrame extends JFrame {
 	private JMenuItem mntmLoadTemplate;
 	private JMenuItem mntmAbout;
 	private JSplitPane splitPane;
-	private ApduListPanel panelList;
-	private ApduDetailPanel panelDetail;
-	private Packet editApdu;
+	private PacketListPanel panelList;
+	private PacketDetailPanel panelDetail;
+	private Packet editPacket;
 	private SessionModel data;
 	final JFileChooser fc;
 
@@ -93,7 +93,9 @@ public class GonzoProxyFrame extends JFrame {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					if (file.getName().endsWith(".gonzo")) {
+						//TODO
 						controller.openFile(file);
+						controller.openPackets(file);
 					}else{
 						JOptionPane.showMessageDialog(GonzoProxyFrame.this,
 							    "Wrong filetype, .gonzo expected",
@@ -117,7 +119,9 @@ public class GonzoProxyFrame extends JFrame {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					if (file.getName().endsWith(".gonzo")) {
+						//TODO
 						controller.saveFile(file);
+						controller.persistPackets(file);
 					}else{
 						JOptionPane.showMessageDialog(GonzoProxyFrame.this,
 							    "Wrong filetype, .gonzo expected",
@@ -136,7 +140,7 @@ public class GonzoProxyFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				GonzoProxyFrame.this.dispose();
+				dispose();
 			}
 		});
 		mnFile.add(mntmExit);
@@ -144,7 +148,7 @@ public class GonzoProxyFrame extends JFrame {
 		mnTools = new JMenu("Tools");
 		menuBar.add(mnTools);
 
-		mntmModifier = new JMenuItem("Modifier");
+		mntmModifier = new JMenuItem("Post-Parse Modifier");
 		mntmModifier.addActionListener(new ActionListener() {
 
 			@Override
@@ -155,7 +159,7 @@ public class GonzoProxyFrame extends JFrame {
 		});
 		mnTools.add(mntmModifier);
 
-		mntmLoadTemplate = new JMenuItem("Load template");
+		mntmLoadTemplate = new JMenuItem("Pre-Parse Modifier");
 		mnTools.add(mntmLoadTemplate);
 
 		mnHelp = new JMenu("Help");
@@ -182,7 +186,7 @@ public class GonzoProxyFrame extends JFrame {
 		gbc_splitPane.gridy = 0;
 		contentPane.add(splitPane, gbc_splitPane);
 
-		panelList = new ApduListPanel(controller, new ListSelectionListener() {
+		panelList = new PacketListPanel(controller, new ListSelectionListener() {
 
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
@@ -192,17 +196,17 @@ public class GonzoProxyFrame extends JFrame {
 					GonzoProxyFrame.this.panelDetail.clearFields();
 					GonzoProxyFrame.this.panelDetail.setApdu(new Packet());
 				} else {
-					GonzoProxyFrame.this.editApdu = ((Packet) GonzoProxyFrame.this.data
+					GonzoProxyFrame.this.editPacket = ((Packet) GonzoProxyFrame.this.data
 							.getPacketList().get(index));
 					GonzoProxyFrame.this.panelDetail
-							.setApdu(GonzoProxyFrame.this.editApdu);
+							.setApdu(GonzoProxyFrame.this.editPacket);
 				}
 
 			}
 		});
 		splitPane.setLeftComponent(panelList);
 
-		panelDetail = new ApduDetailPanel(controller);
+		panelDetail = new PacketDetailPanel(controller);
 		splitPane.setRightComponent(panelDetail);
 	}
 }

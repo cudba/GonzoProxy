@@ -26,14 +26,14 @@ public class AddNewModifierDialog extends JDialog {
 	private JTextField textFieldNewValue;
 	private JTextField textFieldFieldname;
 	private RelayController controller;
-	private Packet editApdu;
+	private Packet packet;
 	private Field field;
 	private JCheckBox chckbxReplaceWhole;
 	private JCheckBox chckbxUpdateLengthAutomatically;
 
-	public AddNewModifierDialog(Packet editApdu, Field field, RelayController controller) {
+	public AddNewModifierDialog(Packet packet, Field field, RelayController controller) {
 		this.controller = controller;
-		this.editApdu = editApdu;
+		this.packet = packet;
 		this.field = field;
 		initGui();
 		setFields();
@@ -45,7 +45,7 @@ public class AddNewModifierDialog extends JDialog {
 			description = field.getDescription();
 		}
 		textFieldFieldname.setText(field.getName() + " - " + description);
-		textFieldPacketname.setText(editApdu.getDescription());
+		textFieldPacketname.setText(packet.getDescription());
 		textFieldOldValue.setText(field.getValue());
 	}
 
@@ -142,7 +142,7 @@ public class AddNewModifierDialog extends JDialog {
 						if(chckbxReplaceWhole.isSelected()){
 							oldValue = "";
 						}
-						controller.addModifierRule(editApdu.getDescription(), field.getName(), oldValue, textFieldNewValue.getText(), chckbxUpdateLengthAutomatically.isSelected());
+						controller.addModifierRule(packet.getDescription(), field.getName(), oldValue, textFieldNewValue.getText(), chckbxUpdateLengthAutomatically.isSelected());
 						AddNewModifierDialog.this.dispose();
 					}
 					

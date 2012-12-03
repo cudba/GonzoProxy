@@ -23,11 +23,11 @@ import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.listener.SessionListener;
-import ch.compass.gonzoproxy.model.ApduTableModel;
 import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.PacketTableModel;
 import ch.compass.gonzoproxy.model.SessionModel;
 
-public class ApduListPanel extends JPanel {
+public class PacketListPanel extends JPanel {
 
 	/**
 	 * 
@@ -41,13 +41,14 @@ public class ApduListPanel extends JPanel {
 	private RelayController controller;
 	private JPanel panel_table;
 	private JScrollPane scrollPane_0;
-	private JTable table_apduList;
+	private JTable table_packetList;
 	private ListSelectionListener lsl;
 	private JButton btnSendRes;
 	private JButton btnClear;
 	private JButton btnSendCmd;
+	private JButton btnReparsePackets;
 
-	public ApduListPanel(RelayController controller,
+	public PacketListPanel(RelayController controller,
 			ListSelectionListener listSelectionListener) {
 		this.controller = controller;
 		currentSession = controller.getSessionModel();
@@ -65,7 +66,7 @@ public class ApduListPanel extends JPanel {
 
 			@Override
 			public void packetReceived(Packet receivedPacket) {
-				table_apduList.scrollRectToVisible(table_apduList.getCellRect(table_apduList.getRowCount()-1, table_apduList.getColumnCount(), true));
+				table_packetList.scrollRectToVisible(table_packetList.getCellRect(table_packetList.getRowCount()-1, table_packetList.getColumnCount(), true));
 			}
 
 			@Override
@@ -107,7 +108,7 @@ public class ApduListPanel extends JPanel {
 		gbc_scrollPane_0.gridy = 0;
 		panel_table.add(scrollPane_0, gbc_scrollPane_0);
 
-		table_apduList = new JTable(){
+		table_packetList = new JTable(){
 			private static final long serialVersionUID = 1595784978737194233L;
 
 			public Component prepareRenderer(TableCellRenderer renderer, int row, int column)
@@ -116,33 +117,33 @@ public class ApduListPanel extends JPanel {
 	
 				if (!isRowSelected(row)){
 					
-					if(table_apduList.getModel().getValueAt(row, 1).equals("COM")){
+					if(table_packetList.getModel().getValueAt(row, 1).equals("COM")){
 						c.setBackground(Color.LIGHT_GRAY);
 					}else{
 						c.setBackground(getBackground());
 					}
-					if(ApduListPanel.this.currentSession.getPacketList().get(row).isModified()){
+					if(PacketListPanel.this.currentSession.getPacketList().get(row).isModified()){
 						c.setBackground(Color.PINK);
 					}
 				}
 				return c;
 			}
 		};
-		table_apduList.setModel(new ApduTableModel(currentSession,
+		table_packetList.setModel(new PacketTableModel(currentSession,
 				new String[] { "#", "Type", "Packet", "ASCII", "Description" }));
 
-		table_apduList.getSelectionModel().addListSelectionListener(
+		table_packetList.getSelectionModel().addListSelectionListener(
 				new ListSelectionListener() {
 
 					@Override
 					public void valueChanged(ListSelectionEvent arg0) {
-						int index = ApduListPanel.this.table_apduList
+						int index = PacketListPanel.this.table_packetList
 								.getSelectedRow();
 						if (index != -1)
 							lsl.valueChanged(new ListSelectionEvent(this,
-									ApduListPanel.this.table_apduList
+									PacketListPanel.this.table_packetList
 											.convertRowIndexToModel(index),
-									ApduListPanel.this.table_apduList
+									PacketListPanel.this.table_packetList
 											.convertRowIndexToModel(index),
 									true));
 						else
@@ -152,8 +153,8 @@ public class ApduListPanel extends JPanel {
 					}
 				});
 
-		configureTable(table_apduList);
-		scrollPane_0.setViewportView(table_apduList);
+		configureTable(table_packetList);
+		scrollPane_0.setViewportView(table_packetList);
 
 		panel_options = new JPanel();
 		GridBagConstraints gbc_panel_options = new GridBagConstraints();
@@ -165,7 +166,7 @@ public class ApduListPanel extends JPanel {
 		gbl_panel_options.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
 		gbl_panel_options.rowHeights = new int[] { 0, 0 };
 		gbl_panel_options.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0,
-				0.0, 0.0, 0.0, Double.MIN_VALUE };
+				0.0, 1.0, 0.0, Double.MIN_VALUE };
 		gbl_panel_options.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		panel_options.setLayout(gbl_panel_options);
 
@@ -173,7 +174,7 @@ public class ApduListPanel extends JPanel {
 		btnTrapCmd.setToolTipText("Trap command");
 		btnTrapCmd
 				.setIcon(new ImageIcon(
-						ApduListPanel.class
+						PacketListPanel.class
 								.getResource("/ch/compass/gonzoproxy/view/icons/right.png")));
 		btnTrapCmd.addActionListener(new ActionListener() {
 
@@ -192,7 +193,7 @@ public class ApduListPanel extends JPanel {
 		btnTrapRes.setToolTipText("Trap response");
 		btnTrapRes
 				.setIcon(new ImageIcon(
-						ApduListPanel.class
+						PacketListPanel.class
 								.getResource("/ch/compass/gonzoproxy/view/icons/left.png")));
 		btnTrapRes.addActionListener(new ActionListener() {
 
@@ -210,7 +211,7 @@ public class ApduListPanel extends JPanel {
 		});
 		btnSendCmd
 				.setIcon(new ImageIcon(
-						ApduListPanel.class
+						PacketListPanel.class
 								.getResource("/ch/compass/gonzoproxy/view/icons/refresh.png")));
 		btnSendCmd.setToolTipText("Send trapped command");
 		GridBagConstraints gbc_btnSendCmd = new GridBagConstraints();
@@ -235,7 +236,7 @@ public class ApduListPanel extends JPanel {
 		});
 		btnSendRes
 				.setIcon(new ImageIcon(
-						ApduListPanel.class
+						PacketListPanel.class
 								.getResource("/ch/compass/gonzoproxy/view/icons/refresh.png")));
 		GridBagConstraints gbc_btnSendRes = new GridBagConstraints();
 		gbc_btnSendRes.insets = new Insets(0, 0, 0, 5);
@@ -245,7 +246,7 @@ public class ApduListPanel extends JPanel {
 
 		btnClear = new JButton("");
 		btnClear.setToolTipText("Cancel session");
-		btnClear.setIcon(new ImageIcon(ApduListPanel.class
+		btnClear.setIcon(new ImageIcon(PacketListPanel.class
 				.getResource("/ch/compass/gonzoproxy/view/icons/cross.png")));
 		btnClear.addActionListener(new ActionListener() {
 
@@ -260,6 +261,18 @@ public class ApduListPanel extends JPanel {
 		gbc_btnClear.gridx = 4;
 		gbc_btnClear.gridy = 0;
 		panel_options.add(btnClear, gbc_btnClear);
+		
+		btnReparsePackets = new JButton("Reparse packets");
+		btnReparsePackets.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				controller.reparsePackets();
+				currentSession.addList(currentSession.getPacketList());
+			}
+		});
+		GridBagConstraints gbc_btnReparsePackets = new GridBagConstraints();
+		gbc_btnReparsePackets.gridx = 6;
+		gbc_btnReparsePackets.gridy = 0;
+		panel_options.add(btnReparsePackets, gbc_btnReparsePackets);
 	}
 
 	private void configureTable(JTable table) {

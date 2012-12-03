@@ -23,8 +23,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import ch.compass.gonzoproxy.controller.RelayController;
-import ch.compass.gonzoproxy.model.RuleModel;
-import ch.compass.gonzoproxy.model.RuleSetModel;
+import ch.compass.gonzoproxy.model.FieldRuleModel;
+import ch.compass.gonzoproxy.model.PacketRuleModel;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
@@ -34,14 +34,14 @@ public class ModifierDialog extends JDialog {
 	private JPanel contentPane;
 	private JTable tableRules;
 	private JList<String> listPacketRule;
-	private RuleModel fieldRuleModel;
+	private FieldRuleModel fieldRuleModel;
 	protected PacketRule editPacketRule;
 	private JCheckBox chckbxUpdateLengthAutomatically;
 	protected FieldRule editFieldRule;
 	private JPanel panel;
 	private JButton btnDeleteSelectedFieldRule;
 	private JButton btnDeleteSelectedPacketRule;
-	private RuleSetModel packetRuleModel;
+	private PacketRuleModel packetRuleModel;
 	private FieldRule dummyFieldRule;
 	private PacketRule dummyPacketRule;
 	private ArrayList<PacketRule> packetRules;
@@ -82,7 +82,7 @@ public class ModifierDialog extends JDialog {
 		gbc_scrollPane_1.gridy = 0;
 		contentPane.add(scrollPane_1, gbc_scrollPane_1);
 
-		packetRuleModel = new RuleSetModel(packetRules);
+		packetRuleModel = new PacketRuleModel(packetRules);
 		listPacketRule = new JList<String>(packetRuleModel);
 		listPacketRule.addListSelectionListener(new ListSelectionListener() {
 
@@ -110,7 +110,7 @@ public class ModifierDialog extends JDialog {
 		gbc_scrollPane.gridy = 0;
 		contentPane.add(scrollPane, gbc_scrollPane);
 
-		fieldRuleModel = new RuleModel();
+		fieldRuleModel = new FieldRuleModel();
 		tableRules = new JTable(fieldRuleModel);
 		tableRules.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -192,9 +192,10 @@ public class ModifierDialog extends JDialog {
 		});
 		panel.add(btnDeleteSelectedFieldRule);
 		
-		btnClose = new JButton("Close");
+		btnClose = new JButton("Save and close");
 		btnClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				controller.persistRules();
 				dispose();
 			}
 		});

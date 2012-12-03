@@ -19,59 +19,56 @@ import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.listener.StateListener;
-import ch.compass.gonzoproxy.model.DetailTableModel;
+import ch.compass.gonzoproxy.model.PacketDetailTableModel;
 import ch.compass.gonzoproxy.model.Field;
 import ch.compass.gonzoproxy.model.Packet;
 import javax.swing.SwingConstants;
 
-public class ApduDetailPanel extends JPanel {
-	private JTable table_detail;
+public class PacketDetailPanel extends JPanel {
 
 	private static final long serialVersionUID = -5129650768327234148L;
 
+	private JTable table_detail;
 	private JTextPane textPane_ascii;
 	private JTextPane textPane_hex;
-	private Packet editApdu;
+	private Packet editPacket;
 	private RelayController controller;
-
-	private DetailTableModel detailTableModel;
-
+	private PacketDetailTableModel detailTableModel;
 	private Field editField;
-
 	private JLabel lblRPort;
-
 	private JLabel lblRHost;
-
 	private JLabel lblLPort;
-
 	private JLabel lblStatus;
 
-	public ApduDetailPanel(RelayController controller) {
+	public PacketDetailPanel(RelayController controller) {
 		this.controller = controller;
-		this.editApdu = new Packet();
+		this.editPacket = new Packet();
 		this.editField = new Field();
-		this.detailTableModel = new DetailTableModel(editApdu,
+		this.detailTableModel = new PacketDetailTableModel(editPacket,
 				controller.getSessionModel());
 		initGui();
 		updateSessionPrefs();
 		registerSessionStateNotifier();
 	}
-	
+
 	private void registerSessionStateNotifier() {
-		controller.getSessionSettings().addSessionStateListener(new StateListener() {
-			
-			@Override
-			public void sessionStateChanged(String state) {
-				lblStatus.setText(state);
-				updateSessionPrefs();
-			}
-		});
-		
+		controller.getSessionSettings().addSessionStateListener(
+				new StateListener() {
+
+					@Override
+					public void sessionStateChanged(String state) {
+						lblStatus.setText(state);
+						updateSessionPrefs();
+					}
+				});
+
 	}
-	
+
 	protected void updateSessionPrefs() {
-		lblLPort.setText(Integer.toString(controller.getSessionSettings().getListenPort()));
-		lblRPort.setText(Integer.toString(controller.getSessionSettings().getRemotePort()));
+		lblLPort.setText(Integer.toString(controller.getSessionSettings()
+				.getListenPort()));
+		lblRPort.setText(Integer.toString(controller.getSessionSettings()
+				.getRemotePort()));
 		lblRHost.setText(controller.getSessionSettings().getRemoteHost());
 	}
 
@@ -101,7 +98,8 @@ public class ApduDetailPanel extends JPanel {
 					JTable target = (JTable) e.getSource();
 					int row = target.getSelectedRow();
 					AddNewModifierDialog nd = new AddNewModifierDialog(
-							editApdu, editApdu.getFields().get(row), controller);
+							editPacket, editPacket.getFields().get(row),
+							controller);
 					nd.setVisible(true);
 				}
 			}
@@ -159,7 +157,7 @@ public class ApduDetailPanel extends JPanel {
 
 		textPane_ascii = new JTextPane();
 		scrollPane_ascii.setViewportView(textPane_ascii);
-		
+
 		lblStatus = new JLabel("");
 		lblStatus.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblStatus = new GridBagConstraints();
@@ -168,7 +166,7 @@ public class ApduDetailPanel extends JPanel {
 		gbc_lblStatus.gridx = 0;
 		gbc_lblStatus.gridy = 1;
 		add(lblStatus, gbc_lblStatus);
-		
+
 		JPanel panelStatus2 = new JPanel();
 		GridBagConstraints gbc_panelStatus2 = new GridBagConstraints();
 		gbc_panelStatus2.fill = GridBagConstraints.BOTH;
@@ -176,57 +174,58 @@ public class ApduDetailPanel extends JPanel {
 		gbc_panelStatus2.gridy = 1;
 		add(panelStatus2, gbc_panelStatus2);
 		GridBagLayout gbl_panelStatus2 = new GridBagLayout();
-		gbl_panelStatus2.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
-		gbl_panelStatus2.rowHeights = new int[]{0, 0};
-		gbl_panelStatus2.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_panelStatus2.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		gbl_panelStatus2.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panelStatus2.rowHeights = new int[] { 0, 0 };
+		gbl_panelStatus2.columnWeights = new double[] { 1.0, 0.0, 0.0, 0.0,
+				0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panelStatus2.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		panelStatus2.setLayout(gbl_panelStatus2);
-		
+
 		JLabel lblListenport = new JLabel("Listenport:");
 		lblListenport.setHorizontalAlignment(SwingConstants.RIGHT);
 		GridBagConstraints gbc_lblListenport = new GridBagConstraints();
 		gbc_lblListenport.anchor = GridBagConstraints.EAST;
 		gbc_lblListenport.insets = new Insets(0, 0, 0, 5);
-		gbc_lblListenport.gridx = 0;
+		gbc_lblListenport.gridx = 1;
 		gbc_lblListenport.gridy = 0;
 		panelStatus2.add(lblListenport, gbc_lblListenport);
-		
+
 		lblLPort = new JLabel("");
 		lblLPort.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_label_1 = new GridBagConstraints();
 		gbc_label_1.insets = new Insets(0, 0, 0, 5);
-		gbc_label_1.gridx = 1;
+		gbc_label_1.gridx = 2;
 		gbc_label_1.gridy = 0;
 		panelStatus2.add(lblLPort, gbc_label_1);
-		
+
 		JLabel lblRemotehost = new JLabel("  Remotehost:");
 		lblRemotehost.setHorizontalAlignment(SwingConstants.RIGHT);
 		GridBagConstraints gbc_lblRemotehost = new GridBagConstraints();
 		gbc_lblRemotehost.insets = new Insets(0, 0, 0, 5);
-		gbc_lblRemotehost.gridx = 2;
+		gbc_lblRemotehost.gridx = 3;
 		gbc_lblRemotehost.gridy = 0;
 		panelStatus2.add(lblRemotehost, gbc_lblRemotehost);
-		
+
 		lblRHost = new JLabel("");
 		lblRHost.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_label_3 = new GridBagConstraints();
 		gbc_label_3.insets = new Insets(0, 0, 0, 5);
-		gbc_label_3.gridx = 3;
+		gbc_label_3.gridx = 4;
 		gbc_label_3.gridy = 0;
 		panelStatus2.add(lblRHost, gbc_label_3);
-		
+
 		JLabel lblRemoteport = new JLabel("  Remoteport:");
 		lblRemoteport.setHorizontalAlignment(SwingConstants.RIGHT);
 		GridBagConstraints gbc_lblRemoteport = new GridBagConstraints();
 		gbc_lblRemoteport.insets = new Insets(0, 0, 0, 5);
-		gbc_lblRemoteport.gridx = 4;
+		gbc_lblRemoteport.gridx = 5;
 		gbc_lblRemoteport.gridy = 0;
 		panelStatus2.add(lblRemoteport, gbc_lblRemoteport);
-		
+
 		lblRPort = new JLabel("");
 		lblRPort.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_label_5 = new GridBagConstraints();
-		gbc_label_5.gridx = 5;
+		gbc_label_5.gridx = 6;
 		gbc_label_5.gridy = 0;
 		panelStatus2.add(lblRPort, gbc_label_5);
 
@@ -240,7 +239,7 @@ public class ApduDetailPanel extends JPanel {
 	}
 
 	public void setApdu(Packet editApdu) {
-		this.editApdu = editApdu;
+		this.editPacket = editApdu;
 		this.detailTableModel.setApdu(editApdu);
 		clearFields();
 	}
@@ -259,10 +258,11 @@ public class ApduDetailPanel extends JPanel {
 					public void valueChanged(ListSelectionEvent e) {
 						int index = table.getSelectedRow();
 						if (index == -1) {
-							ApduDetailPanel.this.clearFields();
+							PacketDetailPanel.this.clearFields();
 						} else {
-							ApduDetailPanel.this.setField(ApduDetailPanel.this.editApdu
-									.getFields().get(index));
+							PacketDetailPanel.this
+									.setField(PacketDetailPanel.this.editPacket
+											.getFields().get(index));
 						}
 					}
 				});
