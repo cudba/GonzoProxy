@@ -14,46 +14,43 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import ch.compass.gonzoproxy.controller.RelayController;
-import ch.compass.gonzoproxy.model.Field;
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.RuleModel;
+import ch.compass.gonzoproxy.relay.modifier.FieldRule;
+import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
-public class AddNewModifierDialog extends JDialog {
+public class EditModifierDialog extends JDialog {
 	private static final long serialVersionUID = -1789866876175936281L;
 	private JPanel contentPane;
 	private JTextField textFieldPacketname;
 	private JTextField textFieldOldValue;
 	private JTextField textFieldNewValue;
 	private JTextField textFieldFieldname;
-	private RelayController controller;
-	private Packet editApdu;
-	private Field field;
+	private RuleModel fieldRuleModel;
 	private JCheckBox chckbxReplaceWhole;
 	private JCheckBox chckbxUpdateLengthAutomatically;
+	private PacketRule packetRule;
+	private FieldRule fieldRule;
 
-	public AddNewModifierDialog(Packet editApdu, Field field, RelayController controller) {
-		this.controller = controller;
-		this.editApdu = editApdu;
-		this.field = field;
+	public EditModifierDialog(PacketRule packetRule, FieldRule fieldRule, RuleModel fieldRuleModel) {
+		this.fieldRuleModel = fieldRuleModel;
+		this.packetRule = packetRule;
+		this.fieldRule = fieldRule;
 		initGui();
 		setFields();
 	}
 
 	private void setFields() {
-		String description = "no description";
-		if (field.getDescription() != null) {
-			description = field.getDescription();
-		}
-		textFieldFieldname.setText(field.getName() + " - " + description);
-		textFieldPacketname.setText(editApdu.getDescription());
-		textFieldOldValue.setText(field.getValue());
+		textFieldFieldname.setText(fieldRule.getCorrespondingField());
+		textFieldPacketname.setText(packetRule.getCorrespondingPacket());
+		textFieldOldValue.setText(fieldRule.getOriginalValue());
+		textFieldNewValue.setText(fieldRule.getReplacedValue());
 	}
 
 	private void initGui() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setModalityType(ModalityType.APPLICATION_MODAL);
-		setTitle("Add new rule");
+		setTitle("Edit rule");
 		setBounds(100, 100, 457, 225);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
@@ -138,12 +135,8 @@ public class AddNewModifierDialog extends JDialog {
 					
 					if(textFieldOldValue.getInputVerifier().verify(textFieldOldValue) && textFieldNewValue.getInputVerifier().verify(textFieldNewValue)){
 						
-						String oldValue = textFieldOldValue.getText();
-						if(chckbxReplaceWhole.isSelected()){
-							oldValue = "";
-						}
-						controller.addModifierRule(editApdu.getDescription(), field.getName(), oldValue, textFieldNewValue.getText(), chckbxUpdateLengthAutomatically.isSelected());
-						AddNewModifierDialog.this.dispose();
+						editRule();
+						EditModifierDialog.this.dispose();
 					}
 					
 				}
@@ -183,7 +176,7 @@ public class AddNewModifierDialog extends JDialog {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					AddNewModifierDialog.this.dispose();
+					EditModifierDialog.this.dispose();
 				}
 			});
 			GridBagConstraints gbc_btnCancel = new GridBagConstraints();
@@ -194,5 +187,15 @@ public class AddNewModifierDialog extends JDialog {
 			
 			textFieldFieldname.setEnabled(false);
 			textFieldPacketname.setEnabled(false);
+	}
+
+	protected void editRule() {
+		String oldValue = textFieldOldValue.getText();
+		if(chckbxReplaceWhole.isSelected()){
+			oldValue = "";
+		}
+		fieldRule.setOriginalValue(oldValue);
+		fieldRule.setReplacedValue(textFieldNewValue.getText());
+		fieldRuleModel.setRules(packetRule.getRules());
 	}
 }

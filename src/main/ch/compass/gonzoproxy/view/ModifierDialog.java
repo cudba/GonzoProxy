@@ -1,6 +1,7 @@
 package ch.compass.gonzoproxy.view;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -23,17 +24,15 @@ import javax.swing.event.ListSelectionListener;
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.model.RuleModel;
 import ch.compass.gonzoproxy.model.RuleSetModel;
-import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
+import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
-import java.awt.FlowLayout;
 
 public class ModifierDialog extends JDialog {
 
 	private static final long serialVersionUID = 9047578530331858262L;
 	private JPanel contentPane;
 	private JTable tableRules;
-	private RelayController controller;
 	private JList<String> listPacketRule;
 	private RuleModel fieldRuleModel;
 	private PacketModifier modifier;
@@ -49,7 +48,6 @@ public class ModifierDialog extends JDialog {
 	private JButton btnClose;
 
 	public ModifierDialog(RelayController controller) {
-		this.controller = controller;
 		this.modifier = controller.getPacketModifier();
 		this.dummyFieldRule = new FieldRule("", "", "");
 		this.dummyPacketRule = new PacketRule("");
@@ -115,13 +113,17 @@ public class ModifierDialog extends JDialog {
 		tableRules.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				JTable target = (JTable) e.getSource();
+				
 				int row = target.getSelectedRow();
 				if (row == -1) {
 					setEditRule(dummyFieldRule);
 				} else {
 					setEditRule(editPacketRule.getRules().get(row));
 				}
-
+				if (e.getClickCount() == 2 && row != -1) {
+					EditModifierDialog emd = new EditModifierDialog(editPacketRule, editFieldRule, fieldRuleModel);
+					emd.setVisible(true);
+				}
 			}
 		});
 		scrollPane.setViewportView(tableRules);
