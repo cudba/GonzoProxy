@@ -20,7 +20,7 @@ public class PacketStreamWriter implements Runnable {
 		TRAP, FORWARDING, SEND_ONE;
 	}
 
-	private HexStreamWriter streamWriter;
+	ApduWrapper wrapper;
 
 	private OutputStream outputStream;
 	private SessionSettings sessionSettings;
@@ -38,7 +38,7 @@ public class PacketStreamWriter implements Runnable {
 		this.sessionSettings = sessionSettings;
 		this.forwardingType = type;
 		addTrapListener();
-		configureStreamWriter();
+		loadWrapper();
 	}
 
 	private void addTrapListener() {
@@ -74,13 +74,13 @@ public class PacketStreamWriter implements Runnable {
 					Packet sendingPacket = relayDataHandler
 							.poll(forwardingType);
 					if (sendingPacket != null)
-						streamWriter.sendPacket(outputStream, sendingPacket);
+						send(sendingPacket);
 					break;
 				case SEND_ONE:
 					Packet sendOnePacket = relayDataHandler
 							.poll(forwardingType);
 					if (sendOnePacket != null)
-						streamWriter.sendPacket(outputStream, sendOnePacket);
+						send(sendOnePacket);
 					state = State.TRAP;
 					break;
 				}
@@ -91,12 +91,18 @@ public class PacketStreamWriter implements Runnable {
 		}
 
 	}
+	
+	private void send(Packet packet)
+			throws IOException {
 
-	private void configureStreamWriter() {
+		byte[] wrappedPacket = wrapper.wrap(packet);
+		outputStream.write(wrappedPacket);
+		outputStream.flush();
+	}
+
+	private void loadWrapper() {
 		ClassLoader cl = GonzoProxy.class.getClassLoader();
-		ApduWrapper wrapper = (ApduWrapper) selectMode(cl, "wrapper");
-
-		streamWriter = new HexStreamWriter(wrapper);
+		wrapper = (ApduWrapper) selectMode(cl, "wrapper");
 	}
 
 	private Object selectMode(ClassLoader cl, String helper) {

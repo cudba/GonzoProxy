@@ -17,6 +17,7 @@ public class RelayController {
 
 	private String[] relayModes;
 
+	private Thread relayManagerThread;
 	private RelayManager relayManager = new RelayManager();
 
 	public RelayController() {
@@ -28,11 +29,13 @@ public class RelayController {
 		stopRunningSession();
 		relayManager.generateNewSessionParameters(portListen, remoteHost,
 				remotePort, mode);
-		new Thread(relayManager).start();
+		relayManagerThread = new Thread(relayManager);
+		relayManagerThread.start();
 	}
 
 	public void stopRunningSession() {
-		relayManager.killSession();
+		if (relayManagerThread != null && relayManagerThread.isAlive())
+			relayManager.killSession();
 	}
 
 	public SessionModel getSessionModel() {

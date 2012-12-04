@@ -44,15 +44,15 @@ public class RelayManager implements Runnable {
 		establishConnection();
 		initProducerConsumer();
 		sessionIsAlive = true;
-		sessionSettings.setSessionState(SessionState.FORWARDING);
 	}
 
 	private void initProducerConsumer() {
 		try {
 			initCommandStreamHandlers();
 			initResponseStreamHandlers();
+			sessionSettings.setSessionState(SessionState.FORWARDING);
 		} catch (IOException e) {
-			sessionSettings.setSessionState(SessionState.DISCONNECTED);
+			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
 			System.out
 					.println("session is beeing killed by manager, io exception");
 			killSession();
@@ -83,7 +83,7 @@ public class RelayManager implements Runnable {
 			} catch (IOException e1) {
 			}
 			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
-
+			sessionIsAlive = false;
 		}
 	}
 
@@ -94,6 +94,7 @@ public class RelayManager implements Runnable {
 			initiator = serverSocket.accept();
 		} catch (IOException e) {
 			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
+			sessionIsAlive = false;
 		}
 	}
 
@@ -135,6 +136,7 @@ public class RelayManager implements Runnable {
 			threadPool.shutdownNow();
 			closeSockets();
 			sessionSettings.setSessionState(SessionState.DISCONNECTED);
+			sessionIsAlive = false;
 		}
 	}
 
