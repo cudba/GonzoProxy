@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -21,6 +22,7 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.model.FieldRuleModel;
@@ -54,6 +56,7 @@ public class ModifierDialog extends JDialog {
 		this.dummyFieldRule = new FieldRule("", "", "");
 		this.dummyPacketRule = new PacketRule("");
 		initGui();
+		configureTable(tableRules);
 	}
 
 	private void initGui() {
@@ -210,6 +213,31 @@ public class ModifierDialog extends JDialog {
 		this.editPacketRule = ruleSet;
 			chckbxUpdateLengthAutomatically.setSelected(ruleSet
 					.shouldUpdateContentLength());
+	}
+	
+	private void configureTable(JTable table) {
+		table.setSelectionMode(0);
+		table.getTableHeader().setReorderingAllowed(false);
+		Enumeration<TableColumn> a = table.getColumnModel().getColumns();
+		for (int i = 0; a.hasMoreElements(); i++) {
+			TableColumn tb = (TableColumn) a.nextElement();
+			switch (i) {
+			case 0:
+				tb.setPreferredWidth(30);
+				break;
+			case 1:				
+				tb.setPreferredWidth(120);
+				break;
+			case 2:
+				tb.setPreferredWidth(120);
+				break;
+			case 3:
+				tb.setMinWidth(50);
+				tb.setMaxWidth(50);
+				break;
+			}
+
+		}
 	}
 
 }
