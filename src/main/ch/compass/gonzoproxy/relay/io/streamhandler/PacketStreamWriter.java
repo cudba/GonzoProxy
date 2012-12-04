@@ -12,7 +12,7 @@ import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
-import ch.compass.gonzoproxy.relay.io.wrapper.ApduWrapper;
+import ch.compass.gonzoproxy.relay.io.wrapper.PacketWrapper;
 
 public class PacketStreamWriter implements Runnable {
 
@@ -20,7 +20,7 @@ public class PacketStreamWriter implements Runnable {
 		TRAP, FORWARDING, SEND_ONE;
 	}
 
-	ApduWrapper wrapper;
+	PacketWrapper wrapper;
 
 	private OutputStream outputStream;
 	private SessionSettings sessionSettings;
@@ -150,6 +150,6 @@ public class PacketStreamWriter implements Runnable {
 
 	private void loadWrapper() {
 		ClassLoader cl = GonzoProxy.class.getClassLoader();
-		wrapper = (ApduWrapper) selectMode(cl, "wrapper");
+		wrapper = (PacketWrapper) selectMode(cl, "wrapper");
 	}
 }
