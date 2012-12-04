@@ -3,7 +3,7 @@ package ch.compass.gonzoproxy.relay.io.extractor;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 
-public interface ApduExtractor {
+public interface PacketExtractor {
 
 	/**
 	 * @param buffer contains the read bytes

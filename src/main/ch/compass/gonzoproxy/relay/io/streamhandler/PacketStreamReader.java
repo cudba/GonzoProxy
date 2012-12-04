@@ -10,14 +10,14 @@ import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
-import ch.compass.gonzoproxy.relay.io.extractor.ApduExtractor;
+import ch.compass.gonzoproxy.relay.io.extractor.PacketExtractor;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
 
 public class PacketStreamReader implements Runnable {
 	
 	private static final int BUFFER_SIZE = 1024;
 
-	private ApduExtractor extractor;
+	private PacketExtractor extractor;
 
 	private InputStream inputStream;
 	private SessionSettings sessionSettings;
@@ -83,7 +83,7 @@ public class PacketStreamReader implements Runnable {
 
 	private void loadExtractor() {
 		ClassLoader cl = GonzoProxy.class.getClassLoader();
-		extractor = (ApduExtractor) selectMode(cl, "extractor");
+		extractor = (PacketExtractor) selectMode(cl, "extractor");
 	}
 
 	private Object selectMode(ClassLoader cl, String helper) {

@@ -24,7 +24,7 @@ import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
-public class RelayManager implements Runnable {
+public class GonzoRelayService implements RelayService {
 
 	private boolean sessionIsAlive = false;
 
@@ -203,9 +203,6 @@ public class RelayManager implements Runnable {
 		sessionSettings.sendOneResponse();
 	}
 
-	public void setDataHandler(RelayDataHandler relayDataHandler) {
-		this.relayDataHandler = relayDataHandler;
-	}
 
 	public int getCurrentListenPort() {
 		return sessionSettings.getListenPort();

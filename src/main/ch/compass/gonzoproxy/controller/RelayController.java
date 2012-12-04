@@ -8,7 +8,8 @@ import java.util.ResourceBundle;
 
 import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.SessionModel;
-import ch.compass.gonzoproxy.relay.RelayManager;
+import ch.compass.gonzoproxy.relay.GonzoRelayService;
+import ch.compass.gonzoproxy.relay.RelayService;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
@@ -18,7 +19,7 @@ public class RelayController {
 	private String[] relayModes;
 
 	private Thread relayManagerThread;
-	private RelayManager relayManager = new RelayManager();
+	private RelayService relayManager = new GonzoRelayService();
 
 	public RelayController() {
 		loadPossibleRelayModes();
