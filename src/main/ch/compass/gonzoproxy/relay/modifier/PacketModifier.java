@@ -42,7 +42,7 @@ public class PacketModifier {
 				String modifiedPacketData = originalPacketData.replaceAll(
 						regex.getRegex(), regex.getReplaceWith());
 				if(!originalPacketData.equals(modifiedPacketData)){
-					packet.setOriginalPacketData(originalPacketData
+					packet.setOriginalPacketData(modifiedPacketData
 							.getBytes());
 					packet.setModified(true);
 				}
