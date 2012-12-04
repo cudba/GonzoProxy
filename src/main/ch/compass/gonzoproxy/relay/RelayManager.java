@@ -11,7 +11,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.ForwardingType;
@@ -94,7 +93,7 @@ public class RelayManager implements Runnable {
 			serverSocket = new ServerSocket(sessionSettings.getListenPort());
 			initiator = serverSocket.accept();
 		} catch (IOException e) {
-			sessionSettings.setSessionState(SessionState.CONNECTION_LOST);
+			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
 		}
 	}
 
@@ -134,17 +133,6 @@ public class RelayManager implements Runnable {
 	public void killSession() {
 		if (sessionIsAlive) {
 			threadPool.shutdownNow();
-			try {
-				if (threadPool.awaitTermination(2, TimeUnit.SECONDS)) {
-					System.out
-							.println("consumer / producer threads closed successfully");
-				} else {
-					System.out
-							.println("consumer / producer not closed in time");
-				}
-			} catch (InterruptedException e) {
-				System.out.println("error while closing worker threads");
-			}
 			closeSockets();
 			sessionSettings.setSessionState(SessionState.DISCONNECTED);
 		}
@@ -164,6 +152,7 @@ public class RelayManager implements Runnable {
 		sessionSettings.setSession(Integer.parseInt(portListen), remoteHost,
 				Integer.parseInt(remotePort));
 		sessionSettings.setMode(mode);
+		relayDataHandler.clearSessionData();
 	}
 
 	public void commandTrapChanged() {

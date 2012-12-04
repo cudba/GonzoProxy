@@ -149,4 +149,8 @@ public class RelayDataHandler implements Runnable {
 	public void persistRegex() throws IOException {
 		packetModifier.persistRegex();
 	}
+
+	public void clearSessionData() {
+		sessionModel.clearData();
+	}
 }

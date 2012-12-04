@@ -85,8 +85,7 @@ public class PacketStreamWriter implements Runnable {
 					break;
 				}
 			} catch (InterruptedException | IOException e) {
-				System.out.println("writer interrupted");
-				sessionSettings.setSessionState(SessionState.CONNECTION_LOST);
+				sessionSettings.setSessionState(SessionState.DISCONNECTED);
 				Thread.currentThread().interrupt();
 			}
 		}

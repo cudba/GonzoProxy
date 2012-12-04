@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import ch.compass.gonzoproxy.GonzoProxy;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.SessionSettings;
+import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.extractor.ApduExtractor;
 
@@ -42,8 +43,8 @@ public class PacketStreamReader implements Runnable {
 				streamReader.readPackets(inputStream, relayDataHandler,
 						forwardingType);
 		} catch (IOException e) {
-			System.out.println("closed");
 			Thread.currentThread().interrupt();
+			sessionSettings.setSessionState(SessionState.DISCONNECTED);
 		}
 	}
 

@@ -10,7 +10,6 @@ public class SessionSettings {
 	
 	public enum SessionState {
 		DISCONNECTED("Disconnected"),
-		CONNECTION_LOST("Connection lost"),
 		CONNECTION_REFUSED("Could not connect to target"),
 		CONNECTING("Waiting for initiator ..."),
 		FORWARDING("Forwarding"),
