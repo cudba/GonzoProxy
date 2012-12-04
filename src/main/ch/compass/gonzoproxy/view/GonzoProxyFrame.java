@@ -38,9 +38,9 @@ public class GonzoProxyFrame extends JFrame {
 	private JMenuItem mntmSave;
 	private JMenuItem mntmExit;
 	private JMenu mnTools;
-	private JMenuItem mntmModifier;
+	private JMenuItem mntmPostMod;
 	private JMenu mnHelp;
-	private JMenuItem mntmLoadTemplate;
+	private JMenuItem mntmPreMod;
 	private JMenuItem mntmAbout;
 	private JSplitPane splitPane;
 	private PacketListPanel panelList;
@@ -148,8 +148,8 @@ public class GonzoProxyFrame extends JFrame {
 		mnTools = new JMenu("Tools");
 		menuBar.add(mnTools);
 
-		mntmModifier = new JMenuItem("Post-Parse Modifier");
-		mntmModifier.addActionListener(new ActionListener() {
+		mntmPostMod = new JMenuItem("Post-Parse Modifier");
+		mntmPostMod.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -157,16 +157,24 @@ public class GonzoProxyFrame extends JFrame {
 				md.setVisible(true);
 			}
 		});
-		mnTools.add(mntmModifier);
+		mnTools.add(mntmPostMod);
 
-		mntmLoadTemplate = new JMenuItem("Pre-Parse Modifier");
-		mnTools.add(mntmLoadTemplate);
+		mntmPreMod = new JMenuItem("Pre-Parse Modifier");
+		mntmPreMod.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				RegexModifierDialog rmd = new RegexModifierDialog();
+				rmd.setVisible(true);
+			}
+		});
+		mnTools.add(mntmPreMod);
 
-		mnHelp = new JMenu("Help");
-		menuBar.add(mnHelp);
-
-		mntmAbout = new JMenuItem("About");
-		mnHelp.add(mntmAbout);
+//		mnHelp = new JMenu("Help");
+//		menuBar.add(mnHelp);
+//
+//		mntmAbout = new JMenuItem("About");
+//		mnHelp.add(mntmAbout);
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
