@@ -2,28 +2,34 @@ package ch.compass.gonzoproxy.relay;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.ForwardingType;
+import ch.compass.gonzoproxy.model.SessionModel;
 import ch.compass.gonzoproxy.model.SessionSettings;
 import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamReader;
 import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamWriter;
+import ch.compass.gonzoproxy.relay.modifier.FieldRule;
+import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
+import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class RelayManager implements Runnable {
-	
+
 	private boolean sessionIsAlive = false;
 
-	private ExecutorService threadPool; 
+	private ExecutorService threadPool;
 
 	private ServerSocket serverSocket;
 	private Socket initiator;
@@ -31,12 +37,11 @@ public class RelayManager implements Runnable {
 	private SessionSettings sessionSettings = new SessionSettings();;
 
 	private RelayDataHandler relayDataHandler = new RelayDataHandler();
-
+	
 	@Override
 	public void run() {
 		threadPool = Executors.newFixedThreadPool(5);
 		threadPool.execute(relayDataHandler);
-		sessionSettings.setSessionState(SessionState.CONNECTING);
 		establishConnection();
 		initProducerConsumer();
 		sessionIsAlive = true;
@@ -48,32 +53,48 @@ public class RelayManager implements Runnable {
 			initCommandStreamHandlers();
 			initResponseStreamHandlers();
 		} catch (IOException e) {
-			System.out.println("manager closed");
 			sessionSettings.setSessionState(SessionState.DISCONNECTED);
+			System.out
+					.println("session is beeing killed by manager, io exception");
+			killSession();
 		}
 	}
 
 	private void establishConnection() {
 		try {
-			serverSocket = new ServerSocket(sessionSettings.getListenPort());
-			initiator = serverSocket.accept();
-			target = new Socket(sessionSettings.getRemoteHost(),
-					sessionSettings.getRemotePort());
-		} catch (IOException openSocket) {
-			try {
-				initiator.close();
-				target.close();
-				sessionSettings.setSessionState(SessionState.DISCONNECTED);
-			} catch (IOException closeSocket) {
-				sessionSettings.setSessionState(SessionState.DISCONNECTED);
-			}
-
-		} finally {
+			awaitConnection();
+			connectToTarget();
+			sessionSettings.setSessionState(SessionState.CONNECTED);
+		}finally {
 			try {
 				serverSocket.close();
 			} catch (IOException e) {
-				// TODO: LOG ?
+				//log server socket not closed ?
 			}
+		}
+	}
+
+	private void connectToTarget() {
+		try {
+			target = new Socket(sessionSettings.getRemoteHost(),
+					sessionSettings.getRemotePort());
+		} catch (IOException e) {
+			try {
+				initiator.close();
+			} catch (IOException e1) {
+			}
+			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
+
+		}
+	}
+
+	private void awaitConnection() {
+		sessionSettings.setSessionState(SessionState.CONNECTING);
+		try {
+			serverSocket = new ServerSocket(sessionSettings.getListenPort());
+			initiator = serverSocket.accept();
+		} catch (IOException e) {
+			sessionSettings.setSessionState(SessionState.CONNECTION_LOST);
 		}
 	}
 
@@ -83,10 +104,12 @@ public class RelayManager implements Runnable {
 				initiator.getInputStream());
 		OutputStream outputStream = new BufferedOutputStream(
 				target.getOutputStream());
-		PacketStreamReader commandStreamReader = new PacketStreamReader(inputStream,
-				relayDataHandler, sessionSettings, ForwardingType.COMMAND);
-		PacketStreamWriter commandStreamWriter = new PacketStreamWriter(outputStream,
-				relayDataHandler, sessionSettings, ForwardingType.COMMAND);
+		PacketStreamReader commandStreamReader = new PacketStreamReader(
+				inputStream, relayDataHandler, sessionSettings,
+				ForwardingType.COMMAND);
+		PacketStreamWriter commandStreamWriter = new PacketStreamWriter(
+				outputStream, relayDataHandler, sessionSettings,
+				ForwardingType.COMMAND);
 
 		threadPool.execute(commandStreamReader);
 		threadPool.execute(commandStreamWriter);
@@ -97,8 +120,9 @@ public class RelayManager implements Runnable {
 				target.getInputStream());
 		OutputStream outputStream = new BufferedOutputStream(
 				initiator.getOutputStream());
-		PacketStreamReader responseStreamReader = new PacketStreamReader(inputStream,
-				relayDataHandler, sessionSettings, ForwardingType.RESPONSE);
+		PacketStreamReader responseStreamReader = new PacketStreamReader(
+				inputStream, relayDataHandler, sessionSettings,
+				ForwardingType.RESPONSE);
 		PacketStreamWriter responseStreamWriter = new PacketStreamWriter(
 				outputStream, relayDataHandler, sessionSettings,
 				ForwardingType.RESPONSE);
@@ -109,7 +133,6 @@ public class RelayManager implements Runnable {
 
 	public void killSession() {
 		if (sessionIsAlive) {
-			closeSockets();
 			threadPool.shutdownNow();
 			try {
 				if (threadPool.awaitTermination(2, TimeUnit.SECONDS)) {
@@ -122,6 +145,7 @@ public class RelayManager implements Runnable {
 			} catch (InterruptedException e) {
 				System.out.println("error while closing worker threads");
 			}
+			closeSockets();
 			sessionSettings.setSessionState(SessionState.DISCONNECTED);
 		}
 	}
@@ -206,6 +230,48 @@ public class RelayManager implements Runnable {
 
 	public void addSessionStateListener(StateListener stateListener) {
 		sessionSettings.addSessionStateListener(stateListener);
+	}
+
+	public SessionModel getSessionModel() {
+		return relayDataHandler.getSessionModel();
+	}
+
+	public void reParse() {
+		relayDataHandler.reParse();
+	}
+
+	public void persistSessionData(File file) throws IOException {
+		relayDataHandler.persistSessionData(file);
+	}
+
+	public void loadPacketsFromFile(File file) throws ClassNotFoundException, IOException {
+		relayDataHandler.loadPacketsFromFile(file);
+	}
+
+	public ArrayList<PacketRule> getPacketRules() {
+		return relayDataHandler.getPacketRules();
+	}
+
+	public ArrayList<PacketRegex> getPacketRegex() {
+		return relayDataHandler.getPacketRegex();
+	}
+
+	public void addRule(String packetName, FieldRule fieldRule,
+			Boolean updateLength) {
+		relayDataHandler.addRule(packetName, fieldRule, updateLength);
+		
+	}
+
+	public void addRegex(PacketRegex packetRegex, boolean isActive) {
+		relayDataHandler.addRegex(packetRegex, isActive);
+	}
+
+	public void persistRules() throws IOException {
+		relayDataHandler.persistRules();
+	}
+
+	public void persistRegex() throws IOException {
+		relayDataHandler.persistRegex();
 	}
 
 }

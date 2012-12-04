@@ -10,11 +10,14 @@ public class SessionSettings {
 	
 	public enum SessionState {
 		DISCONNECTED("Disconnected"),
-		CONNECTING("Connecting..."),
+		CONNECTION_LOST("Connection lost"),
+		CONNECTION_REFUSED("Could not connect to target"),
+		CONNECTING("Waiting for initiator ..."),
 		FORWARDING("Forwarding"),
 		TRAP("Trapped"),
 		COMMAND_TRAP("Command trapped"),
-		RESPONSE_TRAP("Response trapped");
+		RESPONSE_TRAP("Response trapped"), 
+		CONNECTED("Connection established");
 		
 		private String description;
 
@@ -98,7 +101,7 @@ public class SessionSettings {
 
 	private void notifyStateListeners() {
 		for (StateListener stateListener : stateListeners) {
-			stateListener.sessionStateChanged(sessionState.getDescription());
+			stateListener.sessionStateChanged(sessionState);
 		}
 	}
 

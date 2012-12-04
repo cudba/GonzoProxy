@@ -18,7 +18,7 @@ public class PacketModifierTest {
 		FieldRule rule = new FieldRule("Modified Field", "0f", "a5");
 		packetModifier.addRule("Modified Packet", rule, false);
 
-		FieldRule actualAddedRule = packetModifier.getRuleSets().get(0).getRules()
+		FieldRule actualAddedRule = packetModifier.getPacketRule().get(0).getRules()
 				.get(0);
 		assertEquals(rule, actualAddedRule);
 	}
@@ -33,12 +33,12 @@ public class PacketModifierTest {
 		FieldRule addedRule = new FieldRule("Modified Field", "0f", "ff");
 		packetModifier.addRule("Modified Packet", addedRule, false);
 		
-		int actualRuleSetCount = packetModifier.getRuleSets().size();
-		int actualRuleCount = packetModifier.getRuleSets().get(0).getRules().size();
+		int actualRuleSetCount = packetModifier.getPacketRule().size();
+		int actualRuleCount = packetModifier.getPacketRule().get(0).getRules().size();
 		
 		assertEquals(1, actualRuleSetCount);
 		assertEquals(2, actualRuleCount);
-		FieldRule actualAddedRule = packetModifier.getRuleSets().get(0)
+		FieldRule actualAddedRule = packetModifier.getPacketRule().get(0)
 				.getRules().get(0);
 		assertEquals(addedRule, actualAddedRule);
 	}

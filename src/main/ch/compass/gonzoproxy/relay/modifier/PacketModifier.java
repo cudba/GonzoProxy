@@ -36,13 +36,16 @@ public class PacketModifier {
 	public void modifyByRegex(Packet packet) {
 		for (PacketRegex regex : packetsRegex) {
 			if (regex.isActive()) {
+				
 				String originalPacketData = new String(
 						packet.getOriginalPacketData());
-				originalPacketData = originalPacketData.replaceAll(
+				String modifiedPacketData = originalPacketData.replaceAll(
 						regex.getRegex(), regex.getReplaceWith());
-				packet.setOriginalPacketData(originalPacketData
-						.getBytes());
-				packet.setModified(true);
+				if(!originalPacketData.equals(modifiedPacketData)){
+					packet.setOriginalPacketData(originalPacketData
+							.getBytes());
+					packet.setModified(true);
+				}
 			}
 		}
 	}
@@ -66,11 +69,11 @@ public class PacketModifier {
 		packetsRegex.add(regex);
 	}
 
-	public ArrayList<PacketRule> getRuleSets() {
+	public ArrayList<PacketRule> getPacketRule() {
 		return packetRules;
 	}
 	
-	public ArrayList<PacketRegex> getPacketsRegex() {
+	public ArrayList<PacketRegex> getPacketRegex() {
 		return packetsRegex;
 	}
 

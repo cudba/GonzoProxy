@@ -1,5 +1,7 @@
 package ch.compass.gonzoproxy.relay.io;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TimeUnit;
@@ -7,8 +9,12 @@ import java.util.concurrent.TimeUnit;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
+import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
+import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
+import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.relay.parser.ParsingHandler;
+import ch.compass.gonzoproxy.utils.PersistingUtils;
 
 public class RelayDataHandler implements Runnable {
 
@@ -18,18 +24,16 @@ public class RelayDataHandler implements Runnable {
 	private LinkedTransferQueue<Packet> responseSenderQueue = new LinkedTransferQueue<Packet>();
 
 	private ParsingHandler parsingHandler = new ParsingHandler();
-	private PacketModifier packetModifier;
+	private PacketModifier packetModifier = new PacketModifier();
 
-	private SessionModel sessionModel;
+	private SessionModel sessionModel = new SessionModel();
 
 	@Override
 	public void run() {
 		handleRelayData();
 	}
 
-	public void setSessionParameters(SessionModel sessionModel,
-			PacketModifier packetModifier) {
-		this.sessionModel = sessionModel;
+	public void setPacketModifier(PacketModifier packetModifier) {
 		this.packetModifier = packetModifier;
 	}
 
@@ -82,9 +86,9 @@ public class RelayDataHandler implements Runnable {
 
 	}
 
-	public void reParse(ArrayList<Packet> loadedPacketStream) {
+	public void reParse() {
 
-		for (Packet packet : loadedPacketStream) {
+		for (Packet packet : sessionModel.getPacketList()) {
 			packet.clearFields();
 			parsingHandler.tryParse(packet);
 		}
@@ -106,5 +110,43 @@ public class RelayDataHandler implements Runnable {
 			break;
 		}
 		return sendingPacket;
+	}
+
+	public SessionModel getSessionModel() {
+		return sessionModel;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void loadPacketsFromFile(File file) throws ClassNotFoundException, IOException {
+			sessionModel.addList((ArrayList<Packet>) PersistingUtils.loadFile(file));
+	}
+
+	public void persistSessionData(File file) throws IOException {
+			PersistingUtils.saveFile(file, sessionModel.getPacketList());
+	}
+
+	public ArrayList<PacketRule> getPacketRules() {
+		return packetModifier.getPacketRule();
+	}
+
+	public ArrayList<PacketRegex> getPacketRegex() {
+		return packetModifier.getPacketRegex();
+	}
+
+	public void addRule(String packetName, FieldRule fieldRule,
+			Boolean updateLength) {
+		packetModifier.addRule(packetName, fieldRule, updateLength);
+	}
+
+	public void addRegex(PacketRegex packetRegex, boolean isActive) {
+		packetModifier.addRegex(packetRegex, isActive);
+	}
+
+	public void persistRules() throws IOException {
+		packetModifier.persistRules();
+	}
+
+	public void persistRegex() throws IOException {
+		packetModifier.persistRegex();
 	}
 }

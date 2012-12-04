@@ -10,6 +10,7 @@ import ch.compass.gonzoproxy.listener.TrapListener;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionSettings;
+import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.wrapper.ApduWrapper;
 
@@ -84,6 +85,8 @@ public class PacketStreamWriter implements Runnable {
 					break;
 				}
 			} catch (InterruptedException | IOException e) {
+				System.out.println("writer interrupted");
+				sessionSettings.setSessionState(SessionState.CONNECTION_LOST);
 				Thread.currentThread().interrupt();
 			}
 		}

@@ -22,6 +22,8 @@ import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.PacketDetailTableModel;
 import ch.compass.gonzoproxy.model.Field;
 import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
+
 import javax.swing.SwingConstants;
 
 public class PacketDetailPanel extends JPanel {
@@ -56,8 +58,8 @@ public class PacketDetailPanel extends JPanel {
 				new StateListener() {
 
 					@Override
-					public void sessionStateChanged(String state) {
-						lblStatus.setText(state);
+					public void sessionStateChanged(SessionState state) {
+						lblStatus.setText(state.getDescription());
 						updateSessionPrefs();
 					}
 				});

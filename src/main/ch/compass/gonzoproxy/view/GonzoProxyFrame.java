@@ -93,7 +93,7 @@ public class GonzoProxyFrame extends JFrame {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					if (file.getName().endsWith(".gonzo")) {
-						controller.openPackets(file);
+						controller.loadPacketsFromFile(file);
 					}else{
 						JOptionPane.showMessageDialog(GonzoProxyFrame.this,
 							    "Wrong filetype, .gonzo expected",
@@ -117,7 +117,7 @@ public class GonzoProxyFrame extends JFrame {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					if (file.getName().endsWith(".gonzo")) {
-						controller.persistPackets(file);
+						controller.persistSessionData(file);
 					}else{
 						JOptionPane.showMessageDialog(GonzoProxyFrame.this,
 							    "Wrong filetype, .gonzo expected",
