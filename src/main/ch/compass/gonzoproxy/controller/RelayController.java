@@ -17,6 +17,7 @@ import ch.compass.gonzoproxy.relay.RelayManager;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
+import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.utils.PersistingUtils;
 
@@ -24,30 +25,13 @@ public class RelayController {
 
 	private PacketModifier packetModifier = new PacketModifier();
 	private SessionModel sessionModel = new SessionModel();
-	private String[] modes;
+	private String[] relayModes;
 
 	private RelayManager relayManager = new RelayManager();
 
 	public RelayController() {
-		loadModes();
+		loadPossibleRelayModes();
 	}
-
-	private void loadModes() {
-		ArrayList<String> inputModes = new ArrayList<>();
-
-		ResourceBundle bundle = ResourceBundle.getBundle("plugin");
-
-		Enumeration<String> keys = bundle.getKeys();
-		while (keys.hasMoreElements()) {
-			String element = keys.nextElement();
-			if (element.contains("name")) {
-				inputModes.add(bundle.getString(element));
-			}
-		}
-
-		this.modes = inputModes.toArray(new String[2]);
-	}
-
 
 	public void newSession(String portListen, String remoteHost,
 			String remotePort, String mode) {
@@ -55,13 +39,6 @@ public class RelayController {
 		prepareSession();
 		relayManager.generateNewSessionParameters(portListen, remoteHost, remotePort, mode);
 		new Thread(relayManager).start();
-	}
-
-	private void prepareSession() {
-		RelayDataHandler relayDataHandler = new RelayDataHandler();
-		relayDataHandler.setSessionParameters(sessionModel,
-				packetModifier);
-		relayManager.setDataHandler(relayDataHandler);
 	}
 
 	public void stopRunningSession() {
@@ -72,12 +49,30 @@ public class RelayController {
 		return sessionModel;
 	}
 
+	public String[] getPossibleRelayModes() {
+		return relayModes;
+	}
+
+	public ArrayList<PacketRule> getPacketRules() {
+		return packetModifier.getRuleSets();
+	}
+	
+	public ArrayList<PacketRegex> getPacketRegex() {
+		return packetModifier.getPacketsRegex();
+	}
+
 	public void addModifierRule(String packetName, String fieldName,
 			String originalValue, String replacedValue, Boolean updateLength) {
 		FieldRule fieldRule = new FieldRule(fieldName, originalValue,
 				replacedValue);
 		packetModifier.addRule(packetName, fieldRule, updateLength);
 		persistRules();
+	}
+
+	public void addRegex(String regex, String replaceWith, boolean isActive){
+		PacketRegex packetRegex = new PacketRegex(regex, replaceWith);
+		packetModifier.addRegex(packetRegex, isActive);
+		persistRegex();
 	}
 
 	public void commandTrapChanged() {
@@ -96,14 +91,7 @@ public class RelayController {
 		relayManager.sendOneRes();
 	}
 
-	public String[] getModes() {
-		return modes;
-	}
-	
-	public void reparsePackets(){
-		RelayDataHandler fakedDataHandler = new RelayDataHandler();
-		fakedDataHandler.reParse(sessionModel.getPacketList());
-	}
+	//TODO: UNLINK FROM VIEW AND REMOVE
 	
 	@SuppressWarnings("unchecked")
 	public void openFile(File file) {
@@ -132,44 +120,6 @@ public class RelayController {
 		}
 	}
 
-//	public SessionSettings getSessionSettings() {
-//		return sessionSettings;
-//	}
-
-	public ArrayList<PacketRule> getPacketRules() {
-		return packetModifier.getRuleSets();
-	}
-
-	public void persistRules() {
-		try {
-			packetModifier.persistRules();
-		} catch (IOException e) {
-			//TODO: save failed notification
-			e.printStackTrace();
-		}
-		
-	}
-	
-	public void persistPackets(File file){
-		try {
-			PersistingUtils.saveFile(file, sessionModel.getPacketList());
-		} catch (IOException e) {
-			//TODO: SAVE FAILED
-			e.printStackTrace();
-		}
-
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void openPackets(File file){
-		try {
-			sessionModel.addList((ArrayList<Packet>) PersistingUtils.loadFile(file));
-		} catch (ClassNotFoundException | IOException e) {
-			// TODO couldnt open file
-			e.printStackTrace();
-		}
-	}
-
 	public int getCurrentListenPort() {
 		return relayManager.getCurrentListenPort();
 	}
@@ -184,6 +134,70 @@ public class RelayController {
 
 	public void addSessionStateListener(StateListener stateListener) {
 		relayManager.addSessionStateListener(stateListener);
+	}
+
+	public void reparsePackets(){
+		RelayDataHandler fakedDataHandler = new RelayDataHandler();
+		fakedDataHandler.reParse(sessionModel.getPacketList());
+	}
+
+	public void persistPackets(File file){
+		try {
+			PersistingUtils.saveFile(file, sessionModel.getPacketList());
+		} catch (IOException e) {
+			//TODO: SAVE FAILED
+		}
+	
+	}
+
+	@SuppressWarnings("unchecked")
+	public void openPackets(File file){
+		try {
+			sessionModel.addList((ArrayList<Packet>) PersistingUtils.loadFile(file));
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO couldnt open file
+			e.printStackTrace();
+		}
+	}
+
+	public void persistRules() {
+		try {
+			packetModifier.persistRules();
+		} catch (IOException e) {
+			//TODO: save failed notification
+		}
+		
+	}
+
+	public void persistRegex(){
+		try {
+			packetModifier.persistRegex();
+		} catch (IOException e) {
+			//TODO: PERSISTNG FAIL
+		}
+	}
+
+	private void prepareSession() {
+		RelayDataHandler relayDataHandler = new RelayDataHandler();
+		relayDataHandler.setSessionParameters(sessionModel,
+				packetModifier);
+		relayManager.setDataHandler(relayDataHandler);
+	}
+
+	private void loadPossibleRelayModes() {
+		ArrayList<String> inputModes = new ArrayList<>();
+	
+		ResourceBundle bundle = ResourceBundle.getBundle("plugin");
+	
+		Enumeration<String> keys = bundle.getKeys();
+		while (keys.hasMoreElements()) {
+			String element = keys.nextElement();
+			if (element.contains("name")) {
+				inputModes.add(bundle.getString(element));
+			}
+		}
+	
+		this.relayModes = inputModes.toArray(new String[2]);
 	}
 
 }

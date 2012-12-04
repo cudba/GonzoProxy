@@ -1,60 +1,54 @@
 package ch.compass.gonzoproxy.relay.modifier;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import ch.compass.gonzoproxy.model.Field;
 import ch.compass.gonzoproxy.model.Packet;
-import ch.compass.gonzoproxy.utils.PersistingUtils;
 import ch.compass.gonzoproxy.utils.PacketUtils;
+import ch.compass.gonzoproxy.utils.PersistingUtils;
 
 public class PacketModifier {
 
-
 	private static final String REGEX_FILE = "resources/regex_rules.dat";
 	private static final String MODIFIER_FILE = "resources/modifier_rules.dat";
-	
+
 	private ArrayList<PacketRule> packetRules = new ArrayList<PacketRule>();
-	private HashMap<String, Boolean> packetRegex = new HashMap<String, Boolean>();
-	
+	private ArrayList<PacketRegex> packetsRegex = new ArrayList<PacketRegex>();
+
 	public PacketModifier() {
-		
-		// freaks out with tests cause used same command and rules, have to fix it first ;)
+
+		// freaks out with tests cause used same command and rules, have to fix
+		// it first ;)
 		loadModifiers();
-//		loadRegex();
+		loadRegex();
 	}
 
-	public Packet modifyByRule(Packet originalPacket) {
+	public void modifyByRule(Packet originalPacket) {
 		for (PacketRule modifier : packetRules) {
 			if (ruleSetMatches(modifier, originalPacket)) {
-				return applyRules(modifier, originalPacket);
+				applyRules(modifier, originalPacket);
 			}
 		}
-	
-		return originalPacket;
 	}
 
-	public Packet modifyByRegex(Packet packet) {
-		Packet modifiedPacket = packet.clone();
-		//TODO: naming / regex
-		for (String regex : packetRegex.keySet()) {
-			if(packetRegex.get(regex)){
-				String originalPacketData = new String(modifiedPacket.getOriginalPacketData());
-				originalPacketData = originalPacketData.replaceAll(regex, "");
-				modifiedPacket.setOriginalPacketData(originalPacketData.getBytes());
-				modifiedPacket.setModified(true);
+	public void modifyByRegex(Packet packet) {
+		for (PacketRegex regex : packetsRegex) {
+			if (regex.isActive()) {
+				String originalPacketData = new String(
+						packet.getOriginalPacketData());
+				originalPacketData = originalPacketData.replaceAll(
+						regex.getRegex(), regex.getReplaceWith());
+				packet.setOriginalPacketData(originalPacketData
+						.getBytes());
+				packet.setModified(true);
 			}
 		}
-		return modifiedPacket;
 	}
 
-	public void addRule(String packetName, FieldRule fieldRule, Boolean updateLength) {
+	public void addRule(String packetName, FieldRule fieldRule,
+			Boolean updateLength) {
 		PacketRule existingRuleSet = findRuleSet(packetName);
 		if (existingRuleSet != null) {
 			existingRuleSet.add(fieldRule);
@@ -66,14 +60,18 @@ public class PacketModifier {
 			createdRuleSet.shouldUpdateLength(updateLength);
 		}
 	}
-	
-	public void addRegex(String regex, Boolean isActive){
-		packetRegex.put(regex, isActive);
-		saveRegex();
+
+	public void addRegex(PacketRegex regex, Boolean isActive) {
+		regex.setActive(isActive);
+		packetsRegex.add(regex);
 	}
 
 	public ArrayList<PacketRule> getRuleSets() {
 		return packetRules;
+	}
+	
+	public ArrayList<PacketRegex> getPacketsRegex() {
+		return packetsRegex;
 	}
 
 	private PacketRule findRuleSet(String packetName) {
@@ -84,49 +82,49 @@ public class PacketModifier {
 		return null;
 	}
 
-	private Packet applyRules(PacketRule modifier, Packet originalPacket) {
+	private void applyRules(PacketRule modifier, Packet packet) {
 
-		Packet modifiedPacket = originalPacket.clone();
 
-		for (Field field : modifiedPacket.getFields()) {
+		for (Field field : packet.getFields()) {
 			FieldRule rule = modifier.findMatchingRule(field);
 
 			if (rule != null && rule.isActive()) {
 				int fieldLengthDiff;
 
 				if (rule.getOriginalValue().isEmpty()) {
-					fieldLengthDiff= computeLengthDifference(field.getValue(),
+					fieldLengthDiff = computeLengthDifference(field.getValue(),
 							rule.getReplacedValue());
-					
-					updatePacketLenght(modifiedPacket, fieldLengthDiff);
+
+					updatePacketLenght(packet, fieldLengthDiff);
 
 					if (shouldUpdateContentLength(modifier, field)) {
-						updateContentLengthField(modifiedPacket,
+						updateContentLengthField(packet,
 								fieldLengthDiff);
 					}
 					field.setValue(rule.getReplacedValue());
 
 				} else {
-					fieldLengthDiff = computeLengthDifference(rule.getOriginalValue(),
-							rule.getReplacedValue());
-					
-					updatePacketLenght(modifiedPacket, fieldLengthDiff);
-					
+					fieldLengthDiff = computeLengthDifference(
+							rule.getOriginalValue(), rule.getReplacedValue());
+
+					updatePacketLenght(packet, fieldLengthDiff);
+
 					if (shouldUpdateContentLength(modifier, field)) {
-						updateContentLengthField(modifiedPacket,
+						updateContentLengthField(packet,
 								fieldLengthDiff);
 					}
 					field.replaceValue(rule.getOriginalValue(),
 							rule.getReplacedValue());
 				}
-				modifiedPacket.setModified(true);
+				packet.setModified(true);
 			}
 		}
-		return modifiedPacket;
 	}
 
 	private boolean shouldUpdateContentLength(PacketRule modifier, Field field) {
-		return modifier.shouldUpdateContentLength() && field.getName().toUpperCase().contains(PacketUtils.CONTENT_DATA);
+		return modifier.shouldUpdateContentLength()
+				&& field.getName().toUpperCase()
+						.contains(PacketUtils.CONTENT_DATA);
 	}
 
 	private Field findContentLengthField(Packet packet) {
@@ -173,41 +171,33 @@ public class PacketModifier {
 		}
 		return sb.toString();
 	}
-	
-	private void saveRegex(){
-		 try {
-	        	FileOutputStream fout = new FileOutputStream(REGEX_FILE);
-	        	ObjectOutputStream oos = new ObjectOutputStream(fout);
-				oos.writeObject(packetRegex);
-				oos.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+
+	@SuppressWarnings("unchecked")
+	private void loadModifiers() {
+		File modifierFile = new File(MODIFIER_FILE);
+		try {
+			packetRules = (ArrayList<PacketRule>) PersistingUtils
+					.loadFile(modifierFile);
+
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO: LOG FILE LOAD PROB
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void loadModifiers(){
-		File modifierFile = new File(MODIFIER_FILE);
+	private void loadRegex() {
+		File regexFile = new File(REGEX_FILE);
 		try {
-			packetRules = (ArrayList<PacketRule>) PersistingUtils.loadFile(modifierFile);
-			
+			packetsRegex = (ArrayList<PacketRegex>) PersistingUtils
+					.loadFile(regexFile);
 		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
+			// TODO: LOG FILE LOAD PROB
 		}
 	}
-	
-	@SuppressWarnings("unchecked")
-	private void loadRegex() {
-		try {
-			File regexFile = new File(REGEX_FILE);
-			FileInputStream fin = new FileInputStream(regexFile);
-			ObjectInputStream ois = new ObjectInputStream(fin);
-			packetRegex = (HashMap<String, Boolean>) ois.readObject();
-			ois.close();
-		} catch (IOException | ClassNotFoundException e) {
-			packetRegex = new HashMap<String, Boolean>();
-			System.out.println("Regex File not found !");
-		}
+
+	public void persistRegex() throws IOException {
+		File regexFile = new File(REGEX_FILE);
+		PersistingUtils.saveFile(regexFile, packetsRegex);
 	}
 
 	public void persistRules() throws IOException {

@@ -71,7 +71,7 @@ public class NewSessionDialog extends JDialog {
 		contentPane.add(lblSelectInputMethod, gbc_lblSelectInputMethod);
 
 		comboBoxMode = new JComboBox<String>();
-		comboBoxMode.setModel(new DefaultComboBoxModel<String>(controller.getModes()));
+		comboBoxMode.setModel(new DefaultComboBoxModel<String>(controller.getPossibleRelayModes()));
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.insets = new Insets(0, 0, 5, 0);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;

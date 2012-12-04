@@ -61,16 +61,13 @@ public class PacketModifierTest {
 		receivedPacket.addField(new Field("Modified Field", "0f",
 				"FooDescriptoin"));
 
-		Packet modifiedPacket = packetModifier.modifyByRule(receivedPacket);
+		packetModifier.modifyByRule(receivedPacket);
 
 		String expectedReplacedValue = rule.getReplacedValue();
-		String actualReplacedValue = modifiedPacket.getFields().get(1)
+		String actualReplacedValue = receivedPacket.getFields().get(1)
 				.getValue();
-		String expectedOriginalValue = "0f";
-		String actualOriginalValue = receivedPacket.getFields().get(1).getValue();
 
 		assertEquals(expectedReplacedValue, actualReplacedValue);
-		assertEquals(expectedOriginalValue, actualOriginalValue);
 
 	}
 
@@ -92,16 +89,13 @@ public class PacketModifierTest {
 		receivedPacket.addField(new Field("Modified Field", "0f c7",
 				"FooDescriptoin"));
 
-		Packet modifiedPacket = packetModifier.modifyByRule(receivedPacket);
+		packetModifier.modifyByRule(receivedPacket);
 
 		String expectedReplacedValue = rule.getReplacedValue();
-		String actualReplacedValue = modifiedPacket.getFields().get(1).getValue();
+		String actualReplacedValue = receivedPacket.getFields().get(1).getValue();
 		
-		String expectedOriginalValue = "0f c7";
-		String actualOriginalValue = receivedPacket.getFields().get(1).getValue();
 
 		assertEquals(expectedReplacedValue, actualReplacedValue);
-		assertEquals(expectedOriginalValue, actualOriginalValue);
 
 	}
 	
@@ -123,10 +117,10 @@ public class PacketModifierTest {
 		receivedPacket.addField(new Field("Modified Field", "0f",
 				"FooDescriptoin"));
 
-		Packet modifiedPacket = packetModifier.modifyByRule(receivedPacket);
+		packetModifier.modifyByRule(receivedPacket);
 
 		String expectedValue = "0f";
-		String actualValue = modifiedPacket.getFields().get(1).getValue();
+		String actualValue = receivedPacket.getFields().get(1).getValue();
 
 		assertEquals(expectedValue, actualValue);
 
@@ -137,7 +131,7 @@ public class PacketModifierTest {
 
 		PacketModifier packetModifier = new PacketModifier();
 
-		FieldRule rule = new FieldRule("Modified Field", "0f c7", "a5");
+		FieldRule rule = new FieldRule("Foo Content", "0f c7", "a5");
 
 		packetModifier.addRule("Modified Packet", rule, true);
 
@@ -147,29 +141,26 @@ public class PacketModifierTest {
 		receivedPacket.setDescription("Modified Packet");
 
 		receivedPacket.addField(new Field("Lc", "03", "Content Length"));
-		receivedPacket.addField(new Field("Modified Field", "0f c7 b8",
+		receivedPacket.addField(new Field("Foo Content", "0f c7 b8",
 				"FooDescriptoin"));
 		receivedPacket.setSize(3);
 
-		Packet modifiedPacket = packetModifier.modifyByRule(receivedPacket);
+		packetModifier.modifyByRule(receivedPacket);
 
 		String expectedReplacedValue = rule.getReplacedValue() + " b8";
-		String actualReplacedValue = modifiedPacket.getFields().get(1).getValue();
+		String actualReplacedValue = receivedPacket.getFields().get(1).getValue();
 		
-		String expectedOriginalValue = "0f c7 b8";
-		String actualOriginalValue = receivedPacket.getFields().get(1).getValue();
 		
 		Field contentLengthField = new Field();
 
-		for (Field field : modifiedPacket.getFields()) {
+		for (Field field : receivedPacket.getFields()) {
 			if(field.getName().equals(PacketUtils.CONTENT_LENGTH_FIELD))
 				contentLengthField = field;
 		}
 		
 		assertEquals(expectedReplacedValue, actualReplacedValue);
-		assertEquals(expectedOriginalValue, actualOriginalValue);
 		assertEquals("02", contentLengthField.getValue());
-		assertEquals(2, modifiedPacket.getSize());
+		assertEquals(2, receivedPacket.getSize());
 	}
 	
 	@Test
@@ -177,7 +168,7 @@ public class PacketModifierTest {
 
 		PacketModifier packetModifier = new PacketModifier();
 
-		FieldRule rule = new FieldRule("Modified Field", "0f c7", "a5 c7 84");
+		FieldRule rule = new FieldRule("Foo Content", "0f c7", "a5 c7 84");
 
 		packetModifier.addRule("Modified Packet", rule, false);
 
@@ -187,49 +178,49 @@ public class PacketModifierTest {
 		receivedPacket.setDescription("Modified Packet");
 
 		receivedPacket.addField(new Field("Lc", "03", "Content Length"));
-		receivedPacket.addField(new Field("Modified Field", "0f c7 b8",
+		receivedPacket.addField(new Field("Foo Content", "0f c7 b8",
 				"FooDescriptoin"));
 		receivedPacket.setSize(3);
 
-		Packet modifiedPacket = packetModifier.modifyByRule(receivedPacket);
+		packetModifier.modifyByRule(receivedPacket);
 
 		String expectedReplacedValue = rule.getReplacedValue() + " b8";
-		String actualReplacedValue = modifiedPacket.getFields().get(1).getValue();
+		String actualReplacedValue = receivedPacket.getFields().get(1).getValue();
 		
-		String expectedOriginalValue = "0f c7 b8";
-		String actualOriginalValue = receivedPacket.getFields().get(1).getValue();
 		
 		Field contentLengthField = new Field();
 
-		for (Field field : modifiedPacket.getFields()) {
+		for (Field field : receivedPacket.getFields()) {
 			if(field.getName().equals(PacketUtils.CONTENT_LENGTH_FIELD))
 				contentLengthField = field;
 		}
 		
 		assertEquals(expectedReplacedValue, actualReplacedValue);
-		assertEquals(expectedOriginalValue, actualOriginalValue);
 		assertEquals("03", contentLengthField.getValue());
-		assertEquals(4, modifiedPacket.getSize());
+		assertEquals(4, receivedPacket.getSize());
 	}
 	
-//	@Test
-//	public void testModifyByRegex() {
-//
-//		PacketModifier packetModifier = new PacketModifier();
-//
-//		String fakePlainApdu = "00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-//		String libnfcInput = "C-APDU 000d: 00 a4 04 00 07 d2 76 00 00 85 01 01 00";
-//		Packet receivedPacket = new Packet(libnfcInput.getBytes());
-//		receivedPacket.setOriginalPacketData(fakePlainApdu.getBytes());
-//		receivedPacket.setDescription("Modified Packet");
-//
-//		receivedPacket.addField(new Field("Lc", "03", "Content Length"));
-//		receivedPacket.addField(new Field("Modified Field", "0f c7 b8",
-//				"FooDescriptoin"));
-//		receivedPacket.setSize(3);
-//		
-//		Packet modifiedPacket = packetModifier.modifyByRegex(receivedPacket);
-//	}
+	@Test
+	public void testModifyByRegex() {
+
+		PacketModifier packetModifier = new PacketModifier();
+
+		String fakePlainApdu = "00 a4 04 00 07 d2 76 00 00 85 01 01 00";
+		Packet receivedPacket = new Packet();
+		receivedPacket.setOriginalPacketData(fakePlainApdu.getBytes());
+		receivedPacket.setDescription("Modified Packet");
+		receivedPacket.setSize(3);
+		
+		PacketRegex regex = new PacketRegex("a4 04", "ff ff cc cc");
+		packetModifier.addRegex(regex, true);
+		
+		packetModifier.modifyByRegex(receivedPacket);
+		
+		String expectedValue = "00 ff ff cc cc 00 07 d2 76 00 00 85 01 01 00";
+		String actualValue = new String(receivedPacket.getOriginalPacketData());
+		
+		assertEquals(expectedValue, actualValue);
+	}
 	
 	
 }

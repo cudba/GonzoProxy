@@ -51,13 +51,22 @@ public class RelayDataHandler implements Runnable {
 	}
 
 	private Packet processPacket(Packet packet, SessionModel sessionModel) {
+		Packet sendingPacket = packet.clone();
 		parsingHandler.tryParse(packet);
 		sessionModel.addPacket(packet);
-		Packet processedPacket = packetModifier.modifyByRule(packet);
-		if (processedPacket.isModified())
-			sessionModel.addPacket(processedPacket);
+	
+		tryModifyPacket(sendingPacket);
+		
+		if (sendingPacket.isModified())
+			sessionModel.addPacket(sendingPacket);
 
-		return processedPacket;
+		return sendingPacket;
+	}
+
+	private void tryModifyPacket(Packet packetToModify) {
+		packetModifier.modifyByRegex(packetToModify);
+		parsingHandler.tryParse(packetToModify);
+		packetModifier.modifyByRule(packetToModify);
 	}
 
 	private void addToSenderQueue(Packet sendingPacket) {

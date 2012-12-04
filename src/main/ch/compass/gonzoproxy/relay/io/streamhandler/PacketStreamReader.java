@@ -42,6 +42,7 @@ public class PacketStreamReader implements Runnable {
 				streamReader.readPackets(inputStream, relayDataHandler,
 						forwardingType);
 		} catch (IOException e) {
+			System.out.println("closed");
 			Thread.currentThread().interrupt();
 		}
 	}

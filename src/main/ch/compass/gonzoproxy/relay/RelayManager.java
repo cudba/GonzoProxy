@@ -48,6 +48,7 @@ public class RelayManager implements Runnable {
 			initCommandStreamHandlers();
 			initResponseStreamHandlers();
 		} catch (IOException e) {
+			System.out.println("manager closed");
 			sessionSettings.setSessionState(SessionState.DISCONNECTED);
 		}
 	}
