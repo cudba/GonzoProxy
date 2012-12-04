@@ -11,14 +11,16 @@ public class LibNfcApduExtractor implements ApduExtractor {
 
 	private static final char EOC = '\n';
 
-	private static final String DELIMITER = "#";
+	//TODO
+	private static final char DELIMITER = '#';
+	private static final String DELIMITERR = "#";
 
 
 	public byte[] extractPacketsToQueue(byte[] buffer, RelayDataHandler relayDataHandler,
 			int readBytes, ForwardingType forwardingType) {
-		ArrayList<Integer> indices = ByteArraysUtils.getDelimiterIndices(buffer,
-				DELIMITER.getBytes());
-
+		ArrayList<Integer> indices = getDelimiterIndices(buffer, DELIMITER);
+//		ArrayList<Integer> indices = ByteArraysUtils.getDelimiterIndices(buffer,
+//								DELIMITERR.getBytes());
 		int startIndex = 0;
 		int endIndex = 0;
 
@@ -109,5 +111,17 @@ public class LibNfcApduExtractor implements ApduExtractor {
 	@Override
 	public String getName() {
 		return "libnfc";
+	}
+	
+	//TODO
+	public static ArrayList<Integer> getDelimiterIndices(byte[] buffer,
+			char delimiter) {
+		ArrayList<Integer> indices = new ArrayList<Integer>();
+		for (int i = 0; i < buffer.length; i++) {
+			if (buffer[i] == delimiter)
+				indices.add(i);
+
+		}
+		return indices;
 	}
 }
