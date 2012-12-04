@@ -9,7 +9,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import ch.compass.gonzoproxy.controller.RelayController;
+import ch.compass.gonzoproxy.model.RegexTableModel;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
+import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -17,28 +20,41 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 
-public class RegexModifierDialog extends JDialog {
+public class AddNewRegexDialog extends JDialog {
 
 	private static final long serialVersionUID = 9047578530331858262L;
 	private JPanel contentPane;
-	protected PacketRule editPacketRule;
-	protected FieldRule editFieldRule;
 	private JTextField textFieldRegex;
 	private JTextField textFieldReplace;
 	private JPanel panel;
 	private JButton btnSaveAndClose;
 	private JButton btnCancel;
+	private PacketRegex editRegex;
+	private JCheckBox chckbxActive;
+	private RelayController controller;
+	private RegexTableModel regexTableModel;
 
-	public RegexModifierDialog() {
+	public AddNewRegexDialog(PacketRegex regex, RelayController controller, RegexTableModel regexTableModel) {
+		this.regexTableModel = regexTableModel;
+		this.controller = controller;
+		this.editRegex = regex;
 		initGui();
+		setFields();
+	}
+
+	private void setFields() {
+		textFieldRegex.setText(editRegex.getRegex());
+		textFieldReplace.setText(editRegex.getReplaceWith());
+		chckbxActive.setSelected(editRegex.isActive());
 	}
 
 	private void initGui() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(true);
 		setModalityType(ModalityType.APPLICATION_MODAL);
-		setTitle("Pre-Parser Modifier");
+		setTitle("Add new pre-parse modifier");
 		setBounds(100, 100, 460, 130);
 		setMinimumSize(new Dimension(460,130));
 		contentPane = new JPanel();
@@ -85,6 +101,14 @@ public class RegexModifierDialog extends JDialog {
 		contentPane.add(textFieldReplace, gbc_textFieldReplace);
 		textFieldReplace.setColumns(10);
 		
+		chckbxActive = new JCheckBox("active");
+		GridBagConstraints gbc_chckbxActive = new GridBagConstraints();
+		gbc_chckbxActive.anchor = GridBagConstraints.WEST;
+		gbc_chckbxActive.insets = new Insets(0, 0, 0, 5);
+		gbc_chckbxActive.gridx = 0;
+		gbc_chckbxActive.gridy = 2;
+		contentPane.add(chckbxActive, gbc_chckbxActive);
+		
 		panel = new JPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.anchor = GridBagConstraints.EAST;
@@ -94,6 +118,16 @@ public class RegexModifierDialog extends JDialog {
 		contentPane.add(panel, gbc_panel);
 		
 		btnSaveAndClose = new JButton("Save and Close");
+		btnSaveAndClose.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.addRegex(textFieldRegex.getText(), textFieldReplace.getText(), chckbxActive.isSelected());
+				regexTableModel.regexChanged();
+				controller.persistRegex();
+				dispose();
+			}
+		});
 		panel.add(btnSaveAndClose);
 		
 		btnCancel = new JButton("Cancel");

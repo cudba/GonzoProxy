@@ -155,13 +155,13 @@ public class GonzoProxyFrame extends JFrame {
 		});
 		mnTools.add(mntmPostMod);
 
-		mntmPreMod = new JMenuItem("Pre-Parse Modifier");
+		mntmPreMod = new JMenuItem("Pre-Parse Modifier (Regex)");
 		mntmPreMod.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				RegexModifierDialog rmd = new RegexModifierDialog();
-				rmd.setVisible(true);
+				RegexDialog rd = new RegexDialog(controller);
+				rd.setVisible(true);
 			}
 		});
 		mnTools.add(mntmPreMod);

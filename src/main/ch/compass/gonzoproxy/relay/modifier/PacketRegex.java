@@ -1,11 +1,13 @@
 package ch.compass.gonzoproxy.relay.modifier;
 
-public class PacketRegex {
+import java.io.Serializable;
+
+public class PacketRegex implements Serializable{
 	
+	private static final long serialVersionUID = -936176001069709025L;
 	private boolean isActive = true;
 	private String regex;
 	private String replaceWith;
-	
 	
 	public PacketRegex(String regex, String replaceWith) {
 		this.regex = regex;

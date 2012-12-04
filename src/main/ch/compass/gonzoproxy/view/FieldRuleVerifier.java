@@ -12,7 +12,7 @@ class FieldRuleVerifier extends InputVerifier implements CaretListener {
 	
 	public boolean verify(JComponent input) {
 		JTextField tf = (JTextField) input;
-		if(!tf.getText().matches("[a-f0-9][a-f0-9](\\s[a-f0-9][a-f0-9])*")){
+		if(!tf.getText().matches("[a-f0-9][a-f0-9](\\s[a-f0-9][a-f0-9])*") && !tf.getText().equals("")){
 			tf.setBackground(new Color(255, 99, 71));
 			return false;
 		}

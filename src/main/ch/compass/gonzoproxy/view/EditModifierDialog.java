@@ -50,7 +50,7 @@ public class EditModifierDialog extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setModalityType(ModalityType.APPLICATION_MODAL);
-		setTitle("Edit rule");
+		setTitle("Edit post-parse modifier");
 		setBounds(100, 100, 457, 225);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };

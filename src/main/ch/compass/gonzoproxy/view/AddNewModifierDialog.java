@@ -53,7 +53,7 @@ public class AddNewModifierDialog extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setModalityType(ModalityType.APPLICATION_MODAL);
-		setTitle("Add new rule");
+		setTitle("Add new post-parse modifier");
 		setBounds(100, 100, 457, 225);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
@@ -130,7 +130,7 @@ public class AddNewModifierDialog extends JDialog {
 			gbc_textFieldNewValue.gridy = 3;
 			contentPane.add(textFieldNewValue, gbc_textFieldNewValue);
 			textFieldNewValue.setColumns(10);
-			JButton btnSave = new JButton("Save");
+			JButton btnSave = new JButton("Save and close");
 			btnSave.addActionListener(new ActionListener() {
 				
 				@Override
