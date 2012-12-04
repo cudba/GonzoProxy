@@ -9,12 +9,12 @@ import ch.compass.gonzoproxy.listener.TrapListener;
 public class SessionSettings {
 	
 	public enum SessionState {
-		DISCONNECTED("disconnected"),
-		CONNECTING("connecting..."),
-		FORWARDING("forwarding"),
-		TRAP("trapped"),
-		COMMAND_TRAP("command trapped"),
-		RESPONSE_TRAP("response trapped");
+		DISCONNECTED("Disconnected"),
+		CONNECTING("Connecting..."),
+		FORWARDING("Forwarding"),
+		TRAP("Trapped"),
+		COMMAND_TRAP("Command trapped"),
+		RESPONSE_TRAP("Response trapped");
 		
 		private String description;
 
@@ -33,7 +33,7 @@ public class SessionSettings {
 			this.getClass().getName());
 	
 	private ArrayList<StateListener> stateListeners = new ArrayList<StateListener>();
-	private TrapListener trapListener;
+	private ArrayList<TrapListener> trapListeners = new ArrayList<TrapListener>();
 	
 	private String mode;
 	
@@ -57,11 +57,11 @@ public class SessionSettings {
 	}
 	
 	public void sendOneCommand() {
-		trapListener.sendOneCommand();
+		notifySendOneCommand();
 	}
 
 	public void sendOneResponse() {
-		trapListener.sendOneResponse();
+		notifySendOneResponse();
 	}
 
 	public void setMode(String mode) {
@@ -73,7 +73,7 @@ public class SessionSettings {
 	}
 
 	public void setTrapListener(TrapListener trapListener) {
-		this.trapListener = trapListener;
+		trapListeners.add(trapListener);
 	}
 	
 	public SessionState getSessionState() {
@@ -90,15 +90,33 @@ public class SessionSettings {
 		stateListeners.add(stateListener);
 	}
 	
+	public void setTrapState(SessionState sessionState) {
+		this.sessionState = sessionState;
+		notifyStateListeners();
+		notifyTrapChanged();
+	}
+
 	private void notifyStateListeners() {
 		for (StateListener stateListener : stateListeners) {
 			stateListener.sessionStateChanged(sessionState.getDescription());
 		}
 	}
 
-	public void setTrapState(SessionState sessionState) {
-		this.sessionState = sessionState;
-		notifyStateListeners();
-		trapListener.checkTrapChanged();
+	private void notifySendOneResponse() {
+		for (TrapListener trapListener : trapListeners) {
+			trapListener.sendOnePacket(ForwardingType.RESPONSE);
+		}
+	}
+
+	private void notifySendOneCommand() {
+		for (TrapListener trapListener : trapListeners) {
+			trapListener.sendOnePacket(ForwardingType.COMMAND);
+		}
+	}
+
+	private void notifyTrapChanged() {
+		for (TrapListener trapListener : trapListeners) {
+			trapListener.checkTrapChanged();
+		}
 	}
 }

@@ -10,24 +10,23 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
+import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
-import ch.compass.gonzoproxy.model.SessionSettings;
-import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
 import ch.compass.gonzoproxy.relay.RelayManager;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
+import ch.compass.gonzoproxy.utils.PersistingUtils;
 
 public class RelayController {
 
 	private PacketModifier packetModifier = new PacketModifier();
 	private SessionModel sessionModel = new SessionModel();
-	private SessionSettings sessionSettings = new SessionSettings();
 	private String[] modes;
 
-	private RelayManager relayManager;
+	private RelayManager relayManager = new RelayManager();
 
 	public RelayController() {
 		loadModes();
@@ -49,34 +48,24 @@ public class RelayController {
 		this.modes = inputModes.toArray(new String[2]);
 	}
 
-	public void startRelaySession() {
-		RelayDataHandler relayDataHandler = new RelayDataHandler();
-		relayDataHandler.setSessionParameters(sessionModel,
-				packetModifier);
-		relayManager = new RelayManager(relayDataHandler, sessionSettings);
-		 new Thread(relayManager).start();
-	}
 
 	public void newSession(String portListen, String remoteHost,
 			String remotePort, String mode) {
 		stopRunningSession();
-		generateNewSessionParameters(portListen, remoteHost, remotePort, mode);
-		startRelaySession();
-
+		prepareSession();
+		relayManager.generateNewSessionParameters(portListen, remoteHost, remotePort, mode);
+		new Thread(relayManager).start();
 	}
 
-	private void generateNewSessionParameters(String portListen,
-			String remoteHost, String remotePort, String mode) {
-		sessionSettings.setSession(Integer.parseInt(portListen), remoteHost,
-				Integer.parseInt(remotePort));
-		sessionModel.clearData();
-		sessionSettings.setMode(mode);
+	private void prepareSession() {
+		RelayDataHandler relayDataHandler = new RelayDataHandler();
+		relayDataHandler.setSessionParameters(sessionModel,
+				packetModifier);
+		relayManager.setDataHandler(relayDataHandler);
 	}
 
 	public void stopRunningSession() {
-		if (relayManager != null ){
 			relayManager.killSession();
-		}
 	}
 
 	public SessionModel getSessionModel() {
@@ -88,52 +77,23 @@ public class RelayController {
 		FieldRule fieldRule = new FieldRule(fieldName, originalValue,
 				replacedValue);
 		packetModifier.addRule(packetName, fieldRule, updateLength);
+		persistRules();
 	}
 
 	public void commandTrapChanged() {
-		switch (sessionSettings.getSessionState()) {
-		case COMMAND_TRAP:
-			sessionSettings.setTrapState(SessionState.FORWARDING);
-			break;
-		case FORWARDING:
-			sessionSettings.setTrapState(SessionState.COMMAND_TRAP);
-			break;
-		case RESPONSE_TRAP:
-			sessionSettings.setTrapState(SessionState.TRAP);
-			break;
-		case TRAP:
-			sessionSettings.setTrapState(SessionState.RESPONSE_TRAP);
-			break;
-		default:
-			break;
-		}
+		relayManager.commandTrapChanged();
 	}
 
 	public void responseTrapChanged() {
-		switch (sessionSettings.getSessionState()) {
-		case RESPONSE_TRAP:
-			sessionSettings.setTrapState(SessionState.FORWARDING);
-			break;
-		case FORWARDING:
-			sessionSettings.setTrapState(SessionState.RESPONSE_TRAP);
-			break;
-		case COMMAND_TRAP:
-			sessionSettings.setTrapState(SessionState.TRAP);
-			break;
-		case TRAP:
-			sessionSettings.setTrapState(SessionState.COMMAND_TRAP);
-			break;
-		default:
-			break;
-		}
+		relayManager.responseTrapChanged();
 	}
 
 	public void sendOneCmd() {
-		sessionSettings.sendOneCommand();
+		relayManager.sendOneCmd();
 	}
 
 	public void sendOneRes() {
-		sessionSettings.sendOneResponse();
+		relayManager.sendOneRes();
 	}
 
 	public String[] getModes() {
@@ -172,31 +132,58 @@ public class RelayController {
 		}
 	}
 
-	public PacketModifier getPacketModifier() {
-		return packetModifier;
-	}
-
-	public SessionSettings getSessionSettings() {
-		return sessionSettings;
-	}
+//	public SessionSettings getSessionSettings() {
+//		return sessionSettings;
+//	}
 
 	public ArrayList<PacketRule> getPacketRules() {
 		return packetModifier.getRuleSets();
 	}
 
 	public void persistRules() {
-		// TODO Auto-generated method stub
+		try {
+			packetModifier.persistRules();
+		} catch (IOException e) {
+			//TODO: save failed notification
+			e.printStackTrace();
+		}
 		
 	}
 	
 	public void persistPackets(File file){
-		// TODO Auto-generated method stub
+		try {
+			PersistingUtils.saveFile(file, sessionModel.getPacketList());
+		} catch (IOException e) {
+			//TODO: SAVE FAILED
+			e.printStackTrace();
+		}
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void openPackets(File file){
-		// TODO Auto-generated method stub
+		try {
+			sessionModel.addList((ArrayList<Packet>) PersistingUtils.loadFile(file));
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO couldnt open file
+			e.printStackTrace();
+		}
+	}
 
+	public int getCurrentListenPort() {
+		return relayManager.getCurrentListenPort();
+	}
+
+	public String getCurrentRemoteHost() {
+		return relayManager.getCurrentRemoteHost();
+	}
+
+	public int getCurrentRemotePort() {
+		return relayManager.getCurrentRemotePort();
+	}
+
+	public void addSessionStateListener(StateListener stateListener) {
+		relayManager.addSessionStateListener(stateListener);
 	}
 
 }

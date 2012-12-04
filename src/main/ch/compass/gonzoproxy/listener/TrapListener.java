@@ -1,8 +1,9 @@
 package ch.compass.gonzoproxy.listener;
 
+import ch.compass.gonzoproxy.model.ForwardingType;
+
 public interface TrapListener {
 
 	public void checkTrapChanged();
-	public void sendOneCommand();
-	public void sendOneResponse();
+	public void sendOnePacket(ForwardingType type);
 }

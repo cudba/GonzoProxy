@@ -40,9 +40,9 @@ public class NewSessionDialog extends JDialog {
 	}
 
 	private void loadFields() {
-		textFieldPortListen.setText(Integer.toString(controller.getSessionSettings().getListenPort()));
-		textFieldForwardIP.setText(controller.getSessionSettings().getRemoteHost());
-		textFieldForwardPort.setText(Integer.toString(controller.getSessionSettings().getRemotePort()));
+		textFieldPortListen.setText(Integer.toString(controller.getCurrentListenPort()));
+		textFieldForwardIP.setText(controller.getCurrentRemoteHost());
+		textFieldForwardPort.setText(Integer.toString(controller.getCurrentRemotePort()));
 	}
 
 

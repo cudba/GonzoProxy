@@ -23,8 +23,8 @@ import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.listener.SessionListener;
-import ch.compass.gonzoproxy.model.PacketTableModel;
 import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.PacketTableModel;
 import ch.compass.gonzoproxy.model.SessionModel;
 
 public class PacketListPanel extends JPanel {

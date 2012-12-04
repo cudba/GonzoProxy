@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import ch.compass.gonzoproxy.model.Field;
 import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.utils.PersistingUtils;
 import ch.compass.gonzoproxy.utils.PacketUtils;
 
 public class PacketModifier {
@@ -64,7 +65,6 @@ public class PacketModifier {
 			packetRules.add(createdRuleSet);
 			createdRuleSet.shouldUpdateLength(updateLength);
 		}
-		saveModifiers();
 	}
 	
 	public void addRegex(String regex, Boolean isActive){
@@ -174,19 +174,6 @@ public class PacketModifier {
 		return sb.toString();
 	}
 	
-	
-	private void saveModifiers(){
-        try {
-        	FileOutputStream fout = new FileOutputStream(MODIFIER_FILE);
-        	ObjectOutputStream oos = new ObjectOutputStream(fout);
-			oos.writeObject(packetRules);
-			oos.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        
-	}
-	
 	private void saveRegex(){
 		 try {
 	        	FileOutputStream fout = new FileOutputStream(REGEX_FILE);
@@ -200,15 +187,12 @@ public class PacketModifier {
 
 	@SuppressWarnings("unchecked")
 	private void loadModifiers(){
+		File modifierFile = new File(MODIFIER_FILE);
 		try {
-			File modifierFile = new File(MODIFIER_FILE);
-			FileInputStream fin = new FileInputStream(modifierFile);
-			ObjectInputStream ois = new ObjectInputStream(fin);
-			packetRules = (ArrayList<PacketRule>) ois.readObject();
-			ois.close();
-		} catch (IOException | ClassNotFoundException e) {
-			packetRules = new ArrayList<PacketRule>();
-			System.out.println("Modifier File not found !");
+			packetRules = (ArrayList<PacketRule>) PersistingUtils.loadFile(modifierFile);
+			
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -224,6 +208,11 @@ public class PacketModifier {
 			packetRegex = new HashMap<String, Boolean>();
 			System.out.println("Regex File not found !");
 		}
+	}
+
+	public void persistRules() throws IOException {
+		File modifierFile = new File(MODIFIER_FILE);
+		PersistingUtils.saveFile(modifierFile, packetRules);
 	}
 
 }

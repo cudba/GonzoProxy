@@ -52,7 +52,7 @@ public class PacketDetailPanel extends JPanel {
 	}
 
 	private void registerSessionStateNotifier() {
-		controller.getSessionSettings().addSessionStateListener(
+		controller.addSessionStateListener(
 				new StateListener() {
 
 					@Override
@@ -65,11 +65,9 @@ public class PacketDetailPanel extends JPanel {
 	}
 
 	protected void updateSessionPrefs() {
-		lblLPort.setText(Integer.toString(controller.getSessionSettings()
-				.getListenPort()));
-		lblRPort.setText(Integer.toString(controller.getSessionSettings()
-				.getRemotePort()));
-		lblRHost.setText(controller.getSessionSettings().getRemoteHost());
+		lblLPort.setText(Integer.toString(controller.getCurrentListenPort()));
+		lblRPort.setText(Integer.toString(controller.getCurrentRemotePort()));
+		lblRHost.setText(controller.getCurrentRemoteHost());
 	}
 
 	private void initGui() {
