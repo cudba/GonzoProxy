@@ -41,23 +41,6 @@ public class PacketStreamWriter implements Runnable {
 		loadWrapper();
 	}
 
-	private void addTrapListener() {
-		sessionSettings.setTrapListener(new TrapListener() {
-
-			@Override
-			public void sendOnePacket(ForwardingType type) {
-				if (forwardingType == type) {
-					state = State.SEND_ONE;
-				}
-			}
-
-			@Override
-			public void checkTrapChanged() {
-				checkForTraps();
-			}
-		});
-	}
-
 	@Override
 	public void run() {
 		sendPackets();
@@ -100,30 +83,21 @@ public class PacketStreamWriter implements Runnable {
 		outputStream.flush();
 	}
 
-	private void loadWrapper() {
-		ClassLoader cl = GonzoProxy.class.getClassLoader();
-		wrapper = (ApduWrapper) selectMode(cl, "wrapper");
-	}
-
-	private Object selectMode(ClassLoader cl, String helper) {
-
-		ResourceBundle bundle = ResourceBundle.getBundle("plugin");
-
-		Enumeration<String> keys = bundle.getKeys();
-		while (keys.hasMoreElements()) {
-			String element = keys.nextElement();
-			if (element.contains(helper)
-					&& element.contains(sessionSettings.getMode())) {
-				try {
-					return cl.loadClass(bundle.getString(element))
-							.newInstance();
-				} catch (InstantiationException | IllegalAccessException
-						| ClassNotFoundException e) {
-					e.printStackTrace();
+	private void addTrapListener() {
+		sessionSettings.setTrapListener(new TrapListener() {
+	
+			@Override
+			public void sendOnePacket(ForwardingType type) {
+				if (forwardingType == type) {
+					state = State.SEND_ONE;
 				}
 			}
-		}
-		return null;
+	
+			@Override
+			public void checkTrapChanged() {
+				checkForTraps();
+			}
+		});
 	}
 
 	private void checkForTraps() {
@@ -151,5 +125,31 @@ public class PacketStreamWriter implements Runnable {
 		default:
 			break;
 		}
+	}
+
+	private Object selectMode(ClassLoader cl, String helper) {
+	
+		ResourceBundle bundle = ResourceBundle.getBundle("plugin");
+	
+		Enumeration<String> keys = bundle.getKeys();
+		while (keys.hasMoreElements()) {
+			String element = keys.nextElement();
+			if (element.contains(helper)
+					&& element.contains(sessionSettings.getMode())) {
+				try {
+					return cl.loadClass(bundle.getString(element))
+							.newInstance();
+				} catch (InstantiationException | IllegalAccessException
+						| ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
+
+	private void loadWrapper() {
+		ClassLoader cl = GonzoProxy.class.getClassLoader();
+		wrapper = (ApduWrapper) selectMode(cl, "wrapper");
 	}
 }

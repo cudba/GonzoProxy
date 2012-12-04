@@ -16,7 +16,7 @@ public interface ApduExtractor {
 	 * 					
 	 */
 	
-	public byte[] extractPacketsToQueue(byte[] buffer, RelayDataHandler relayDataHandler,
+	public byte[] extractPacketsToHandler(byte[] buffer, RelayDataHandler relayDataHandler,
 			int readBytes, ForwardingType forwardingType);
 
 	public String getName();

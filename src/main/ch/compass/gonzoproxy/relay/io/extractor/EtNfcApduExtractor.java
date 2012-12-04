@@ -14,7 +14,7 @@ public class EtNfcApduExtractor implements ApduExtractor {
 	private static final String DELIMITER = "#";
 
 
-	public byte[] extractPacketsToQueue(byte[] buffer, RelayDataHandler relayDataHandler,
+	public byte[] extractPacketsToHandler(byte[] buffer, RelayDataHandler relayDataHandler,
 			int readBytes, ForwardingType forwardingType) {
 		ArrayList<Integer> indices = ByteArraysUtils.getDelimiterIndices(buffer,
 				DELIMITER.getBytes());
