@@ -58,7 +58,6 @@ public class RelayDataHandler implements Runnable {
 		Packet sendingPacket = packet.clone();
 		parsingHandler.tryParse(packet);
 		sessionModel.addPacket(packet);
-	
 		tryModifyPacket(sendingPacket);
 		
 		if (sendingPacket.isModified())
