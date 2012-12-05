@@ -85,7 +85,7 @@ public class RelayDataHandler implements Runnable {
 	}
 
 	public void reparse() {
-
+		parsingHandler.loadTemplates();
 		for (Packet packet : sessionModel.getPacketList()) {
 			packet.clearFields();
 			parsingHandler.tryParse(packet);

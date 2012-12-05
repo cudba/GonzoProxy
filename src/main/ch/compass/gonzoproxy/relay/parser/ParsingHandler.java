@@ -30,7 +30,7 @@ public class ParsingHandler {
 			parseByDefault(processingPacket);
 	}
 
-	private void loadTemplates() {
+	public void loadTemplates() {
 		File[] templateFiles = locateTemplateFiles();
 		for (int i = 0; i < templateFiles.length; i++) {
 			try (InputStream fileInput = new FileInputStream(templateFiles[i])) {
