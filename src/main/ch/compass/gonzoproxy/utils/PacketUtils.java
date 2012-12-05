@@ -65,7 +65,7 @@ public class PacketUtils {
 	}
 
 	public static boolean isContentIdentifierField(Field processingField) {
-		return processingField.getName().equals(CONTENT_IDENTIFIER);
+		return processingField.getName().contains(CONTENT_IDENTIFIER);
 	}
 
 	public static boolean hasCustomLenght(int fieldLength) {
@@ -92,7 +92,7 @@ public class PacketUtils {
 
 	public static boolean isIdentifyingContent(ArrayList<Field> templateFields,
 			int offset, Field processingField) {
-		return processingField.getName().equals(PacketUtils.CONTENT_IDENTIFIER)
+		return processingField.getName().contains(PacketUtils.CONTENT_IDENTIFIER)
 				&& templateFields.size() > offset + 1;
 	}
 

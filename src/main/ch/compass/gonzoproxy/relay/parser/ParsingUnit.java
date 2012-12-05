@@ -28,7 +28,7 @@ public class ParsingUnit {
 			offset += PacketUtils.getEncodedFieldLength(fieldLength, true);
 
 			if (PacketUtils.isContentLengthField(processingField)) {
-				
+
 				int nextContentIdentifierField = PacketUtils
 						.findNextContentIdentifierField(i + 1, templateFields);
 
@@ -47,6 +47,9 @@ public class ParsingUnit {
 
 					break;
 				default:
+					contentLength = Integer.parseInt(
+							processingField.getValue(), 16);
+					contentStartIndex = offset;
 					int nextIdentifierIndex = PacketUtils
 							.findFieldInPlainPacket(
 									packet,
@@ -57,17 +60,17 @@ public class ParsingUnit {
 							nextIdentifierIndex);
 					break;
 				}
-				
+
 			} else if (PacketUtils.isNextFieldContentIdentifier(templateFields,
 					i, processingField)) {
 				fieldLength = PacketUtils
 						.getContentIdentifierLength(templateFields.get(i + 1));
 			} else if (PacketUtils.isIdentifyingContent(templateFields, i,
 					processingField)) {
-				int nextContentIdentifierField = PacketUtils
+				int nextContentIdentifierPosition = PacketUtils
 						.findNextContentIdentifierField(i + 1, templateFields);
 
-				switch (nextContentIdentifierField) {
+				switch (nextContentIdentifierPosition) {
 				case 0:
 					fieldLength = PacketUtils.getRemainingContentSize(
 							contentStartIndex, contentLength, offset);
@@ -84,7 +87,7 @@ public class ParsingUnit {
 									packet,
 									currentFieldOffset,
 									templateFields.get(i
-											+ nextContentIdentifierField));
+											+ nextContentIdentifierPosition));
 					fieldLength = PacketUtils.calculateSubContentLength(offset,
 							nextIdentifierIndex);
 					break;

@@ -40,10 +40,10 @@ public class TemplateValidator {
 				byte[] length = PacketUtils.extractField(packet,
 						encodedFieldLength, currentFieldOffset);
 
-				int nextContentIdentifierField = PacketUtils
+				int nextContentIdentifierPosition = PacketUtils
 						.findNextContentIdentifierField(i + 1, templateFields);
 
-				switch (nextContentIdentifierField) {
+				switch (nextContentIdentifierPosition) {
 				case 0:
 					fieldLength = Integer.parseInt(new String(length), 16);
 					break;
@@ -57,13 +57,15 @@ public class TemplateValidator {
 					break;
 
 				default:
+					contentLength = Integer.parseInt(new String(length), 16);
+					contentStartIndex = offset;
 					int nextIdentifierIndex = PacketUtils
 							.findFieldInPlainPacket(
 									packet,
 									currentFieldOffset,
 									templateFields
 											.get(i
-													+ PacketUtils.NEXT_IDENTIFIER_OFFSET));
+													+ nextContentIdentifierPosition));
 					fieldLength = PacketUtils.calculateSubContentLength(offset,
 							nextIdentifierIndex);
 					break;
@@ -76,10 +78,10 @@ public class TemplateValidator {
 			} else if (PacketUtils.isIdentifyingContent(templateFields, i,
 					processingField)) {
 
-				int nextContentIdentifierField = PacketUtils
+				int nextContentIdentifierPosition = PacketUtils
 						.findNextContentIdentifierField(i + 1, templateFields);
 
-				switch (nextContentIdentifierField) {
+				switch (nextContentIdentifierPosition) {
 				case 0:
 					fieldLength = PacketUtils.getRemainingContentSize(
 							contentStartIndex, contentLength, offset);
@@ -96,7 +98,7 @@ public class TemplateValidator {
 									currentFieldOffset,
 									templateFields
 											.get(i
-													+ PacketUtils.NEXT_IDENTIFIER_OFFSET));
+													+ nextContentIdentifierPosition));
 					fieldLength = PacketUtils.calculateSubContentLength(offset,
 							nextIdentifierIndex);
 					break;

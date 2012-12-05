@@ -5,10 +5,8 @@ fields:
   description: Response Message Template
 - name: Lc
   description: Content Length
-- name: Ci
-  value: 83 00 07
+- name: Content
   description: Application Interchange Profile (Command Identifier)
-- name: AFL Content
 - name: Ci
   value: ff ff
 - name: Content
