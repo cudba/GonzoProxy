@@ -24,9 +24,8 @@ import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
-public class RelayManager implements Runnable {
+public class GonzoRelayService implements RelayService {
 
-	private boolean sessionIsAlive = false;
 
 	private ExecutorService threadPool;
 
@@ -43,7 +42,6 @@ public class RelayManager implements Runnable {
 		threadPool.execute(relayDataHandler);
 		establishConnection();
 		initProducerConsumer();
-		sessionIsAlive = true;
 	}
 
 	private void initProducerConsumer() {
@@ -61,7 +59,7 @@ public class RelayManager implements Runnable {
 
 	private void establishConnection() {
 		try {
-			awaitConnection();
+			awaitInitiatorConnection();
 			connectToTarget();
 			sessionSettings.setSessionState(SessionState.CONNECTED);
 		}finally {
@@ -83,18 +81,16 @@ public class RelayManager implements Runnable {
 			} catch (IOException e1) {
 			}
 			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
-			sessionIsAlive = false;
 		}
 	}
 
-	private void awaitConnection() {
+	private void awaitInitiatorConnection() {
 		sessionSettings.setSessionState(SessionState.CONNECTING);
 		try {
 			serverSocket = new ServerSocket(sessionSettings.getListenPort());
 			initiator = serverSocket.accept();
 		} catch (IOException e) {
 			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
-			sessionIsAlive = false;
 		}
 	}
 
@@ -132,12 +128,9 @@ public class RelayManager implements Runnable {
 	}
 
 	public void killSession() {
-		if (sessionIsAlive) {
 			threadPool.shutdownNow();
 			closeSockets();
 			sessionSettings.setSessionState(SessionState.DISCONNECTED);
-			sessionIsAlive = false;
-		}
 	}
 
 	private void closeSockets() {
@@ -203,9 +196,6 @@ public class RelayManager implements Runnable {
 		sessionSettings.sendOneResponse();
 	}
 
-	public void setDataHandler(RelayDataHandler relayDataHandler) {
-		this.relayDataHandler = relayDataHandler;
-	}
 
 	public int getCurrentListenPort() {
 		return sessionSettings.getListenPort();
@@ -228,7 +218,7 @@ public class RelayManager implements Runnable {
 	}
 
 	public void reParse() {
-		relayDataHandler.reParse();
+		relayDataHandler.reparse();
 	}
 
 	public void persistSessionData(File file) throws IOException {

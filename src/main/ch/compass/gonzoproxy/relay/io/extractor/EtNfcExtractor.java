@@ -7,14 +7,14 @@ import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
 
-public class EtNfcApduExtractor implements ApduExtractor {
+public class EtNfcExtractor implements PacketExtractor {
 
 	private static final char EOC = '\n';
 
 	private static final String DELIMITER = "#";
 
 
-	public byte[] extractPacketsToQueue(byte[] buffer, RelayDataHandler relayDataHandler,
+	public byte[] extractPacketsToHandler(byte[] buffer, RelayDataHandler relayDataHandler,
 			int readBytes, ForwardingType forwardingType) {
 		ArrayList<Integer> indices = ByteArraysUtils.getDelimiterIndices(buffer,
 				DELIMITER.getBytes());

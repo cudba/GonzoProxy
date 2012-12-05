@@ -43,8 +43,7 @@ public class RelayDataHandler implements Runnable {
 			try {
 				Packet receivedPacket = receiverQueue.take();
 
-				Packet sendingPacket = processPacket(receivedPacket,
-						sessionModel);
+				Packet sendingPacket = processPacket(receivedPacket);
 				addToSenderQueue(sendingPacket);
 
 			} catch (InterruptedException e) {
@@ -54,11 +53,10 @@ public class RelayDataHandler implements Runnable {
 
 	}
 
-	private Packet processPacket(Packet packet, SessionModel sessionModel) {
+	private Packet processPacket(Packet packet) {
 		Packet sendingPacket = packet.clone();
 		parsingHandler.tryParse(packet);
 		sessionModel.addPacket(packet);
-	
 		tryModifyPacket(sendingPacket);
 		
 		if (sendingPacket.isModified())
@@ -86,7 +84,7 @@ public class RelayDataHandler implements Runnable {
 
 	}
 
-	public void reParse() {
+	public void reparse() {
 
 		for (Packet packet : sessionModel.getPacketList()) {
 			packet.clearFields();

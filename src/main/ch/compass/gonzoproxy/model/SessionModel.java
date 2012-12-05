@@ -25,10 +25,10 @@ public class SessionModel {
 
 	public void clearData() {
 		sessionData.clear();
-		notifyClear();
+		notifyDataCleared();
 	}
 
-	private void notifyClear() {
+	private void notifyDataCleared() {
 		for (SessionListener listener : sessionListeners) {
 			listener.packetCleared();
 		}
@@ -42,10 +42,10 @@ public class SessionModel {
 
 	public void addList(ArrayList<Packet> readObject) {
 		this.sessionData = readObject;
-		notifyNewList();
+		notifyNewPacketList();
 	}
 
-	private void notifyNewList() {
+	private void notifyNewPacketList() {
 		for (SessionListener listener : sessionListeners) {
 			listener.newList();
 		}		

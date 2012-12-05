@@ -3,7 +3,7 @@ package ch.compass.gonzoproxy.relay.io.extractor;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 
-public interface ApduExtractor {
+public interface PacketExtractor {
 
 	/**
 	 * @param buffer contains the read bytes
@@ -16,7 +16,7 @@ public interface ApduExtractor {
 	 * 					
 	 */
 	
-	public byte[] extractPacketsToQueue(byte[] buffer, RelayDataHandler relayDataHandler,
+	public byte[] extractPacketsToHandler(byte[] buffer, RelayDataHandler relayDataHandler,
 			int readBytes, ForwardingType forwardingType);
 
 	public String getName();

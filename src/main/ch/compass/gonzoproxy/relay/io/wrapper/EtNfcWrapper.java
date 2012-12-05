@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import ch.compass.gonzoproxy.model.Packet;
 
-public class LibNfcApduWrapper implements ApduWrapper {
+public class EtNfcWrapper implements PacketWrapper{
 
 	private byte[] trailer;
 	private byte[] plainApdu;
@@ -12,15 +12,12 @@ public class LibNfcApduWrapper implements ApduWrapper {
 
 	public byte[] wrap(Packet apdu) {
 		this.trailer = apdu.getTrailer();
+		this.plainApdu = apdu.getOriginalPacketData();
 		this.preamble = computePreamble(apdu);
-
-
-		this.plainApdu = apdu.getPacketDataAsBytes();
 
 		int newSize = preamble.length + plainApdu.length + trailer.length;
 
 		byte[] wrappedApdu = Arrays.copyOf(preamble, newSize);
-
 		System.arraycopy(plainApdu, 0, wrappedApdu, preamble.length,
 				plainApdu.length);
 		System.arraycopy(trailer, 0, wrappedApdu, preamble.length
@@ -40,8 +37,7 @@ public class LibNfcApduWrapper implements ApduWrapper {
 
 		for (int i = 0; i < newSize.length; i++) {
 			newPreamble[lastSizeIndex - i] = newSize[lastIndexNew - i];
-		}
-		;
+		};
 
 		apdu.setPreamble(newPreamble);
 
@@ -51,7 +47,7 @@ public class LibNfcApduWrapper implements ApduWrapper {
 
 	@Override
 	public String getName() {
-		return "libnfc";
+		return "etnfc";
 	}
 
 }

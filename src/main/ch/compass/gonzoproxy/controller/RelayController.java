@@ -8,17 +8,20 @@ import java.util.ResourceBundle;
 
 import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.SessionModel;
-import ch.compass.gonzoproxy.relay.RelayManager;
+import ch.compass.gonzoproxy.relay.GonzoRelayService;
+import ch.compass.gonzoproxy.relay.RelayService;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class RelayController {
 
+	private boolean sessionIsActive = false;
+	
 	private String[] relayModes;
 
-	private Thread relayManagerThread;
-	private RelayManager relayManager = new RelayManager();
+	private Thread relayServiceThread;
+	private RelayService relayService = new GonzoRelayService();
 
 	public RelayController() {
 		loadPossibleRelayModes();
@@ -27,19 +30,22 @@ public class RelayController {
 	public void newSession(String portListen, String remoteHost,
 			String remotePort, String mode) {
 		stopRunningSession();
-		relayManager.generateNewSessionParameters(portListen, remoteHost,
+		relayService.generateNewSessionParameters(portListen, remoteHost,
 				remotePort, mode);
-		relayManagerThread = new Thread(relayManager);
-		relayManagerThread.start();
+		relayServiceThread = new Thread(relayService);
+		relayServiceThread.start();
+		sessionIsActive = true;
 	}
 
 	public void stopRunningSession() {
-		if (relayManagerThread != null && relayManagerThread.isAlive())
-			relayManager.killSession();
+		if (sessionIsActive) {
+			relayService.killSession();
+			sessionIsActive = false;
+		}
 	}
 
 	public SessionModel getSessionModel() {
-		return relayManager.getSessionModel();
+		return relayService.getSessionModel();
 	}
 
 	public String[] getPossibleRelayModes() {
@@ -47,66 +53,66 @@ public class RelayController {
 	}
 
 	public ArrayList<PacketRule> getPacketRules() {
-		return relayManager.getPacketRules();
+		return relayService.getPacketRules();
 	}
 
 	public ArrayList<PacketRegex> getPacketRegex() {
-		return relayManager.getPacketRegex();
+		return relayService.getPacketRegex();
 	}
 
 	public void addModifierRule(String packetName, String fieldName,
 			String originalValue, String replacedValue, Boolean updateLength) {
 		FieldRule fieldRule = new FieldRule(fieldName, originalValue,
 				replacedValue);
-		relayManager.addRule(packetName, fieldRule, updateLength);
+		relayService.addRule(packetName, fieldRule, updateLength);
 		persistRules();
 	}
 
 	public void addRegex(String regex, String replaceWith, boolean isActive) {
 		PacketRegex packetRegex = new PacketRegex(regex, replaceWith);
-		relayManager.addRegex(packetRegex, isActive);
+		relayService.addRegex(packetRegex, isActive);
 		persistRegex();
 	}
 
 	public void commandTrapChanged() {
-		relayManager.commandTrapChanged();
+		relayService.commandTrapChanged();
 	}
 
 	public void responseTrapChanged() {
-		relayManager.responseTrapChanged();
+		relayService.responseTrapChanged();
 	}
 
 	public void sendOneCmd() {
-		relayManager.sendOneCmd();
+		relayService.sendOneCmd();
 	}
 
 	public void sendOneRes() {
-		relayManager.sendOneRes();
+		relayService.sendOneRes();
 	}
 
 	public int getCurrentListenPort() {
-		return relayManager.getCurrentListenPort();
+		return relayService.getCurrentListenPort();
 	}
 
 	public String getCurrentRemoteHost() {
-		return relayManager.getCurrentRemoteHost();
+		return relayService.getCurrentRemoteHost();
 	}
 
 	public int getCurrentRemotePort() {
-		return relayManager.getCurrentRemotePort();
+		return relayService.getCurrentRemotePort();
 	}
 
 	public void addSessionStateListener(StateListener stateListener) {
-		relayManager.addSessionStateListener(stateListener);
+		relayService.addSessionStateListener(stateListener);
 	}
 
 	public void reparsePackets() {
-		relayManager.reParse();
+		relayService.reParse();
 	}
 
 	public void persistSessionData(File file) {
 		try {
-			relayManager.persistSessionData(file);
+			relayService.persistSessionData(file);
 		} catch (IOException e) {
 			// notify user
 			e.printStackTrace();
@@ -115,7 +121,7 @@ public class RelayController {
 
 	public void loadPacketsFromFile(File file) {
 		try {
-			relayManager.loadPacketsFromFile(file);
+			relayService.loadPacketsFromFile(file);
 		} catch (ClassNotFoundException | IOException e) {
 			// notify user
 		}
@@ -123,7 +129,7 @@ public class RelayController {
 
 	public void persistRules() {
 		try {
-			relayManager.persistRules();
+			relayService.persistRules();
 		} catch (IOException e) {
 			// TODO: save failed notification
 		}
@@ -132,7 +138,7 @@ public class RelayController {
 
 	public void persistRegex() {
 		try {
-			relayManager.persistRegex();
+			relayService.persistRegex();
 		} catch (IOException e) {
 			// TODO: PERSISTNG FAIL
 		}
