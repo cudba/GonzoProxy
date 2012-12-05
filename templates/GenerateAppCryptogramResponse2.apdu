@@ -1,7 +1,8 @@
-packetDescription: Read Response Big
+packetDescription: Generate Application Cryptogram Responseasdasd
 fields:
 - name: ID
-  value: 70
+  value: 77
+  description: Response Message Template
 - name: ID2
   value: 81
 - name: Lc

@@ -1,0 +1,26 @@
+packetDescription: Read Response Big CC
+fields:
+- name: ID
+  value: 70
+- name: ID2
+  value: 81
+- name: Lc
+  description: Content Length
+- name: Ci
+  value: 9f
+- name: Content
+- name: Ci
+  value: 42
+- name: CC Content
+- name: Ci
+  value: 5e
+- name: Ci
+  value: 53
+- name: Content CC Holder Name
+- name: Ci
+  value: 54
+- name: Ci
+  value: 5e
+- name: Content CC Expire
+- name: Status Byte 1
+- name: Status Byte 2

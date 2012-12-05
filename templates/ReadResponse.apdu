@@ -1,9 +1,7 @@
-packetDescription: Read Response Big
+packetDescription: Read Response
 fields:
 - name: ID
   value: 70
-- name: ID2
-  value: 81
 - name: Lc
   description: Content Length
 - name: Content
