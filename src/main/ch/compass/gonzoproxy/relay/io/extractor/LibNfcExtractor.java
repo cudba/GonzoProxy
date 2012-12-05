@@ -37,9 +37,9 @@ public class LibNfcExtractor implements PacketExtractor {
 		byte[] singlePacket = ByteArraysUtils.trim(buffer, endIndex, readBytes - endIndex);
 
 		if (packetIsComplete(singlePacket)) {
-			Packet apdu = splitPacket(singlePacket);
-			apdu.setType(forwardingType);
-			relayDataHandler.offer(apdu);
+			Packet packet = splitPacket(singlePacket);
+			packet.setType(forwardingType);
+			relayDataHandler.offer(packet);
 			return new byte[0];
 		} else {
 			return singlePacket;
@@ -50,17 +50,17 @@ public class LibNfcExtractor implements PacketExtractor {
 		return singlePacket[singlePacket.length - 1] == EOC;
 	}
 
-	private Packet splitPacket(byte[] rawApdu) {
-		int size = getPacketSize(rawApdu);
-		byte[] preamble = getApduPreamble(rawApdu, size);
-		byte[] plainApdu = getPlainPacket(rawApdu, size);
-		byte[] trailer = getPacketTrailer(rawApdu, size);
-		Packet newApdu = new Packet();
-		newApdu.setPreamble(preamble);
-		newApdu.setOriginalPacketData(plainApdu);
-		newApdu.setTrailer(trailer);
-		newApdu.setSize(size);
-		return newApdu;
+	private Packet splitPacket(byte[] rawPacket) {
+		int size = getPacketSize(rawPacket);
+		byte[] preamble = getPackPreamble(rawPacket, size);
+		byte[] plainPacket = getPlainPacket(rawPacket, size);
+		byte[] trailer = getPacketTrailer(rawPacket, size);
+		Packet newPacket = new Packet();
+		newPacket.setPreamble(preamble);
+		newPacket.setOriginalPacketData(plainPacket);
+		newPacket.setTrailer(trailer);
+		newPacket.setSize(size);
+		return newPacket;
 	}
 
 	private byte[] getPacketTrailer(byte[] plainPacket, int size) {
@@ -83,7 +83,7 @@ public class LibNfcExtractor implements PacketExtractor {
 		return plainPacket;
 	}
 
-	private byte[] getApduPreamble(byte[] plainPacket, int size) {
+	private byte[] getPackPreamble(byte[] plainPacket, int size) {
 		for (int i = 0; i < plainPacket.length; i++) {
 			if (plainPacket[i] == ':') {
 				return ByteArraysUtils.trim(plainPacket, 0, i + 2);

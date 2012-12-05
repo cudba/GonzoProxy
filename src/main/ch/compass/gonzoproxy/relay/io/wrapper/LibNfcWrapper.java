@@ -7,35 +7,35 @@ import ch.compass.gonzoproxy.model.Packet;
 public class LibNfcWrapper implements PacketWrapper {
 
 	private byte[] trailer;
-	private byte[] plainApdu;
+	private byte[] plainPacket;
 	private byte[] preamble;
 
-	public byte[] wrap(Packet apdu) {
-		this.trailer = apdu.getTrailer();
-		this.preamble = computePreamble(apdu);
+	public byte[] wrap(Packet packet) {
+		this.trailer = packet.getTrailer();
+		this.preamble = computePreamble(packet);
 
 
-		this.plainApdu = apdu.getPacketDataAsBytes();
+		this.plainPacket = packet.getPacketDataAsBytes();
 
-		int newSize = preamble.length + plainApdu.length + trailer.length;
+		int newSize = preamble.length + plainPacket.length + trailer.length;
 
-		byte[] wrappedApdu = Arrays.copyOf(preamble, newSize);
+		byte[] wrappedPacket = Arrays.copyOf(preamble, newSize);
 
-		System.arraycopy(plainApdu, 0, wrappedApdu, preamble.length,
-				plainApdu.length);
-		System.arraycopy(trailer, 0, wrappedApdu, preamble.length
-				+ plainApdu.length, trailer.length);
+		System.arraycopy(plainPacket, 0, wrappedPacket, preamble.length,
+				plainPacket.length);
+		System.arraycopy(trailer, 0, wrappedPacket, preamble.length
+				+ plainPacket.length, trailer.length);
 
-		return wrappedApdu;
+		return wrappedPacket;
 	}
 
-	private byte[] computePreamble(Packet apdu) {
-		byte[] newPreamble = apdu.getPreamble();
+	private byte[] computePreamble(Packet packet) {
+		byte[] newPreamble = packet.getPreamble();
 		int lastSizeIndex = newPreamble.length - 1 - 2;
 
-		int apduSize = apdu.getSize();
-		String strApduSize = Integer.toHexString(apduSize);
-		byte[] newSize = strApduSize.getBytes();
+		int packetSize = packet.getSize();
+		String strPacketSize = Integer.toHexString(packetSize);
+		byte[] newSize = strPacketSize.getBytes();
 		int lastIndexNew = newSize.length - 1;
 
 		for (int i = 0; i < newSize.length; i++) {
@@ -43,7 +43,7 @@ public class LibNfcWrapper implements PacketWrapper {
 		}
 		;
 
-		apdu.setPreamble(newPreamble);
+		packet.setPreamble(newPreamble);
 
 		return newPreamble;
 
