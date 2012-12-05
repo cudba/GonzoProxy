@@ -157,7 +157,7 @@ public class RelayController {
 			}
 		}
 
-		this.relayModes = inputModes.toArray(new String[2]);
+		this.relayModes = inputModes.toArray(new String[inputModes.size()]);
 	}
 
 }
