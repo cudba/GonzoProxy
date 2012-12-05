@@ -1,0 +1,35 @@
+packetDescription: Generate Application Cryptogram Response
+fields:
+- name: ID
+  value: 77
+  description: Response Message Template
+- name: ID2
+  value: 81
+- name: Lc
+  description: Content Length
+- name: Ci
+  value: 9f
+- name: Ci 
+  value: 27
+  description: Cryptogram Information Data
+- name: CID Content
+- name: Ci
+  value: 9f
+- name: Ci 
+  value: 36
+  description: Application Transaction Counter
+- name: ATC Content
+- name: Ci
+  value: 9f
+- name: Ci 
+  value: 4b
+  description: Signed Dynamic Application Data
+- name: SDAD Content
+- name: Ci
+  value: 9f
+- name: Ci 
+  value: 10
+  description: Issuer Application Data
+- name: IAD Content
+- name: Status Byte 1
+- name: Status Byte 2

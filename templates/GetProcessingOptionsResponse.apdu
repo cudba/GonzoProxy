@@ -1,19 +1,17 @@
 packetDescription: Get Processing Options Response
 fields:
-- name: BER-TLV 
+- name: RMT
   value: 77
-  description: A BER-TLV coded constructed object
+  description: Response Message Template
 - name: Lc
   description: Content Length
 - name: Ci
   value: 82
   description: Application Interchange Profile (Command Identifier)
-- name: Ci
-  value: 00
-- name: Ci
-  value: 07
+- name: AIP Content
 - name: Ci
   value: 94
   description: Application File Locator (Command Identifier)
 - name: AFL Content
-- name: trailer
+- name: Status Byte 1
+- name: Status Byte 2
