@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.model.Field;
 import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class AddNewModifierDialog extends JDialog {
 	private static final long serialVersionUID = -1789866876175936281L;
@@ -47,6 +48,7 @@ public class AddNewModifierDialog extends JDialog {
 		textFieldFieldname.setText(field.getName() + " - " + description);
 		textFieldPacketname.setText(packet.getDescription());
 		textFieldOldValue.setText(field.getValue());
+		chckbxUpdateLengthAutomatically.setSelected(isUpdateLength());
 	}
 
 	private void initGui() {
@@ -142,6 +144,7 @@ public class AddNewModifierDialog extends JDialog {
 						if(chckbxReplaceWhole.isSelected()){
 							oldValue = "";
 						}
+						
 						controller.addModifierRule(packet.getDescription(), field.getName(), oldValue, textFieldNewValue.getText(), chckbxUpdateLengthAutomatically.isSelected());
 						AddNewModifierDialog.this.dispose();
 					}
@@ -166,7 +169,7 @@ public class AddNewModifierDialog extends JDialog {
 			gbc_chckbxReplaceWhole.gridy = 4;
 			contentPane.add(chckbxReplaceWhole, gbc_chckbxReplaceWhole);
 			
-			chckbxUpdateLengthAutomatically = new JCheckBox("Update length automatically");
+			chckbxUpdateLengthAutomatically = new JCheckBox("Update content length automatically");
 			GridBagConstraints gbc_chckbxUpdateLengthAutomatically = new GridBagConstraints();
 			gbc_chckbxUpdateLengthAutomatically.anchor = GridBagConstraints.WEST;
 			gbc_chckbxUpdateLengthAutomatically.insets = new Insets(0, 0, 5, 0);
@@ -195,4 +198,16 @@ public class AddNewModifierDialog extends JDialog {
 			textFieldFieldname.setEnabled(false);
 			textFieldPacketname.setEnabled(false);
 	}
+	
+	private boolean isUpdateLength(){
+		
+		for(PacketRule p : controller.getPacketRules()){
+			if(p.getCorrespondingPacket().equals(packet.getDescription())){
+				return p.shouldUpdateContentLength();
+			}
+		}
+		
+		return true;
+	}
+	
 }

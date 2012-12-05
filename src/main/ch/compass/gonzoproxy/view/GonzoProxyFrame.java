@@ -39,9 +39,9 @@ public class GonzoProxyFrame extends JFrame {
 	private JMenuItem mntmExit;
 	private JMenu mnTools;
 	private JMenuItem mntmPostMod;
-	private JMenu mnHelp;
+//	private JMenu mnHelp;
 	private JMenuItem mntmPreMod;
-	private JMenuItem mntmAbout;
+//	private JMenuItem mntmAbout;
 	private JSplitPane splitPane;
 	private PacketListPanel panelList;
 	private PacketDetailPanel panelDetail;
