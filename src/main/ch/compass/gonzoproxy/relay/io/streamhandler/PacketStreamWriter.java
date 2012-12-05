@@ -84,7 +84,7 @@ public class PacketStreamWriter implements Runnable {
 	}
 
 	private void addTrapListener() {
-		sessionSettings.setTrapListener(new TrapListener() {
+		sessionSettings.addTrapListener(new TrapListener() {
 	
 			@Override
 			public void sendOnePacket(ForwardingType type) {

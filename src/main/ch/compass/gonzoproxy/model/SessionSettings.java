@@ -74,7 +74,7 @@ public class SessionSettings {
 		return mode;
 	}
 
-	public void setTrapListener(TrapListener trapListener) {
+	public void addTrapListener(TrapListener trapListener) {
 		trapListeners.add(trapListener);
 	}
 	

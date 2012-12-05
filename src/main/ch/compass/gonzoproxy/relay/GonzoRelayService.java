@@ -26,7 +26,6 @@ import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class GonzoRelayService implements RelayService {
 
-	private boolean sessionIsAlive = false;
 
 	private ExecutorService threadPool;
 
@@ -43,7 +42,6 @@ public class GonzoRelayService implements RelayService {
 		threadPool.execute(relayDataHandler);
 		establishConnection();
 		initProducerConsumer();
-		sessionIsAlive = true;
 	}
 
 	private void initProducerConsumer() {
@@ -61,7 +59,7 @@ public class GonzoRelayService implements RelayService {
 
 	private void establishConnection() {
 		try {
-			awaitConnection();
+			awaitInitiatorConnection();
 			connectToTarget();
 			sessionSettings.setSessionState(SessionState.CONNECTED);
 		}finally {
@@ -83,18 +81,16 @@ public class GonzoRelayService implements RelayService {
 			} catch (IOException e1) {
 			}
 			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
-			sessionIsAlive = false;
 		}
 	}
 
-	private void awaitConnection() {
+	private void awaitInitiatorConnection() {
 		sessionSettings.setSessionState(SessionState.CONNECTING);
 		try {
 			serverSocket = new ServerSocket(sessionSettings.getListenPort());
 			initiator = serverSocket.accept();
 		} catch (IOException e) {
 			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
-			sessionIsAlive = false;
 		}
 	}
 
@@ -132,12 +128,9 @@ public class GonzoRelayService implements RelayService {
 	}
 
 	public void killSession() {
-		if (sessionIsAlive) {
 			threadPool.shutdownNow();
 			closeSockets();
 			sessionSettings.setSessionState(SessionState.DISCONNECTED);
-			sessionIsAlive = false;
-		}
 	}
 
 	private void closeSockets() {
@@ -225,7 +218,7 @@ public class GonzoRelayService implements RelayService {
 	}
 
 	public void reParse() {
-		relayDataHandler.reParse();
+		relayDataHandler.reparse();
 	}
 
 	public void persistSessionData(File file) throws IOException {
