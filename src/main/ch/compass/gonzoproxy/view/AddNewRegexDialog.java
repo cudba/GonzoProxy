@@ -3,24 +3,21 @@ package ch.compass.gonzoproxy.view;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import ch.compass.gonzoproxy.controller.RelayController;
-import ch.compass.gonzoproxy.model.RegexTableModel;
-import ch.compass.gonzoproxy.relay.modifier.FieldRule;
-import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
-import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import ch.compass.gonzoproxy.controller.RelayController;
+import ch.compass.gonzoproxy.model.RegexTableModel;
+import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 
 public class AddNewRegexDialog extends JDialog {
 
