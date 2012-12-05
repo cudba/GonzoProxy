@@ -80,10 +80,10 @@ public class ParsingHandlerTest {
 	}
 
 	@Test
-	public void testProcessFourBytesContentIdentifier() {
+	public void testProcessCustomContentIdentifierLength() {
 
-		String fakePlainPacket = "77 07 82 00 07 94 76 00 0a 85";
-		String libnfcInput = "#R-Packet 000a: 77 07 8200 07 94 76 00 0a 85";
+		String fakePlainPacket = "77 07 83 00 07 ff ff 00 00";
+		String libnfcInput = "#R-Packet 000a: 77 07 82 00 07 94 76 00 0a 85";
 		Packet packet = new Packet();
 		packet.setOriginalPacketData(fakePlainPacket.getBytes());
 
