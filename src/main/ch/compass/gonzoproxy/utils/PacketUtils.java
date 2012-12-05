@@ -6,7 +6,6 @@ import ch.compass.gonzoproxy.model.Field;
 
 public class PacketUtils {
 
-	public static final int NEXT_IDENTIFIER_OFFSET = 2;
 	public static final int DEFAULT_FIELDLENGTH = 1;
 	public static final String CONTENT_LENGTH_FIELD = "Lc";
 	public static final String CONTENT_IDENTIFIER = "Ci";
@@ -39,11 +38,6 @@ public class PacketUtils {
 			}
 			if(matches)
 				return i;
-//			byteField[0] = plainPacket[i];
-//			byteField[1] = plainPacket[i + 1];
-//			if (new String(byteField).equals(nextIdentifier)) {
-//				return i;
-//			}
 		}
 		return 0;
 	}
