@@ -9,14 +9,14 @@ public class Packet implements Serializable, Cloneable {
 
 	private boolean isModified = false;
 
-	private byte[] originalPacketData;
-	private byte[] preamble;
-	private byte[] trailer;
+	private byte[] originalPacketData = new byte[0];
+	private byte[] preamble = new byte[0];
+	private byte[] trailer = new byte[0];
 	private ArrayList<Field> fields = new ArrayList<Field>();
 
-	private String description;
+	private String description = "";
 	private ForwardingType type;
-	private int size;
+	private int size = 0;
 
 	public String getDescription() {
 		return description;

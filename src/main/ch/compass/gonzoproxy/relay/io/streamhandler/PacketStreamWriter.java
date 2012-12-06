@@ -9,8 +9,8 @@ import ch.compass.gonzoproxy.GonzoProxy;
 import ch.compass.gonzoproxy.listener.TrapListener;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
-import ch.compass.gonzoproxy.model.SessionSettings;
-import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
+import ch.compass.gonzoproxy.relay.RelaySettings;
+import ch.compass.gonzoproxy.relay.RelaySettings.SessionState;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.wrapper.PacketWrapper;
 
@@ -23,21 +23,20 @@ public class PacketStreamWriter implements Runnable {
 	PacketWrapper wrapper;
 
 	private OutputStream outputStream;
-	private SessionSettings sessionSettings;
 	private State state = State.FORWARDING;
+	private String mode;
 
 	private RelayDataHandler relayDataHandler;
 
 	private ForwardingType forwardingType;
 
 	public PacketStreamWriter(OutputStream outputStream,
-			RelayDataHandler relayDataHandler, SessionSettings sessionSettings,
+			RelayDataHandler relayDataHandler, String mode,
 			ForwardingType type) {
 		this.outputStream = outputStream;
 		this.relayDataHandler = relayDataHandler;
-		this.sessionSettings = sessionSettings;
+		this.mode = mode;
 		this.forwardingType = type;
-		addTrapListener();
 		loadWrapper();
 	}
 
@@ -68,40 +67,42 @@ public class PacketStreamWriter implements Runnable {
 					break;
 				}
 			} catch (InterruptedException | IOException e) {
-				sessionSettings.setSessionState(SessionState.DISCONNECTED);
 				Thread.currentThread().interrupt();
 			}
 		}
 
 	}
-	
-	private void send(Packet packet)
-			throws IOException {
+
+	private void send(Packet packet) throws IOException {
 
 		byte[] wrappedPacket = wrapper.wrap(packet);
 		outputStream.write(wrappedPacket);
 		outputStream.flush();
 	}
 
-	private void addTrapListener() {
+	public void setTrapListener(RelaySettings sessionSettings) {
+		addTrapListener(sessionSettings);
+	}
+
+	private void addTrapListener(RelaySettings sessionSettings) {
 		sessionSettings.addTrapListener(new TrapListener() {
-	
+
 			@Override
 			public void sendOnePacket(ForwardingType type) {
 				if (forwardingType == type) {
 					state = State.SEND_ONE;
 				}
 			}
-	
+
 			@Override
-			public void checkTrapChanged() {
-				checkForTraps();
+			public void checkTrapChanged(SessionState sessionState) {
+				checkForTraps(sessionState);
 			}
 		});
 	}
 
-	private void checkForTraps() {
-		switch (sessionSettings.getSessionState()) {
+	private void checkForTraps(SessionState sessionState) {
+		switch (sessionState) {
 		case TRAP:
 			state = State.TRAP;
 			break;
@@ -128,14 +129,14 @@ public class PacketStreamWriter implements Runnable {
 	}
 
 	private Object selectMode(ClassLoader cl, String helper) {
-	
+
 		ResourceBundle bundle = ResourceBundle.getBundle("plugin");
-	
+
 		Enumeration<String> keys = bundle.getKeys();
 		while (keys.hasMoreElements()) {
 			String element = keys.nextElement();
 			if (element.contains(helper)
-					&& element.contains(sessionSettings.getMode())) {
+					&& element.contains(mode)) {
 				try {
 					return cl.loadClass(bundle.getString(element))
 							.newInstance();

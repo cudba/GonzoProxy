@@ -16,7 +16,9 @@ import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.relay.parser.ParsingHandler;
 import ch.compass.gonzoproxy.utils.PersistingUtils;
 
-public class RelayDataHandler implements Runnable {
+public class RelayDataHandler {
+
+	private static final String EOS = "End Of Stream";
 
 	private LinkedTransferQueue<Packet> receiverQueue = new LinkedTransferQueue<Packet>();
 
@@ -28,23 +30,27 @@ public class RelayDataHandler implements Runnable {
 
 	private SessionModel sessionModel = new SessionModel();
 
-	@Override
-	public void run() {
-		handleRelayData();
-	}
+	// @Override
+	// public void run() {
+	// handleRelayData();
+	// }
 
 	public void setPacketModifier(PacketModifier packetModifier) {
 		this.packetModifier = packetModifier;
 	}
 
-	private void handleRelayData() {
-
-		while (!Thread.currentThread().isInterrupted()) {
+	public void processRelayData() {
+		boolean hasMorePackets = true;
+		while (hasMorePackets) {
 			try {
 				Packet receivedPacket = receiverQueue.take();
 
-				Packet sendingPacket = processPacket(receivedPacket);
-				addToSenderQueue(sendingPacket);
+				if (endOfStream(receivedPacket)) {
+					hasMorePackets = false;
+				} else {
+					Packet sendingPacket = processPacket(receivedPacket);
+					addToSenderQueue(sendingPacket);
+				}
 
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
@@ -53,12 +59,17 @@ public class RelayDataHandler implements Runnable {
 
 	}
 
+	private boolean endOfStream(Packet receivedPacket) {
+		return receivedPacket.getDescription() != null
+				&& receivedPacket.getDescription().equals(EOS);
+	}
+
 	private Packet processPacket(Packet packet) {
 		Packet sendingPacket = packet.clone();
 		parsingHandler.tryParse(packet);
 		sessionModel.addPacket(packet);
 		tryModifyPacket(sendingPacket);
-		
+
 		if (sendingPacket.isModified())
 			sessionModel.addPacket(sendingPacket);
 
@@ -115,12 +126,14 @@ public class RelayDataHandler implements Runnable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void loadPacketsFromFile(File file) throws ClassNotFoundException, IOException {
-			sessionModel.addList((ArrayList<Packet>) PersistingUtils.loadFile(file));
+	public void loadPacketsFromFile(File file) throws ClassNotFoundException,
+			IOException {
+		sessionModel
+				.addList((ArrayList<Packet>) PersistingUtils.loadFile(file));
 	}
 
 	public void persistSessionData(File file) throws IOException {
-			PersistingUtils.saveFile(file, sessionModel.getPacketList());
+		PersistingUtils.saveFile(file, sessionModel.getPacketList());
 	}
 
 	public ArrayList<PacketRule> getPacketRules() {

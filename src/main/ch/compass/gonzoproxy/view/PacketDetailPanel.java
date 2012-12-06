@@ -22,7 +22,7 @@ import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.PacketDetailTableModel;
 import ch.compass.gonzoproxy.model.Field;
 import ch.compass.gonzoproxy.model.Packet;
-import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
+import ch.compass.gonzoproxy.relay.RelaySettings.SessionState;
 
 import javax.swing.SwingConstants;
 

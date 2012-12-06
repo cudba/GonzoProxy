@@ -24,7 +24,6 @@ public class ParsingUnit {
 			parseField(packet, fieldLength, offset, processingField);
 			processingPacket.addField(processingField);
 
-			int currentFieldOffset = offset;
 			offset += PacketUtils.getEncodedFieldLength(fieldLength, true);
 
 			if (PacketUtils.isContentLengthField(processingField)) {
