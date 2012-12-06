@@ -52,14 +52,18 @@ public class LibNfcExtractor implements PacketExtractor {
 
 	private Packet splitPacket(byte[] rawPacket) {
 		int size = getPacketSize(rawPacket);
-		byte[] preamble = getPackPreamble(rawPacket, size);
-		byte[] plainPacket = getPlainPacket(rawPacket, size);
-		byte[] trailer = getPacketTrailer(rawPacket, size);
 		Packet newPacket = new Packet();
-		newPacket.setPreamble(preamble);
-		newPacket.setOriginalPacketData(plainPacket);
-		newPacket.setTrailer(trailer);
-		newPacket.setSize(size);
+		if(size > 0){
+			byte[] preamble = getPackPreamble(rawPacket, size);
+			byte[] plainPacket = getPlainPacket(rawPacket, size);
+			byte[] trailer = getPacketTrailer(rawPacket, size);
+			newPacket.setPreamble(preamble);
+			newPacket.setOriginalPacketData(plainPacket);
+			newPacket.setTrailer(trailer);
+			newPacket.setSize(size);
+		}else {
+			newPacket.setOriginalPacketData(rawPacket);
+		}
 		return newPacket;
 	}
 
@@ -101,7 +105,11 @@ public class LibNfcExtractor implements PacketExtractor {
 				size[1] = plainPacket[i + 2];
 				size[2] = plainPacket[i + 3];
 				size[3] = plainPacket[i + 4];
-				value = Integer.parseInt(new String(size), 16);
+				try {
+					value = Integer.parseInt(new String(size), 16);
+				}catch (NumberFormatException e){
+					return 0;
+				}
 				return value;
 			}
 		}

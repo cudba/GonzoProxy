@@ -105,15 +105,18 @@ public class Packet implements Serializable, Cloneable {
 
 	public String toAscii() {
 		StringBuffer sb = new StringBuffer("");
-		String ascii = getPacketDataAsString().replaceAll("\\s", "");
-		String[] strArr = ascii.split("(?<=\\G..)");
+		String hexPacketData = getPacketDataAsString().replaceAll("\\s", "");
+		String[] hexPacketValues = hexPacketData.split("(?<=\\G..)");
 	
-		for (String a : strArr) {
-			int c = Integer.parseInt(a, 16);
-			char chr = (char) c;
-			sb.append(chr);
+		for (String hexValue : hexPacketValues) {
+			try {
+				int decimalValue = Integer.parseInt(hexValue, 16);
+				char asciiValue = (char) decimalValue;
+				sb.append(asciiValue);
+			}catch (NumberFormatException e){
+				sb.append('?');
+			}
 		}
-	
 		return sb.toString();
 	}
 

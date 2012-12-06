@@ -3,6 +3,7 @@ package ch.compass.gonzoproxy.relay.io;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -18,7 +19,7 @@ import ch.compass.gonzoproxy.utils.PersistingUtils;
 
 public class RelayDataHandler {
 
-	private static final String EOS = "End Of Stream";
+	private static final String EOS = "End Of Stream\n";
 
 	private LinkedTransferQueue<Packet> receiverQueue = new LinkedTransferQueue<Packet>();
 
@@ -29,11 +30,6 @@ public class RelayDataHandler {
 	private PacketModifier packetModifier = new PacketModifier();
 
 	private SessionModel sessionModel = new SessionModel();
-
-	// @Override
-	// public void run() {
-	// handleRelayData();
-	// }
 
 	public void setPacketModifier(PacketModifier packetModifier) {
 		this.packetModifier = packetModifier;
@@ -46,6 +42,7 @@ public class RelayDataHandler {
 				Packet receivedPacket = receiverQueue.take();
 
 				if (endOfStream(receivedPacket)) {
+					System.out.println("eos by handler");
 					hasMorePackets = false;
 				} else {
 					Packet sendingPacket = processPacket(receivedPacket);
@@ -60,8 +57,7 @@ public class RelayDataHandler {
 	}
 
 	private boolean endOfStream(Packet receivedPacket) {
-		return receivedPacket.getDescription() != null
-				&& receivedPacket.getDescription().equals(EOS);
+		return Arrays.equals(receivedPacket.getOriginalPacketData(), EOS.getBytes());
 	}
 
 	private Packet processPacket(Packet packet) {

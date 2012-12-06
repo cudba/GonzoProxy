@@ -16,7 +16,7 @@ public class PacketStreamReader implements Runnable {
 	
 	private static final int BUFFER_SIZE = 1024;
 
-	private static final String EOS = "End Of Stream";
+	private static final String EOS = "End Of Stream\n";
 
 	private PacketExtractor extractor;
 
@@ -71,7 +71,7 @@ public class PacketStreamReader implements Runnable {
 				buffer = extractor.extractPacketsToHandler(buffer,
 						relayDataHandler, length, forwardingType);
 			}else {
-				sendEosPacket();
+				extractor.extractPacketsToHandler(EOS.getBytes(), relayDataHandler, EOS.length(), forwardingType);
 			}
 
 			readCompleted = buffer.length == 0;
@@ -83,7 +83,7 @@ public class PacketStreamReader implements Runnable {
 		}
 	}
 
-	private void sendEosPacket() {
+	private void handleEndOfStream() {
 		Packet eosPacket = new Packet();
 		eosPacket.setDescription(EOS);
 		relayDataHandler.offer(eosPacket);

@@ -34,18 +34,21 @@ public class LibNfcWrapper implements PacketWrapper {
 		int lastSizeIndex = newPreamble.length - 1 - 2;
 
 		int packetSize = packet.getSize();
-		String strPacketSize = Integer.toHexString(packetSize);
-		byte[] newSize = strPacketSize.getBytes();
-		int lastIndexNew = newSize.length - 1;
-
-		for (int i = 0; i < newSize.length; i++) {
-			newPreamble[lastSizeIndex - i] = newSize[lastIndexNew - i];
+		
+		if(packetSize > 0) {
+			String strPacketSize = Integer.toHexString(packetSize);
+			byte[] newSize = strPacketSize.getBytes();
+			int lastIndexNew = newSize.length - 1;
+			
+			for (int i = 0; i < newSize.length; i++) {
+				newPreamble[lastSizeIndex - i] = newSize[lastIndexNew - i];
+			}
+			
+			packet.setPreamble(newPreamble);
+			
+			return newPreamble;
 		}
-		;
-
-		packet.setPreamble(newPreamble);
-
-		return newPreamble;
+		return new byte[0];
 
 	}
 
