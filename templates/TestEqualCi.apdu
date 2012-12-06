@@ -1,0 +1,17 @@
+packetDescription: TestEqualCi
+fields:
+- name: RMT
+  value: 66
+  description: Response Message Template
+- name: Lc
+  description: Content Length
+- name: Ci
+  value: 83
+  description: Application Interchange Profile (Command Identifier)
+- name: Content
+- name: Ci
+  value: 83
+- name: Content
+- name: Ci
+  value: 83
+- name: Content

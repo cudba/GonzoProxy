@@ -1,0 +1,12 @@
+packetDescription: Generate Application Cryptogram Responseasdasd
+fields:
+- name: ID
+  value: 77
+  description: Response Message Template
+- name: ID2
+  value: 81
+- name: Lc
+  description: Content Length
+- name: Content
+- name: Status Byte 1
+- name: Status Byte 2
