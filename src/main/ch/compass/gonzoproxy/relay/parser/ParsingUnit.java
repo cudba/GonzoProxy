@@ -53,7 +53,7 @@ public class ParsingUnit {
 					int nextIdentifierIndex = PacketUtils
 							.findFieldInPlainPacket(
 									packet,
-									currentFieldOffset,
+									offset,
 									templateFields.get(i
 											+ nextContentIdentifierField));
 					fieldLength = PacketUtils.calculateSubContentLength(offset,
@@ -85,7 +85,7 @@ public class ParsingUnit {
 					int nextIdentifierIndex = PacketUtils
 							.findFieldInPlainPacket(
 									packet,
-									currentFieldOffset,
+									offset,
 									templateFields.get(i
 											+ nextContentIdentifierPosition));
 					fieldLength = PacketUtils.calculateSubContentLength(offset,

@@ -62,7 +62,7 @@ public class TemplateValidator {
 					int nextIdentifierIndex = PacketUtils
 							.findFieldInPlainPacket(
 									packet,
-									currentFieldOffset,
+									offset,
 									templateFields
 											.get(i
 													+ nextContentIdentifierPosition));
@@ -95,7 +95,7 @@ public class TemplateValidator {
 					int nextIdentifierIndex = PacketUtils
 							.findFieldInPlainPacket(
 									packet,
-									currentFieldOffset,
+									offset,
 									templateFields
 											.get(i
 													+ nextContentIdentifierPosition));

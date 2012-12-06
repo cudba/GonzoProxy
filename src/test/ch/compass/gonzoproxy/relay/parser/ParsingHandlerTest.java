@@ -95,8 +95,8 @@ public class ParsingHandlerTest {
 			mergedFields.append(field.getValue());
 		}
 
-		String packetDescription = "Get Processing Options Response";
-		String trimmedPacket = "77078200079476 00 0a85";
+		String packetDescription = "Test ci length";
+		String trimmedPacket = "770783 00 07ff ff00 00";
 		assertEquals(packetDescription, packet.getDescription());
 		assertArrayEquals(fakePlainPacket.getBytes(), packet.getOriginalPacketData());
 		assertEquals(trimmedPacket, mergedFields.toString());
@@ -126,5 +126,27 @@ public class ParsingHandlerTest {
 		assertArrayEquals(fakePlainPacket.getBytes(), packet.getOriginalPacketData());
 		assertEquals(trimmedPacket, mergedFields.toString());
 
+	}
+	
+	@Test
+	public void testEqualContentIdentifiers() {
+		String fakePlainPacket = "66 07 83 00 07 83 ff 83 00";
+		String libnfcInput = "#R-Packet 0009: 66 07 83 00 07 83 ff 83 00";
+		Packet packet = new Packet();
+		packet.setOriginalPacketData(fakePlainPacket.getBytes());
+
+		parserHanlder.tryParse(packet);
+
+		StringBuilder mergedFields = new StringBuilder();
+
+		for (Field field : packet.getFields()) {
+			mergedFields.append(field.getValue());
+		}
+
+		String packetDescription = "TestEqualCi";
+		String trimmedPacket = "770783 00 07ff ff00 00";
+		assertEquals(packetDescription, packet.getDescription());
+		assertArrayEquals(fakePlainPacket.getBytes(), packet.getOriginalPacketData());
+		assertEquals(trimmedPacket, mergedFields.toString());
 	}
 }
