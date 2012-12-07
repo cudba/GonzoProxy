@@ -5,7 +5,7 @@ import java.util.Arrays;
 import ch.compass.gonzoproxy.model.Packet;
 
 public class LibNfcWrapper implements PacketWrapper {
-
+	//TODO: make local
 	private byte[] trailer;
 	private byte[] plainPacket;
 	private byte[] preamble;

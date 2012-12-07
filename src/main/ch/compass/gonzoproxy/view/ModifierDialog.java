@@ -140,9 +140,9 @@ public class ModifierDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(chckbxUpdateLengthAutomatically.isSelected()){
-					editPacketRule.shouldUpdateLength(true);
+					editPacketRule.setUpdateLength(true);
 				}else{
-					editPacketRule.shouldUpdateLength(false);
+					editPacketRule.setUpdateLength(false);
 				}				
 			}
 		});

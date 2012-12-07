@@ -75,7 +75,7 @@ public class LibNfcExtractor implements PacketExtractor {
 						- endOfPlainPacket);
 			}
 		}
-		return null;
+		return new byte[0];
 	}
 
 	private byte[] getPlainPacket(byte[] plainPacket, int size) {
@@ -122,7 +122,7 @@ public class LibNfcExtractor implements PacketExtractor {
 	}
 	
 	//TODO
-	public static ArrayList<Integer> getDelimiterIndices(byte[] buffer,
+	public ArrayList<Integer> getDelimiterIndices(byte[] buffer,
 			char delimiter) {
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		for (int i = 0; i < buffer.length; i++) {

@@ -12,7 +12,7 @@ import ch.compass.gonzoproxy.utils.PersistingUtils;
 public class PacketModifier {
 
 	private static final String REGEX_FILE = "resources/regex_rules.dat";
-	private static final String MODIFIER_FILE = "resources/modifier_rules.dat";
+	private static final String RULE_FILE = "resources/modifier_rules.dat";
 
 	private ArrayList<PacketRule> packetRules = new ArrayList<PacketRule>();
 	private ArrayList<PacketRegex> packetsRegex = new ArrayList<PacketRegex>();
@@ -55,12 +55,12 @@ public class PacketModifier {
 		PacketRule existingRuleSet = findRuleSet(packetName);
 		if (existingRuleSet != null) {
 			existingRuleSet.add(fieldRule);
-			existingRuleSet.shouldUpdateLength(updateLength);
+			existingRuleSet.setUpdateLength(updateLength);
 		} else {
 			PacketRule createdRuleSet = new PacketRule(packetName);
 			createdRuleSet.add(fieldRule);
 			packetRules.add(createdRuleSet);
-			createdRuleSet.shouldUpdateLength(updateLength);
+			createdRuleSet.setUpdateLength(updateLength);
 		}
 	}
 
@@ -177,7 +177,7 @@ public class PacketModifier {
 
 	@SuppressWarnings("unchecked")
 	private void loadModifiers() {
-		File modifierFile = new File(MODIFIER_FILE);
+		File modifierFile = new File(RULE_FILE);
 		try {
 			packetRules = (ArrayList<PacketRule>) PersistingUtils
 					.loadFile(modifierFile);
@@ -204,7 +204,7 @@ public class PacketModifier {
 	}
 
 	public void persistRules() throws IOException {
-		File modifierFile = new File(MODIFIER_FILE);
+		File modifierFile = new File(RULE_FILE);
 		PersistingUtils.saveFile(modifierFile, packetRules);
 	}
 
