@@ -9,10 +9,8 @@ import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
-import ch.compass.gonzoproxy.GonzoProxy;
 import ch.compass.gonzoproxy.model.ForwardingType;
-import ch.compass.gonzoproxy.model.SessionSettings;
-import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
+import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.extractor.PacketExtractor;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
@@ -21,20 +19,22 @@ public class PacketStreamReader implements Runnable {
 	
 	private static final int BUFFER_SIZE = 1024;
 
+	private static final String EOS = "End Of Stream\n";
+
 	private PacketExtractor extractor;
 
 	private InputStream inputStream;
-	private SessionSettings sessionSettings;
 	private ForwardingType forwardingType;
+	private String mode;
 
 	private RelayDataHandler relayDataHandler;
 
 	public PacketStreamReader(InputStream inputStream,
-			RelayDataHandler relayDataHandler, SessionSettings sessionSettings,
+			RelayDataHandler relayDataHandler, String mode,
 			ForwardingType forwardingType) {
 		this.inputStream = inputStream;
 		this.relayDataHandler = relayDataHandler;
-		this.sessionSettings = sessionSettings;
+		this.mode = mode;
 		this.forwardingType = forwardingType;
 		loadExtractor();
 	}
@@ -50,7 +50,6 @@ public class PacketStreamReader implements Runnable {
 				read();
 		} catch (IOException e) {
 			Thread.currentThread().interrupt();
-			sessionSettings.setSessionState(SessionState.DISCONNECTED);
 		}
 	}
 	
@@ -74,6 +73,8 @@ public class PacketStreamReader implements Runnable {
 				length += readBytes;
 				buffer = extractor.extractPacketsToHandler(buffer,
 						relayDataHandler, length, forwardingType);
+			}else {
+				extractor.extractPacketsToHandler(EOS.getBytes(), relayDataHandler, EOS.length(), forwardingType);
 			}
 
 			readCompleted = buffer.length == 0;
@@ -85,8 +86,14 @@ public class PacketStreamReader implements Runnable {
 		}
 	}
 
+	private void handleEndOfStream() {
+		Packet eosPacket = new Packet();
+		eosPacket.setDescription(EOS);
+		relayDataHandler.offer(eosPacket);
+	}
+
 	private void loadExtractor() {
-		ClassLoader cl = getClassloader(sessionSettings.getMode());
+		ClassLoader cl = getClassloader(mode);
 		extractor = (PacketExtractor) selectMode(cl, "extractor");
 	}
 	
@@ -120,7 +127,7 @@ public class PacketStreamReader implements Runnable {
 		Enumeration<String> keys = bundle.getKeys();
 		while (keys.hasMoreElements()) {
 			String element = keys.nextElement();
-			if (element.contains(helper) && element.contains(sessionSettings.getMode())) {
+			if (element.contains(helper) && element.contains(mode)) {
 				try {
 					return cl.loadClass(bundle.getString(element))
 							.newInstance();

@@ -1,0 +1,19 @@
+packetDescription: Reparsed Test
+fields:
+- name: BER-TLV 
+  value: 77
+  description: A BER-TLV coded constructed object
+- name: Lc
+  description: Content Length
+- name: Ci
+  value: 82
+  description: Application Interchange Profile (Command Identifier)
+- name: Ci
+  value: ff
+- name: Ci
+  value: ff
+- name: Ci
+  value: ff
+  description: Application File Locator (Command Identifier)
+- name: AFL Content
+- name: trailer

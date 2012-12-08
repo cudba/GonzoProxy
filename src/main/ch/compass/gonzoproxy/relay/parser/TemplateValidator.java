@@ -24,7 +24,8 @@ public class TemplateValidator {
 			}
 
 			Field processingField = templateFields.get(i);
-			if (isIdentifierField(processingField)) {
+
+			if (shouldVerify(processingField)) {
 				if (!fieldIsVerified(packet, fieldLength, offset,
 						processingField)) {
 					return false;
@@ -38,37 +39,68 @@ public class TemplateValidator {
 						fieldLength, false);
 				byte[] length = PacketUtils.extractField(packet,
 						encodedFieldLength, currentFieldOffset);
-				if (PacketUtils.isContentIdentifierField(templateFields
-						.get(i + 1))) {
-					contentLength = Integer.parseInt(new String(length), 16);
-					contentStartIndex = offset;
-				} else {
-					fieldLength = Integer.parseInt(new String(length), 16);
-				}
-			}
 
-			else if (PacketUtils.isIdentifiedContent(templateFields, i,
-					processingField)) {
-
-				int nextContentIdentifierField = PacketUtils
+				int nextContentIdentifierPosition = PacketUtils
 						.findNextContentIdentifierField(i + 1, templateFields);
 
-				switch (nextContentIdentifierField) {
+				switch (nextContentIdentifierPosition) {
+				case 0:
+					fieldLength = Integer.parseInt(new String(length), 16);
+					break;
+
+				case 1:
+					contentLength = Integer.parseInt(new String(length), 16);
+					contentStartIndex = offset;
+					fieldLength = PacketUtils
+							.getContentIdentifierLength(templateFields
+									.get(i + 1));
+					break;
+
+				default:
+					contentLength = Integer.parseInt(new String(length), 16);
+					contentStartIndex = offset;
+					int nextIdentifierIndex = PacketUtils
+							.findFieldInPlainPacket(
+									packet,
+									offset,
+									templateFields
+											.get(i
+													+ nextContentIdentifierPosition));
+					fieldLength = PacketUtils.calculateSubContentLength(offset,
+							nextIdentifierIndex);
+					break;
+				}
+
+			} else if (PacketUtils.isNextFieldContentIdentifier(templateFields,
+					i, processingField)) {
+				fieldLength = PacketUtils
+						.getContentIdentifierLength(templateFields.get(i + 1));
+			} else if (PacketUtils.isIdentifyingContent(templateFields, i,
+					processingField)) {
+
+				int nextContentIdentifierPosition = PacketUtils
+						.findNextContentIdentifierField(i + 1, templateFields);
+
+				switch (nextContentIdentifierPosition) {
 				case 0:
 					fieldLength = PacketUtils.getRemainingContentSize(
 							contentStartIndex, contentLength, offset);
 					break;
 				case 1:
-					fieldLength = PacketUtils.DEFAULT_FIELDLENGTH;
+					fieldLength = PacketUtils
+							.getContentIdentifierLength(templateFields
+									.get(i + 1));
 					break;
 				default:
-					int nextIdentifierIndex = PacketUtils.findFieldInPlainPacket(
-							packet,
-							currentFieldOffset,
-							templateFields.get(i
-									+ PacketUtils.NEXT_IDENTIFIER_OFFSET));
-					fieldLength = PacketUtils.calculateSubContentLength(
-							offset, nextIdentifierIndex);
+					int nextIdentifierIndex = PacketUtils
+							.findFieldInPlainPacket(
+									packet,
+									offset,
+									templateFields
+											.get(i
+													+ nextContentIdentifierPosition));
+					fieldLength = PacketUtils.calculateSubContentLength(offset,
+							nextIdentifierIndex);
 					break;
 				}
 			} else {
@@ -83,21 +115,21 @@ public class TemplateValidator {
 		return (offset + fieldLength * PacketUtils.ENCODING_OFFSET) <= packet.length;
 	}
 
-	private boolean isIdentifierField(Field processingField) {
+	private boolean shouldVerify(Field processingField) {
 		return processingField.getValue() != null;
 	}
 
 	private boolean fieldIsVerified(byte[] packet, int fieldLength, int offset,
 			Field processingField) {
 		byte[] idByte;
-		int encodedFieldLength = PacketUtils.getEncodedFieldLength(
-				fieldLength, false);
+		int encodedFieldLength = PacketUtils.getEncodedFieldLength(fieldLength,
+				false);
 		if (fieldLength > PacketUtils.DEFAULT_FIELDLENGTH) {
-			idByte = PacketUtils.extractField(packet,
-					encodedFieldLength, offset);
+			idByte = PacketUtils.extractField(packet, encodedFieldLength,
+					offset);
 		} else {
-			idByte = PacketUtils.extractField(packet,
-					encodedFieldLength, offset);
+			idByte = PacketUtils.extractField(packet, encodedFieldLength,
+					offset);
 		}
 		if (!valueMatches(idByte, processingField)) {
 			return false;

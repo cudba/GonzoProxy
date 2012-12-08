@@ -1,12 +1,13 @@
-package ch.compass.gonzoproxy.model;
+package ch.compass.gonzoproxy.relay;
 
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.listener.TrapListener;
+import ch.compass.gonzoproxy.model.ForwardingType;
 
-public class SessionSettings {
+public class RelaySettings {
 	
 	public enum SessionState {
 		DISCONNECTED("Disconnected"),
@@ -16,7 +17,7 @@ public class SessionSettings {
 		TRAP("Trapped"),
 		COMMAND_TRAP("Command trapped"),
 		RESPONSE_TRAP("Response trapped"), 
-		CONNECTED("Connection established");
+		CONNECTED("Connection established"), CONNECTION_LOST("Connection lost");
 		
 		private String description;
 
@@ -118,7 +119,7 @@ public class SessionSettings {
 
 	private void notifyTrapChanged() {
 		for (TrapListener trapListener : trapListeners) {
-			trapListener.checkTrapChanged();
+			trapListener.checkTrapChanged(sessionState);
 		}
 	}
 }

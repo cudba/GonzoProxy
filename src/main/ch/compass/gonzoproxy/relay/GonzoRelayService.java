@@ -15,8 +15,7 @@ import java.util.concurrent.Executors;
 import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.SessionModel;
-import ch.compass.gonzoproxy.model.SessionSettings;
-import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
+import ch.compass.gonzoproxy.relay.RelaySettings.SessionState;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamReader;
 import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamWriter;
@@ -26,22 +25,31 @@ import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class GonzoRelayService implements RelayService {
 
-
 	private ExecutorService threadPool;
 
 	private ServerSocket serverSocket;
 	private Socket initiator;
 	private Socket target;
-	private SessionSettings sessionSettings = new SessionSettings();;
+	private RelaySettings sessionSettings = new RelaySettings();;
 
 	private RelayDataHandler relayDataHandler = new RelayDataHandler();
-	
+
 	@Override
 	public void run() {
-		threadPool = Executors.newFixedThreadPool(5);
-		threadPool.execute(relayDataHandler);
+		handleRelaySession();
+	}
+
+	private void handleRelaySession() {
+		threadPool = Executors.newFixedThreadPool(4);
 		establishConnection();
 		initProducerConsumer();
+		handleData();
+		killSession();
+	}
+
+	private void handleData() {
+		relayDataHandler.processRelayData();
+		
 	}
 
 	private void initProducerConsumer() {
@@ -62,11 +70,11 @@ public class GonzoRelayService implements RelayService {
 			awaitInitiatorConnection();
 			connectToTarget();
 			sessionSettings.setSessionState(SessionState.CONNECTED);
-		}finally {
+		} finally {
 			try {
 				serverSocket.close();
 			} catch (IOException e) {
-				//log server socket not closed ?
+				// log server socket not closed ?
 			}
 		}
 	}
@@ -101,11 +109,13 @@ public class GonzoRelayService implements RelayService {
 		OutputStream outputStream = new BufferedOutputStream(
 				target.getOutputStream());
 		PacketStreamReader commandStreamReader = new PacketStreamReader(
-				inputStream, relayDataHandler, sessionSettings,
+				inputStream, relayDataHandler, sessionSettings.getMode(),
 				ForwardingType.COMMAND);
 		PacketStreamWriter commandStreamWriter = new PacketStreamWriter(
-				outputStream, relayDataHandler, sessionSettings,
+				outputStream, relayDataHandler, sessionSettings.getMode(),
 				ForwardingType.COMMAND);
+		
+		commandStreamWriter.setTrapListener(sessionSettings);
 
 		threadPool.execute(commandStreamReader);
 		threadPool.execute(commandStreamWriter);
@@ -117,20 +127,22 @@ public class GonzoRelayService implements RelayService {
 		OutputStream outputStream = new BufferedOutputStream(
 				initiator.getOutputStream());
 		PacketStreamReader responseStreamReader = new PacketStreamReader(
-				inputStream, relayDataHandler, sessionSettings,
+				inputStream, relayDataHandler, sessionSettings.getMode(),
 				ForwardingType.RESPONSE);
 		PacketStreamWriter responseStreamWriter = new PacketStreamWriter(
-				outputStream, relayDataHandler, sessionSettings,
+				outputStream, relayDataHandler, sessionSettings.getMode(),
 				ForwardingType.RESPONSE);
+		
+		responseStreamWriter.setTrapListener(sessionSettings);
 
 		threadPool.execute(responseStreamReader);
 		threadPool.execute(responseStreamWriter);
 	}
 
 	public void killSession() {
-			threadPool.shutdownNow();
-			closeSockets();
-			sessionSettings.setSessionState(SessionState.DISCONNECTED);
+		sessionSettings.setSessionState(SessionState.DISCONNECTED);
+		threadPool.shutdownNow();
+		closeSockets();
 	}
 
 	private void closeSockets() {
@@ -196,7 +208,6 @@ public class GonzoRelayService implements RelayService {
 		sessionSettings.sendOneResponse();
 	}
 
-
 	public int getCurrentListenPort() {
 		return sessionSettings.getListenPort();
 	}
@@ -225,7 +236,8 @@ public class GonzoRelayService implements RelayService {
 		relayDataHandler.persistSessionData(file);
 	}
 
-	public void loadPacketsFromFile(File file) throws ClassNotFoundException, IOException {
+	public void loadPacketsFromFile(File file) throws ClassNotFoundException,
+			IOException {
 		relayDataHandler.loadPacketsFromFile(file);
 	}
 
@@ -240,7 +252,7 @@ public class GonzoRelayService implements RelayService {
 	public void addRule(String packetName, FieldRule fieldRule,
 			Boolean updateLength) {
 		relayDataHandler.addRule(packetName, fieldRule, updateLength);
-		
+
 	}
 
 	public void addRegex(PacketRegex packetRegex, boolean isActive) {

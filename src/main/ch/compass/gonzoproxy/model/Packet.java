@@ -9,14 +9,14 @@ public class Packet implements Serializable, Cloneable {
 
 	private boolean isModified = false;
 
-	private byte[] originalPacketData;
-	private byte[] preamble;
-	private byte[] trailer;
+	private byte[] originalPacketData = new byte[0];
+	private byte[] preamble = new byte[0];
+	private byte[] trailer = new byte[0];
 	private ArrayList<Field> fields = new ArrayList<Field>();
 
-	private String description;
+	private String description = "";
 	private ForwardingType type;
-	private int size;
+	private int size = 0;
 
 	public String getDescription() {
 		return description;
@@ -105,15 +105,18 @@ public class Packet implements Serializable, Cloneable {
 
 	public String toAscii() {
 		StringBuffer sb = new StringBuffer("");
-		String ascii = getPacketDataAsString().replaceAll("\\s", "");
-		String[] strArr = ascii.split("(?<=\\G..)");
+		String hexPacketData = getPacketDataAsString().replaceAll("\\s", "");
+		String[] hexPacketValues = hexPacketData.split("(?<=\\G..)");
 	
-		for (String a : strArr) {
-			int c = Integer.parseInt(a, 16);
-			char chr = (char) c;
-			sb.append(chr);
+		for (String hexValue : hexPacketValues) {
+			try {
+				int decimalValue = Integer.parseInt(hexValue, 16);
+				char asciiValue = (char) decimalValue;
+				sb.append(asciiValue);
+			}catch (NumberFormatException e){
+				sb.append('?');
+			}
 		}
-	
 		return sb.toString();
 	}
 

@@ -1,6 +1,6 @@
 package ch.compass.gonzoproxy.listener;
 
-import ch.compass.gonzoproxy.model.SessionSettings.SessionState;
+import ch.compass.gonzoproxy.relay.RelaySettings.SessionState;
 
 public interface StateListener {
 	

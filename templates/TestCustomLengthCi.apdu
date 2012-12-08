@@ -1,0 +1,12 @@
+packetDescription: Test ci length
+fields:
+- name: RMT
+  value: 77
+  description: Response Message Template
+- name: Lc
+  description: Content Length
+- name: Content
+  description: Application Interchange Profile (Command Identifier)
+- name: Ci
+  value: ff ff
+- name: Content

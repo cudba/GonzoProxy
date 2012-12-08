@@ -45,10 +45,6 @@ public class ByteArraysUtils {
 		return newArray;
 	}
 
-	public static byte[] merge(byte[] tmpFinalApdu, byte[] missingBytes) {
-		return null;
-	}
-
 	private static boolean validInput(byte[] array, int fromIndex, int length) {
 		return array.length >= fromIndex + length && length >= 0;
 	}
