@@ -10,7 +10,6 @@ import java.util.Enumeration;
 import java.util.ResourceBundle;
 
 import ch.compass.gonzoproxy.model.ForwardingType;
-import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.extractor.PacketExtractor;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
@@ -20,7 +19,7 @@ public class PacketStreamReader implements Runnable {
 	private static final int BUFFER_SIZE = 1024;
 
 	private static final String EOS = "End Of Stream\n";
-
+	
 	private PacketExtractor extractor;
 
 	private InputStream inputStream;
@@ -36,11 +35,11 @@ public class PacketStreamReader implements Runnable {
 		this.relayDataHandler = relayDataHandler;
 		this.mode = mode;
 		this.forwardingType = forwardingType;
-		loadExtractor();
 	}
 
 	@Override
 	public void run() {
+		loadExtractor();
 		readPackets();
 	}
 
@@ -88,7 +87,10 @@ public class PacketStreamReader implements Runnable {
 
 	private void loadExtractor() {
 		ClassLoader cl = getClassloader(mode);
-		extractor = (PacketExtractor) selectMode(cl, "extractor");
+		if((extractor = (PacketExtractor) selectMode(cl, "extractor")) == null) {
+			relayDataHandler.failedToLoadRelayMode();
+			Thread.currentThread().interrupt();
+		}
 	}
 	
 	private URLClassLoader getClassloader(String mode) {
@@ -103,8 +105,8 @@ public class PacketStreamReader implements Runnable {
 					try {
 						url = extractorJar.toURI().toURL();
 					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						relayDataHandler.failedToLoadRelayMode();
+						Thread.currentThread().interrupt();
 					}
 					 URL[] urls = new URL[]{url};
 					 return new URLClassLoader(urls);
@@ -114,7 +116,7 @@ public class PacketStreamReader implements Runnable {
 			return null;
 		}
 
-	private Object selectMode(ClassLoader cl, String helper) {
+	private PacketExtractor selectMode(ClassLoader cl, String helper) {
 	
 		ResourceBundle bundle = ResourceBundle.getBundle("plugin");
 	
@@ -123,12 +125,12 @@ public class PacketStreamReader implements Runnable {
 			String key = keys.nextElement();
 			if (key.contains(helper) && key.contains(mode)) {
 				try {
-					return cl.loadClass(bundle.getString(key))
+					return (PacketExtractor) cl.loadClass(bundle.getString(key))
 							.newInstance();
 				} catch (InstantiationException | IllegalAccessException
 						| ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					relayDataHandler.failedToLoadRelayMode();
+					Thread.currentThread().interrupt();
 				}
 			}
 		}

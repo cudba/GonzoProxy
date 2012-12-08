@@ -32,7 +32,11 @@ public class GonzoRelayService implements RelayService {
 	private Socket target;
 	private RelaySettings sessionSettings = new RelaySettings();;
 
-	private RelayDataHandler relayDataHandler = new RelayDataHandler();
+	private RelayDataHandler relayDataHandler;
+	
+	public GonzoRelayService() {
+		relayDataHandler = new RelayDataHandler(sessionSettings);
+	}
 
 	@Override
 	public void run() {
@@ -44,7 +48,7 @@ public class GonzoRelayService implements RelayService {
 		establishConnection();
 		initProducerConsumer();
 		handleData();
-		killSession();
+		closeRelay();
 	}
 
 	private void handleData() {
@@ -59,9 +63,7 @@ public class GonzoRelayService implements RelayService {
 			sessionSettings.setSessionState(SessionState.FORWARDING);
 		} catch (IOException e) {
 			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
-			System.out
-					.println("session is beeing killed by manager, io exception");
-			killSession();
+			closeRelay();
 		}
 	}
 
@@ -140,7 +142,11 @@ public class GonzoRelayService implements RelayService {
 	}
 
 	public void killSession() {
+		closeRelay();
 		sessionSettings.setSessionState(SessionState.DISCONNECTED);
+	}
+
+	private void closeRelay() {
 		threadPool.shutdownNow();
 		closeSockets();
 	}

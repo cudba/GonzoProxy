@@ -17,7 +17,10 @@ public class RelaySettings {
 		TRAP("Trapped"),
 		COMMAND_TRAP("Command trapped"),
 		RESPONSE_TRAP("Response trapped"), 
-		CONNECTED("Connection established"), CONNECTION_LOST("Connection lost");
+		CONNECTED("Connection established"), 
+		CONNECTION_LOST("Connection lost"), 
+		EOS("End Of Stream reached"), 
+		MODE_FAILURE("Failed to load chosen relay mode");
 		
 		private String description;
 
