@@ -10,7 +10,6 @@ import java.util.Enumeration;
 import java.util.ResourceBundle;
 
 import ch.compass.gonzoproxy.model.ForwardingType;
-import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.extractor.PacketExtractor;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
@@ -20,7 +19,7 @@ public class PacketStreamReader implements Runnable {
 	private static final int BUFFER_SIZE = 1024;
 
 	private static final String EOS = "End Of Stream\n";
-
+	
 	private PacketExtractor extractor;
 
 	private InputStream inputStream;
@@ -103,8 +102,8 @@ public class PacketStreamReader implements Runnable {
 					try {
 						url = extractorJar.toURI().toURL();
 					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						relayDataHandler.failedToLoadRelayMode();
+						Thread.currentThread().interrupt();
 					}
 					 URL[] urls = new URL[]{url};
 					 return new URLClassLoader(urls);
@@ -127,8 +126,8 @@ public class PacketStreamReader implements Runnable {
 							.newInstance();
 				} catch (InstantiationException | IllegalAccessException
 						| ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					relayDataHandler.failedToLoadRelayMode();
+					Thread.currentThread().interrupt();
 				}
 			}
 		}

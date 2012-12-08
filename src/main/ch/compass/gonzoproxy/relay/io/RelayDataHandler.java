@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
+import ch.compass.gonzoproxy.relay.RelaySettings;
+import ch.compass.gonzoproxy.relay.RelaySettings.SessionState;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
@@ -21,6 +23,8 @@ public class RelayDataHandler {
 
 	private static final String EOS = "End Of Stream\n";
 
+	private boolean morePacketsAvailable = true;
+
 	private LinkedTransferQueue<Packet> receiverQueue = new LinkedTransferQueue<Packet>();
 
 	private LinkedTransferQueue<Packet> commandSenderQueue = new LinkedTransferQueue<Packet>();
@@ -31,33 +35,40 @@ public class RelayDataHandler {
 
 	private SessionModel sessionModel = new SessionModel();
 
+	private RelaySettings sessionSettings;
+	
+	public RelayDataHandler(RelaySettings sessionSettings){
+		this.sessionSettings = sessionSettings;
+		
+	}
+
 	public void setPacketModifier(PacketModifier packetModifier) {
 		this.packetModifier = packetModifier;
 	}
 
 	public void processRelayData() {
-		boolean hasMorePackets = true;
-		while (hasMorePackets) {
+		while (morePacketsAvailable) {
 			try {
 				Packet receivedPacket = receiverQueue.take();
 
-				if (endOfStream(receivedPacket)) {
-					hasMorePackets = false;
-				} else {
+				if(!isEndOfStream(receivedPacket)){
 					Packet sendingPacket = processPacket(receivedPacket);
 					addToSenderQueue(sendingPacket);
+				}else{
+					morePacketsAvailable = false;
+					sessionSettings.setSessionState(SessionState.EOS);
 				}
 
 			} catch (InterruptedException e) {
-				//TODO
-				Thread.currentThread().interrupt();
+				morePacketsAvailable = false;
 			}
 		}
 
 	}
 
-	private boolean endOfStream(Packet receivedPacket) {
-		return Arrays.equals(receivedPacket.getOriginalPacketData(), EOS.getBytes());
+	private boolean isEndOfStream(Packet receivedPacket) {
+		
+		return Arrays.equals(EOS.getBytes(), receivedPacket.getOriginalPacketData());
 	}
 
 	private Packet processPacket(Packet packet) {
@@ -119,6 +130,11 @@ public class RelayDataHandler {
 
 	public SessionModel getSessionModel() {
 		return sessionModel;
+	}
+
+	public void failedToLoadRelayMode() {
+		morePacketsAvailable = false;
+		sessionSettings.setSessionState(SessionState.MODE_FAILURE);
 	}
 
 	@SuppressWarnings("unchecked")
