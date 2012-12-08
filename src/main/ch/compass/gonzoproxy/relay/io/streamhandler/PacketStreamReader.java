@@ -1,7 +1,11 @@
 package ch.compass.gonzoproxy.relay.io.streamhandler;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
@@ -82,9 +86,32 @@ public class PacketStreamReader implements Runnable {
 	}
 
 	private void loadExtractor() {
-		ClassLoader cl = GonzoProxy.class.getClassLoader();
+		ClassLoader cl = getClassloader(sessionSettings.getMode());
 		extractor = (PacketExtractor) selectMode(cl, "extractor");
 	}
+	
+	private URLClassLoader getClassloader(String mode) {
+		ResourceBundle bundle = ResourceBundle.getBundle("plugin");
+			
+			Enumeration<String> keys = bundle.getKeys();
+			while (keys.hasMoreElements()) {
+				String element = keys.nextElement();
+				if (element.contains(".jar") && element.contains(mode)) {
+					File extractorJar = new File("plugin/" + element);
+					URL url = null;
+					try {
+						url = extractorJar.toURI().toURL();
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					 URL[] urls = new URL[]{url};
+					 return new URLClassLoader(urls);
+				}
+			}
+
+			return null;
+		}
 
 	private Object selectMode(ClassLoader cl, String helper) {
 	
