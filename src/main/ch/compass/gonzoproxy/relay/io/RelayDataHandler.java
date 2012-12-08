@@ -42,7 +42,6 @@ public class RelayDataHandler {
 				Packet receivedPacket = receiverQueue.take();
 
 				if (endOfStream(receivedPacket)) {
-					System.out.println("eos by handler");
 					hasMorePackets = false;
 				} else {
 					Packet sendingPacket = processPacket(receivedPacket);
@@ -50,6 +49,7 @@ public class RelayDataHandler {
 				}
 
 			} catch (InterruptedException e) {
+				//TODO
 				Thread.currentThread().interrupt();
 			}
 		}

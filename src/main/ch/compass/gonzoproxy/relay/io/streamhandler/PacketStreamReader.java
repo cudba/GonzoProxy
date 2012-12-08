@@ -86,12 +86,6 @@ public class PacketStreamReader implements Runnable {
 		}
 	}
 
-	private void handleEndOfStream() {
-		Packet eosPacket = new Packet();
-		eosPacket.setDescription(EOS);
-		relayDataHandler.offer(eosPacket);
-	}
-
 	private void loadExtractor() {
 		ClassLoader cl = getClassloader(mode);
 		extractor = (PacketExtractor) selectMode(cl, "extractor");
@@ -102,9 +96,9 @@ public class PacketStreamReader implements Runnable {
 			
 			Enumeration<String> keys = bundle.getKeys();
 			while (keys.hasMoreElements()) {
-				String element = keys.nextElement();
-				if (element.contains(".jar") && element.contains(mode)) {
-					File extractorJar = new File("plugin/" + element);
+				String key = keys.nextElement();
+				if (key.contains(".jar") && key.contains(mode)) {
+					File extractorJar = new File("plugin/" + bundle.getString(key));
 					URL url = null;
 					try {
 						url = extractorJar.toURI().toURL();
@@ -126,10 +120,10 @@ public class PacketStreamReader implements Runnable {
 	
 		Enumeration<String> keys = bundle.getKeys();
 		while (keys.hasMoreElements()) {
-			String element = keys.nextElement();
-			if (element.contains(helper) && element.contains(mode)) {
+			String key = keys.nextElement();
+			if (key.contains(helper) && key.contains(mode)) {
 				try {
-					return cl.loadClass(bundle.getString(element))
+					return cl.loadClass(bundle.getString(key))
 							.newInstance();
 				} catch (InstantiationException | IllegalAccessException
 						| ClassNotFoundException e) {
