@@ -40,11 +40,11 @@ public class PacketStreamWriter implements Runnable {
 		this.relayDataHandler = relayDataHandler;
 		this.mode = mode;
 		this.forwardingType = type;
-		loadWrapper();
 	}
 
 	@Override
 	public void run() {
+		loadWrapper();
 		sendPackets();
 	}
 
@@ -155,7 +155,10 @@ public class PacketStreamWriter implements Runnable {
 
 	private void loadWrapper() {
 		ClassLoader cl = getClassloader(mode);
-		wrapper = (PacketWrapper) selectMode(cl, "wrapper");
+		if((wrapper = (PacketWrapper) selectMode(cl, "wrapper")) == null) {
+			relayDataHandler.failedToLoadRelayMode();
+			Thread.currentThread().interrupt();
+		}
 	}
 	
 	private URLClassLoader getClassloader(String mode) {
@@ -170,8 +173,8 @@ public class PacketStreamWriter implements Runnable {
 					try {
 						url = extractorJar.toURI().toURL();
 					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						relayDataHandler.failedToLoadRelayMode();
+						Thread.currentThread().interrupt();
 					}
 					 URL[] urls = new URL[]{url};
 					 return new URLClassLoader(urls);

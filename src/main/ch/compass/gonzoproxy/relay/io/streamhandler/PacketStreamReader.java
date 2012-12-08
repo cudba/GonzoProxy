@@ -35,11 +35,11 @@ public class PacketStreamReader implements Runnable {
 		this.relayDataHandler = relayDataHandler;
 		this.mode = mode;
 		this.forwardingType = forwardingType;
-		loadExtractor();
 	}
 
 	@Override
 	public void run() {
+		loadExtractor();
 		readPackets();
 	}
 
@@ -87,7 +87,10 @@ public class PacketStreamReader implements Runnable {
 
 	private void loadExtractor() {
 		ClassLoader cl = getClassloader(mode);
-		extractor = (PacketExtractor) selectMode(cl, "extractor");
+		if((extractor = (PacketExtractor) selectMode(cl, "extractor")) == null) {
+			relayDataHandler.failedToLoadRelayMode();
+			Thread.currentThread().interrupt();
+		}
 	}
 	
 	private URLClassLoader getClassloader(String mode) {
@@ -113,7 +116,7 @@ public class PacketStreamReader implements Runnable {
 			return null;
 		}
 
-	private Object selectMode(ClassLoader cl, String helper) {
+	private PacketExtractor selectMode(ClassLoader cl, String helper) {
 	
 		ResourceBundle bundle = ResourceBundle.getBundle("plugin");
 	
@@ -122,7 +125,7 @@ public class PacketStreamReader implements Runnable {
 			String key = keys.nextElement();
 			if (key.contains(helper) && key.contains(mode)) {
 				try {
-					return cl.loadClass(bundle.getString(key))
+					return (PacketExtractor) cl.loadClass(bundle.getString(key))
 							.newInstance();
 				} catch (InstantiationException | IllegalAccessException
 						| ClassNotFoundException e) {

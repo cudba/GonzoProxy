@@ -133,8 +133,8 @@ public class RelayDataHandler {
 	}
 
 	public void failedToLoadRelayMode() {
-		morePacketsAvailable = false;
 		sessionSettings.setSessionState(SessionState.MODE_FAILURE);
+		morePacketsAvailable = false;
 	}
 
 	@SuppressWarnings("unchecked")
