@@ -1,5 +1,6 @@
 package ch.compass.gonzoproxy.view;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -8,10 +9,12 @@ import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -19,12 +22,10 @@ import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.listener.StateListener;
-import ch.compass.gonzoproxy.model.PacketDetailTableModel;
 import ch.compass.gonzoproxy.model.Field;
 import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.PacketDetailTableModel;
 import ch.compass.gonzoproxy.relay.RelaySettings.SessionState;
-
-import javax.swing.SwingConstants;
 
 public class PacketDetailPanel extends JPanel {
 
@@ -59,6 +60,9 @@ public class PacketDetailPanel extends JPanel {
 
 					@Override
 					public void sessionStateChanged(SessionState state) {
+						if(state.equals(SessionState.MODE_FAILURE)){
+							lblStatus.setForeground(Color.RED);
+						}
 						lblStatus.setText(state.getDescription());
 						updateSessionPrefs();
 					}

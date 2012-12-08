@@ -19,8 +19,8 @@ public class RelaySettings {
 		RESPONSE_TRAP("Response trapped"), 
 		CONNECTED("Connection established"), 
 		CONNECTION_LOST("Connection lost"), 
-		EOS("End Of Stream reached"), 
-		MODE_FAILURE("Failed to load chosen relay mode");
+		EOS("End of stream reached"), 
+		MODE_FAILURE("Failed to instantiate chosen relay mode");
 		
 		private String description;
 
