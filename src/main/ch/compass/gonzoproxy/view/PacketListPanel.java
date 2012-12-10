@@ -129,8 +129,7 @@ public class PacketListPanel extends JPanel {
 				return c;
 			}
 		};
-		table_packetList.setModel(new PacketTableModel(currentSession,
-				new String[] { "#", "Type", "Packet", "ASCII", "Description" }));
+		table_packetList.setModel(new PacketTableModel(currentSession));
 
 		table_packetList.getSelectionModel().addListSelectionListener(
 				new ListSelectionListener() {

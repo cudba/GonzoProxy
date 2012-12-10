@@ -11,11 +11,10 @@ public class PacketTableModel extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = -1437358812481945385L;
 	private SessionModel session;
-	String[] columnNames;;
+	String[] columnNames = { "#", "Type", "Packet", "ASCII", "Description" };
 
-	public PacketTableModel(SessionModel session, String[] columnNames) {
+	public PacketTableModel(SessionModel session) {
 		this.session = session;
-		this.columnNames = columnNames;
 		this.session.addSessionListener(createListener());
 	}
 
