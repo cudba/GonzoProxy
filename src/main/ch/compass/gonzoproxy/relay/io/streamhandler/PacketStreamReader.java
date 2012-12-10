@@ -10,9 +10,11 @@ import java.util.Enumeration;
 import java.util.ResourceBundle;
 
 import ch.compass.gonzoproxy.model.ForwardingType;
+import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.extractor.PacketExtractor;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
+import ch.compass.gonzoproxy.utils.PacketUtils;
 
 public class PacketStreamReader implements Runnable {
 	
@@ -73,7 +75,8 @@ public class PacketStreamReader implements Runnable {
 				buffer = extractor.extractPacketsToHandler(buffer,
 						relayDataHandler, length, forwardingType);
 			}else {
-				extractor.extractPacketsToHandler(EOS.getBytes(), relayDataHandler, EOS.length(), forwardingType);
+				sendEosPacket();
+				throw new IOException();
 			}
 
 			readCompleted = buffer.length == 0;
@@ -84,11 +87,22 @@ public class PacketStreamReader implements Runnable {
 			}
 		}
 	}
+	
+	private void sendEosPacket() {
+		Packet eosPacket = new Packet();
+		eosPacket.setDescription(PacketUtils.EOS_PACKET);
+		relayDataHandler.offer(eosPacket);
+	}
+	
+	private void sendModeFailurePacket() {
+		Packet modeFailurePacket = new Packet();
+		modeFailurePacket.setDescription(PacketUtils.MODE_FAILURE_PACKET);
+	}
 
 	private void loadExtractor() {
 		ClassLoader cl = getClassloader(mode);
 		if((extractor = (PacketExtractor) selectMode(cl, "extractor")) == null) {
-			relayDataHandler.failedToLoadRelayMode();
+			sendModeFailurePacket();
 			Thread.currentThread().interrupt();
 		}
 	}
@@ -105,7 +119,7 @@ public class PacketStreamReader implements Runnable {
 					try {
 						url = extractorJar.toURI().toURL();
 					} catch (MalformedURLException e) {
-						relayDataHandler.failedToLoadRelayMode();
+						sendModeFailurePacket();
 						Thread.currentThread().interrupt();
 					}
 					 URL[] urls = new URL[]{url};
@@ -129,7 +143,7 @@ public class PacketStreamReader implements Runnable {
 							.newInstance();
 				} catch (InstantiationException | IllegalAccessException
 						| ClassNotFoundException e) {
-					relayDataHandler.failedToLoadRelayMode();
+					sendModeFailurePacket();
 					Thread.currentThread().interrupt();
 				}
 			}
