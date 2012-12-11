@@ -1,4 +1,4 @@
-package ch.compass.gonzoproxy.relay;
+package ch.compass.gonzoproxy.relay.settings;
 
 import java.util.ArrayList;
 import java.util.prefs.Preferences;

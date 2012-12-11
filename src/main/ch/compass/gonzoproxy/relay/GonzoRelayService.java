@@ -15,13 +15,14 @@ import java.util.concurrent.Executors;
 import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.SessionModel;
-import ch.compass.gonzoproxy.relay.RelaySettings.SessionState;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamReader;
 import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamWriter;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
+import ch.compass.gonzoproxy.relay.settings.RelaySettings;
+import ch.compass.gonzoproxy.relay.settings.RelaySettings.SessionState;
 
 public class GonzoRelayService implements RelayService {
 
@@ -45,16 +46,16 @@ public class GonzoRelayService implements RelayService {
 
 	private void handleRelaySession() {
 		threadPool = Executors.newFixedThreadPool(4);
-		establishConnection();
-		initProducerConsumer();
-		handleData();
+		if(establishConnection()){
+			initProducerConsumer();
+			handleData();
+		}
 	}
 
 	private void handleData() {
 		try {
 			relayDataHandler.processRelayData();
 		} catch (InterruptedException e) {
-			System.out.println("interrupted");
 			stopSession();
 		}
 
@@ -71,15 +72,23 @@ public class GonzoRelayService implements RelayService {
 		sessionSettings.setSessionState(SessionState.FORWARDING);
 	}
 
-	private void establishConnection() {
+	private boolean establishConnection() {
 		try {
-			awaitInitiatorConnection();
-			connectToTarget();
-			sessionSettings.setSessionState(SessionState.CONNECTED);
+			sessionSettings.setSessionState(SessionState.CONNECTING);
+			
+			if(awaitInitiatorConnection()){
+				connectToTarget();
+				sessionSettings.setSessionState(SessionState.CONNECTED);
+				return true;
+			}else {
+				sessionSettings.setSessionState(SessionState.DISCONNECTED);
+				return false;
+			}
 		} finally {
 			try {
 				serverSocket.close();
 			} catch (IOException e) {
+				// is this code reached? :>
 				// log server socket not closed ?
 			}
 		}
@@ -98,14 +107,14 @@ public class GonzoRelayService implements RelayService {
 		}
 	}
 
-	private void awaitInitiatorConnection() {
-		sessionSettings.setSessionState(SessionState.CONNECTING);
+	private boolean awaitInitiatorConnection() {
 		try {
 			serverSocket = new ServerSocket(sessionSettings.getListenPort());
 			initiator = serverSocket.accept();
 		} catch (IOException e) {
-			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
+			return false;
 		}
+		return true;
 	}
 
 	private void initCommandStreamHandlers() throws IOException {
@@ -170,6 +179,13 @@ public class GonzoRelayService implements RelayService {
 		if (socketIsOpen(target)) {
 			try {
 				target.close();
+			} catch (IOException e) {
+				sessionSettings.setSessionState(SessionState.DISCONNECTED);
+			}
+		}
+		if(serverSocket != null) {
+			try {
+				serverSocket.close();
 			} catch (IOException e) {
 				sessionSettings.setSessionState(SessionState.DISCONNECTED);
 			}

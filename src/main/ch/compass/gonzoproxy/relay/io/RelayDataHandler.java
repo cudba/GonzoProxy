@@ -9,13 +9,13 @@ import java.util.concurrent.TimeUnit;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
-import ch.compass.gonzoproxy.relay.RelaySettings;
-import ch.compass.gonzoproxy.relay.RelaySettings.SessionState;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.relay.parser.ParsingHandler;
+import ch.compass.gonzoproxy.relay.settings.RelaySettings;
+import ch.compass.gonzoproxy.relay.settings.RelaySettings.SessionState;
 import ch.compass.gonzoproxy.utils.PacketUtils;
 import ch.compass.gonzoproxy.utils.PersistingUtils;
 
