@@ -15,9 +15,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import ch.compass.gonzoproxy.controller.RelayController;
-
+import javax.swing.JCheckBox;
 
 public class NewSessionDialog extends JDialog {
 
@@ -32,6 +34,7 @@ public class NewSessionDialog extends JDialog {
 	private JComboBox<String> comboBoxMode;
 
 	private RelayController controller;
+	private JCheckBox chckbxRunLocally;
 
 	public NewSessionDialog(RelayController controller) {
 		this.controller = controller;
@@ -40,11 +43,13 @@ public class NewSessionDialog extends JDialog {
 	}
 
 	private void loadFields() {
-		textFieldPortListen.setText(Integer.toString(controller.getCurrentListenPort()));
+		textFieldPortListen.setText(Integer.toString(controller
+				.getCurrentListenPort()));
 		textFieldForwardIP.setText(controller.getCurrentRemoteHost());
-		textFieldForwardPort.setText(Integer.toString(controller.getCurrentRemotePort()));
+		textFieldForwardPort.setText(Integer.toString(controller
+				.getCurrentRemotePort()));
+		enableCheckbox(controller.getPossibleRelayModes()[0]);
 	}
-
 
 	private void initGui() {
 		setResizable(false);
@@ -71,7 +76,15 @@ public class NewSessionDialog extends JDialog {
 		contentPane.add(lblSelectInputMethod, gbc_lblSelectInputMethod);
 
 		comboBoxMode = new JComboBox<String>();
-		comboBoxMode.setModel(new DefaultComboBoxModel<String>(controller.getPossibleRelayModes()));
+		comboBoxMode.setModel(new DefaultComboBoxModel<String>(controller
+				.getPossibleRelayModes()));
+		comboBoxMode.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				enableCheckbox((String) comboBoxMode.getSelectedItem());
+			}
+		});
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.insets = new Insets(0, 0, 5, 0);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
@@ -145,9 +158,41 @@ public class NewSessionDialog extends JDialog {
 				String remoteHost = textFieldForwardIP.getText();
 				String remotePort = textFieldForwardPort.getText();
 				String mode = (String) comboBoxMode.getSelectedItem();
-				controller.newSession(portListen, remoteHost, remotePort, mode);
+				if (chckbxRunLocally.isSelected()) {
+					controller.newSession("1234", "localhost", "4321", mode,
+							chckbxRunLocally.isSelected());
+				} else {
+					controller.newSession(portListen, remoteHost, remotePort,
+							mode, chckbxRunLocally.isSelected());
+				}
 			}
 		});
+
+		chckbxRunLocally = new JCheckBox("run locally");
+		chckbxRunLocally
+				.setToolTipText("<html>Runs command: socat TCP:localhost:1234 \"EXEC:nfc-relay-picc -t,fdin=3,fdout=4\"<br>" +
+						"and: socat TCP-LISTEN:4321 \"EXEC:nfc-relay-picc -i,fdin=3,fdout=4\"");
+		chckbxRunLocally.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				if (chckbxRunLocally.isSelected()) {
+					textFieldForwardIP.setEnabled(false);
+					textFieldForwardPort.setEnabled(false);
+					textFieldPortListen.setEnabled(false);
+				} else {
+					textFieldForwardIP.setEnabled(true);
+					textFieldForwardPort.setEnabled(true);
+					textFieldPortListen.setEnabled(true);
+				}
+			}
+		});
+		GridBagConstraints gbc_chckbxRunLocally = new GridBagConstraints();
+		gbc_chckbxRunLocally.anchor = GridBagConstraints.WEST;
+		gbc_chckbxRunLocally.insets = new Insets(0, 0, 0, 5);
+		gbc_chckbxRunLocally.gridx = 0;
+		gbc_chckbxRunLocally.gridy = 4;
+		contentPane.add(chckbxRunLocally, gbc_chckbxRunLocally);
 		GridBagConstraints gbc_btnStart = new GridBagConstraints();
 		gbc_btnStart.gridx = 1;
 		gbc_btnStart.gridy = 4;
@@ -158,6 +203,15 @@ public class NewSessionDialog extends JDialog {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setSize(338, 173);
+	}
+
+	protected void enableCheckbox(String selectedItem) {
+		if (selectedItem.equals("libnfc")) {
+			chckbxRunLocally.setEnabled(true);
+		} else {
+			chckbxRunLocally.setEnabled(false);
+			chckbxRunLocally.setSelected(false);
+		}
 	}
 
 }

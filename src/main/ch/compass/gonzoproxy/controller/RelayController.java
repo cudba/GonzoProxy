@@ -17,7 +17,7 @@ import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 public class RelayController {
 
 	private boolean sessionIsActive = false;
-	
+
 	private String[] relayModes;
 
 	private Thread relayServiceThread;
@@ -28,13 +28,16 @@ public class RelayController {
 	}
 
 	public void newSession(String portListen, String remoteHost,
-			String remotePort, String mode) {
+			String remotePort, String mode, boolean runLocally) {
 		stopRunningSession();
 		relayService.generateNewSessionParameters(portListen, remoteHost,
 				remotePort, mode);
 		relayServiceThread = new Thread(relayService);
 		relayServiceThread.start();
 		sessionIsActive = true;
+		if(runLocally){
+			runLocally();
+		}
 	}
 
 	public void stopRunningSession() {
@@ -155,6 +158,23 @@ public class RelayController {
 		}
 
 		this.relayModes = inputModes.toArray(new String[inputModes.size()]);
+	}
+
+	private void runLocally() {
+		String[] listenCmd = { "socat", "TCP-LISTEN:4321,reuseaddr",
+				"EXEC:nfc-relay-picc -i,fdin=3,fdout=4" };
+
+		String[] connectCmd = { "socat", "TCP:localhost:1234",
+				"EXEC:nfc-relay-picc -t,fdin=3,fdout=4" };
+
+		try {
+			Runtime.getRuntime().exec(listenCmd);
+			Runtime.getRuntime().exec(connectCmd);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }
