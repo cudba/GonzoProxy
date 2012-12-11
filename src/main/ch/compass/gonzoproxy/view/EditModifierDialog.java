@@ -44,6 +44,12 @@ public class EditModifierDialog extends JDialog {
 		textFieldPacketname.setText(packetRule.getCorrespondingPacket());
 		textFieldOldValue.setText(fieldRule.getOriginalValue());
 		textFieldNewValue.setText(fieldRule.getReplacedValue());
+		chckbxReplaceWhole.setSelected(fieldRule.getOriginalValue().equals(""));
+		if(fieldRule.getOriginalValue().equals("")){
+			textFieldOldValue.setEnabled(false);
+		}
+		chckbxUpdateLengthAutomatically.setSelected(packetRule.shouldUpdateContentLength());
+		
 	}
 
 	private void initGui() {
