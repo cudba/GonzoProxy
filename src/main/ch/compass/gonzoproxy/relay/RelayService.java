@@ -14,7 +14,7 @@ public interface RelayService extends Runnable {
 
 	public abstract void run();
 
-	public abstract void killSession();
+	public abstract void stopSession();
 
 	public abstract void generateNewSessionParameters(String portListen,
 			String remoteHost, String remotePort, String mode);

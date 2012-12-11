@@ -38,10 +38,7 @@ public class RelayController {
 	}
 
 	public void stopRunningSession() {
-		if (sessionIsActive) {
-			relayService.killSession();
-			sessionIsActive = false;
-		}
+		relayService.stopSession();
 	}
 
 	public SessionModel getSessionModel() {

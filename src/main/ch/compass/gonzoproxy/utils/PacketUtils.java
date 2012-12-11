@@ -10,6 +10,9 @@ public class PacketUtils {
 	public static final String CONTENT_LENGTH_FIELD = "Lc";
 	public static final String CONTENT_IDENTIFIER = "Ci";
 	public static final String CONTENT_DATA = "CONTENT";
+	
+	public static final String EOS_PACKET = "End Of Stream";
+	public static final String MODE_FAILURE_PACKET = "Mode loading error";
 
 	public static final int ENCODING_OFFSET = 2;
 	public static final int WHITESPACE_OFFSET = 1;

@@ -3,7 +3,6 @@ package ch.compass.gonzoproxy.relay.io;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -17,11 +16,10 @@ import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.relay.parser.ParsingHandler;
+import ch.compass.gonzoproxy.utils.PacketUtils;
 import ch.compass.gonzoproxy.utils.PersistingUtils;
 
 public class RelayDataHandler {
-
-	private static final String EOS = "End Of Stream\n";
 
 	private boolean morePacketsAvailable = true;
 
@@ -36,39 +34,41 @@ public class RelayDataHandler {
 	private SessionModel sessionModel = new SessionModel();
 
 	private RelaySettings sessionSettings;
-	
-	public RelayDataHandler(RelaySettings sessionSettings){
+
+	public RelayDataHandler(RelaySettings sessionSettings) {
 		this.sessionSettings = sessionSettings;
-		
+
 	}
 
-	public void setPacketModifier(PacketModifier packetModifier) {
-		this.packetModifier = packetModifier;
-	}
+	public void processRelayData() throws InterruptedException {
 
-	public void processRelayData() {
 		while (morePacketsAvailable) {
-			try {
-				Packet receivedPacket = receiverQueue.take();
+			Packet receivedPacket = receiverQueue.poll(200,
+					TimeUnit.MILLISECONDS);
 
-				if(!isEndOfStream(receivedPacket)){
+			if (receivedPacket != null) {
+				if (!streamFailure(receivedPacket)) {
 					Packet sendingPacket = processPacket(receivedPacket);
 					addToSenderQueue(sendingPacket);
-				}else{
+				} else {
 					morePacketsAvailable = false;
-					sessionSettings.setSessionState(SessionState.EOS);
+					throw new InterruptedException();
 				}
-
-			} catch (InterruptedException e) {
-				morePacketsAvailable = false;
 			}
 		}
 
 	}
 
-	private boolean isEndOfStream(Packet receivedPacket) {
-		
-		return Arrays.equals(EOS.getBytes(), receivedPacket.getOriginalPacketData());
+	private boolean streamFailure(Packet receivedPacket) {
+		String packetDescription = receivedPacket.getDescription();
+		if (PacketUtils.EOS_PACKET.equals(packetDescription)) {
+			sessionSettings.setSessionState(SessionState.EOS);
+			return true;
+		} else if (PacketUtils.MODE_FAILURE_PACKET.equals(packetDescription)) {
+			sessionSettings.setSessionState(SessionState.MODE_FAILURE);
+			return true;
+		}
+		return false;
 	}
 
 	private Packet processPacket(Packet packet) {
@@ -105,6 +105,7 @@ public class RelayDataHandler {
 	public void reparse() {
 		parsingHandler.loadTemplates();
 		for (Packet packet : sessionModel.getPacketList()) {
+			packet.updateOrigialDataFromFields();
 			packet.clearFields();
 			parsingHandler.tryParse(packet);
 		}
@@ -173,7 +174,12 @@ public class RelayDataHandler {
 		packetModifier.persistRegex();
 	}
 
-	public void clearSessionData() {
+	public void reset() {
 		sessionModel.clearData();
+		morePacketsAvailable = true;
+	}
+	
+	public void stopDataHandling() {
+		morePacketsAvailable = false;
 	}
 }
