@@ -20,6 +20,8 @@ import ch.compass.gonzoproxy.utils.PacketUtils;
 import ch.compass.gonzoproxy.utils.PersistingUtils;
 
 public class RelayDataHandler {
+	
+	private boolean isHandlingData = false;
 
 	private LinkedTransferQueue<Packet> receiverQueue = new LinkedTransferQueue<Packet>();
 
@@ -39,9 +41,8 @@ public class RelayDataHandler {
 	}
 
 	public void processRelayData() throws InterruptedException {
-		clearQueues();
-		boolean morePacketsAvailable = true;
-		while (morePacketsAvailable) {
+		isHandlingData = true;
+		while (isHandlingData) {
 			Packet receivedPacket = receiverQueue.poll(200,
 					TimeUnit.MILLISECONDS);
 
@@ -50,7 +51,7 @@ public class RelayDataHandler {
 					Packet sendingPacket = processPacket(receivedPacket);
 					addToSenderQueue(sendingPacket);
 				} else {
-					morePacketsAvailable = false;
+					isHandlingData = false;
 					throw new InterruptedException();
 				}
 			}
@@ -58,10 +59,26 @@ public class RelayDataHandler {
 
 	}
 
-	private void clearQueues() {
-		receiverQueue.clear();
-		commandSenderQueue.clear();
-		responseSenderQueue.clear();
+	public void offer(Packet packet) {
+		receiverQueue.offer(packet);
+	}
+
+	public Packet poll(ForwardingType type) throws InterruptedException {
+		Packet sendingPacket = null;
+		switch (type) {
+		case COMMAND:
+			sendingPacket = commandSenderQueue.poll(200, TimeUnit.MILLISECONDS);
+			break;
+		case RESPONSE:
+			sendingPacket = responseSenderQueue
+					.poll(200, TimeUnit.MILLISECONDS);
+			break;
+		}
+		return sendingPacket;
+	}
+
+	public boolean isHandlingData() {
+		return isHandlingData;
 	}
 
 	private boolean streamFailure(Packet receivedPacket) {
@@ -104,7 +121,6 @@ public class RelayDataHandler {
 			responseSenderQueue.offer(sendingPacket);
 			break;
 		}
-
 	}
 
 	public void reparse() {
@@ -114,24 +130,6 @@ public class RelayDataHandler {
 			packet.clearFields();
 			parsingHandler.tryParse(packet);
 		}
-	}
-
-	public void offer(Packet packet) {
-		receiverQueue.offer(packet);
-	}
-
-	public Packet poll(ForwardingType type) throws InterruptedException {
-		Packet sendingPacket = null;
-		switch (type) {
-		case COMMAND:
-			sendingPacket = commandSenderQueue.poll(200, TimeUnit.MILLISECONDS);
-			break;
-		case RESPONSE:
-			sendingPacket = responseSenderQueue
-					.poll(200, TimeUnit.MILLISECONDS);
-			break;
-		}
-		return sendingPacket;
 	}
 
 	public SessionModel getSessionModel() {
@@ -174,7 +172,7 @@ public class RelayDataHandler {
 		packetModifier.persistRegex();
 	}
 
-	public void reset() {
+	public void clearSessionData() {
 		sessionModel.clearData();
 	}
 	

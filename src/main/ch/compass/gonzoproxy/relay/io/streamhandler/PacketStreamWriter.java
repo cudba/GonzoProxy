@@ -85,10 +85,6 @@ public class PacketStreamWriter implements Runnable {
 	}
 
 	public void setTrapListener(RelaySettings sessionSettings) {
-		addTrapListener(sessionSettings);
-	}
-
-	private void addTrapListener(RelaySettings sessionSettings) {
 		sessionSettings.addTrapListener(new TrapListener() {
 
 			@Override

@@ -72,7 +72,7 @@ public class PacketStreamReader implements Runnable {
 				buffer = extractor.extractPacketsToHandler(buffer,
 						relayDataHandler, length, forwardingType);
 			}else {
-				sendEosPacket();
+				offerEosPacket();
 				throw new IOException();
 			}
 
@@ -85,18 +85,18 @@ public class PacketStreamReader implements Runnable {
 		}
 	}
 	
-	private void sendEosPacket() {
+	private void offerEosPacket() {
 		relayDataHandler.offer(PacketUtils.getEosPacket());
 	}
 	
-	private void sendModeFailurePacket() {
+	private void offerModeFailurePacket() {
 		relayDataHandler.offer(PacketUtils.getModeFailurePacket());
 	}
 
 	private void loadExtractor() {
 		ClassLoader cl = getClassloader(mode);
 		if((extractor = (PacketExtractor) selectMode(cl, "extractor")) == null) {
-			sendModeFailurePacket();
+			offerModeFailurePacket();
 			Thread.currentThread().interrupt();
 		}
 	}
@@ -113,7 +113,7 @@ public class PacketStreamReader implements Runnable {
 					try {
 						url = extractorJar.toURI().toURL();
 					} catch (MalformedURLException e) {
-						sendModeFailurePacket();
+						offerModeFailurePacket();
 						Thread.currentThread().interrupt();
 					}
 					 URL[] urls = new URL[]{url};
@@ -137,7 +137,7 @@ public class PacketStreamReader implements Runnable {
 							.newInstance();
 				} catch (InstantiationException | IllegalAccessException
 						| ClassNotFoundException e) {
-					sendModeFailurePacket();
+					offerModeFailurePacket();
 					Thread.currentThread().interrupt();
 				}
 			}

@@ -49,20 +49,8 @@ public class GonzoRelayService implements RelayService {
 		threadPool = Executors.newFixedThreadPool(4);
 		if(establishConnection()){
 			initProducerConsumer();
-			System.out.println("fubidubi");
 			startDataProcessing();
 		}
-	}
-
-	private void initProducerConsumer() {
-		try {
-			initCommandStreamHandlers();
-			initResponseStreamHandlers();
-		} catch (IOException e) {
-			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
-			stopSession();
-		}
-		sessionSettings.setSessionState(SessionState.FORWARDING);
 	}
 
 	private boolean establishConnection() {
@@ -110,6 +98,17 @@ public class GonzoRelayService implements RelayService {
 		return true;
 	}
 
+	private void initProducerConsumer() {
+		try {
+			initCommandStreamHandlers();
+			initResponseStreamHandlers();
+		} catch (IOException e) {
+			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
+			closeRelayComponents();
+		}
+		sessionSettings.setSessionState(SessionState.FORWARDING);
+	}
+
 	private void initCommandStreamHandlers() throws IOException {
 	
 		InputStream inputStream = new BufferedInputStream(
@@ -151,20 +150,62 @@ public class GonzoRelayService implements RelayService {
 		try {
 			relayDataHandler.processRelayData();
 		} catch (InterruptedException e) {
-			System.out.println("interrupted exception");
-			stopSession();
+			closeRelayComponents();
 		}
 	
 	}
 
 	public void stopSession() {
+		closeRelayComponents();
+		sessionSettings.setSessionState(SessionState.DISCONNECTED);
+	}
+
+	private void closeRelayComponents() {
 		stopDataProcessing();
 		closeSockets();
 		shutdownConsumerProducer();
+		
 	}
 
 	private void stopDataProcessing() {
-		relayDataHandler.offer(PacketUtils.getEosPacket());
+		if(relayDataHandler.isHandlingData()) {
+			relayDataHandler.offer(PacketUtils.getEosPacket());
+		}
+	}
+
+	private void shutdownConsumerProducer() {
+		if (threadPool != null)
+			threadPool.shutdownNow();
+	}
+
+	private void closeSockets() {
+		if (socketIsOpen(initiator)) {
+			try {
+				initiator.close();
+			} catch (IOException e) {
+				// TODO : state -> socket closing error
+				sessionSettings.setSessionState(SessionState.DISCONNECTED);
+			}
+		}
+	
+		if (socketIsOpen(target)) {
+			try {
+				target.close();
+			} catch (IOException e) {
+				sessionSettings.setSessionState(SessionState.DISCONNECTED);
+			}
+		}
+		if(serverSocket != null) {
+			try {
+				serverSocket.close();
+			} catch (IOException e) {
+				sessionSettings.setSessionState(SessionState.DISCONNECTED);
+			}
+		}
+	}
+
+	private boolean socketIsOpen(Socket socket) {
+		return socket != null && !socket.isClosed();
 	}
 
 	public void setConnectionParameters(String portListen,
@@ -172,7 +213,7 @@ public class GonzoRelayService implements RelayService {
 		sessionSettings.setConnectionParameter(Integer.parseInt(portListen), remoteHost,
 				Integer.parseInt(remotePort));
 		sessionSettings.setMode(mode);
-		relayDataHandler.reset();
+		relayDataHandler.clearSessionData();
 	}
 
 	public void commandTrapChanged() {
@@ -280,41 +321,6 @@ public class GonzoRelayService implements RelayService {
 
 	public void persistRegex() throws IOException {
 		relayDataHandler.persistRegex();
-	}
-
-	private void shutdownConsumerProducer() {
-		if (threadPool != null)
-			threadPool.shutdownNow();
-	}
-
-	private void closeSockets() {
-		if (socketIsOpen(initiator)) {
-			try {
-				initiator.close();
-			} catch (IOException e) {
-				// TODO : state -> socket closing error
-				sessionSettings.setSessionState(SessionState.DISCONNECTED);
-			}
-		}
-	
-		if (socketIsOpen(target)) {
-			try {
-				target.close();
-			} catch (IOException e) {
-				sessionSettings.setSessionState(SessionState.DISCONNECTED);
-			}
-		}
-		if(serverSocket != null) {
-			try {
-				serverSocket.close();
-			} catch (IOException e) {
-				sessionSettings.setSessionState(SessionState.DISCONNECTED);
-			}
-		}
-	}
-
-	private boolean socketIsOpen(Socket socket) {
-		return socket != null && !socket.isClosed();
 	}
 
 }
