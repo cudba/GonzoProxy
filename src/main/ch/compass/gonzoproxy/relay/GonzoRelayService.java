@@ -47,13 +47,13 @@ public class GonzoRelayService implements RelayService {
 
 	private void startRelaySession() {
 		threadPool = Executors.newFixedThreadPool(4);
-		if (establishConnection()) {
+		if (connectionEstablished()) {
 			initProducerConsumer();
 			startDataProcessing();
 		}
 	}
 
-	private boolean establishConnection() {
+	private boolean connectionEstablished() {
 		try {
 			sessionSettings.setSessionState(SessionState.CONNECTING);
 
