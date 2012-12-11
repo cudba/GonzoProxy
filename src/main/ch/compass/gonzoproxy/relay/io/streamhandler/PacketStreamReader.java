@@ -23,7 +23,7 @@ public class PacketStreamReader implements Runnable {
 
 	private InputStream inputStream;
 	private ForwardingType forwardingType;
-	private String mode;
+	private String relayMode;
 
 	private RelayDataHandler relayDataHandler;
 
@@ -32,7 +32,7 @@ public class PacketStreamReader implements Runnable {
 			ForwardingType forwardingType) {
 		this.inputStream = inputStream;
 		this.relayDataHandler = relayDataHandler;
-		this.mode = mode;
+		this.relayMode = mode;
 		this.forwardingType = forwardingType;
 	}
 
@@ -94,7 +94,7 @@ public class PacketStreamReader implements Runnable {
 	}
 
 	private void loadExtractor() {
-		ClassLoader cl = getClassloader(mode);
+		ClassLoader cl = getClassloader(relayMode);
 		if((extractor = (PacketExtractor) selectMode(cl, "extractor")) == null) {
 			offerModeFailurePacket();
 			Thread.currentThread().interrupt();
@@ -131,7 +131,7 @@ public class PacketStreamReader implements Runnable {
 		Enumeration<String> keys = bundle.getKeys();
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();
-			if (key.contains(helper) && key.contains(mode)) {
+			if (key.contains(helper) && key.contains(relayMode)) {
 				try {
 					return (PacketExtractor) cl.loadClass(bundle.getString(key))
 							.newInstance();

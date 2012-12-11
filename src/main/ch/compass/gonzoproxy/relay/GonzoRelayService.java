@@ -47,7 +47,7 @@ public class GonzoRelayService implements RelayService {
 
 	private void startRelaySession() {
 		threadPool = Executors.newFixedThreadPool(4);
-		if(establishConnection()){
+		if (establishConnection()) {
 			initProducerConsumer();
 			startDataProcessing();
 		}
@@ -56,12 +56,17 @@ public class GonzoRelayService implements RelayService {
 	private boolean establishConnection() {
 		try {
 			sessionSettings.setSessionState(SessionState.CONNECTING);
-			
-			if(awaitInitiatorConnection()){
-				connectToTarget();
-				sessionSettings.setSessionState(SessionState.CONNECTED);
-				return true;
-			}else {
+
+			if (initiatorConnected()) {
+				if (connectedToTarget()) {
+					sessionSettings.setSessionState(SessionState.CONNECTED);
+					return true;
+				} else {
+					sessionSettings
+							.setSessionState(SessionState.CONNECTION_REFUSED);
+					return false;
+				}
+			} else {
 				sessionSettings.setSessionState(SessionState.DISCONNECTED);
 				return false;
 			}
@@ -75,7 +80,7 @@ public class GonzoRelayService implements RelayService {
 		}
 	}
 
-	private void connectToTarget() {
+	private boolean connectedToTarget() {
 		try {
 			target = new Socket(sessionSettings.getRemoteHost(),
 					sessionSettings.getRemotePort());
@@ -84,11 +89,12 @@ public class GonzoRelayService implements RelayService {
 				initiator.close();
 			} catch (IOException e1) {
 			}
-			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
+			return false;
 		}
+		return true;
 	}
 
-	private boolean awaitInitiatorConnection() {
+	private boolean initiatorConnected() {
 		try {
 			serverSocket = new ServerSocket(sessionSettings.getListenPort());
 			initiator = serverSocket.accept();
@@ -110,20 +116,20 @@ public class GonzoRelayService implements RelayService {
 	}
 
 	private void initCommandStreamHandlers() throws IOException {
-	
+
 		InputStream inputStream = new BufferedInputStream(
 				initiator.getInputStream());
 		OutputStream outputStream = new BufferedOutputStream(
 				target.getOutputStream());
 		PacketStreamReader commandStreamReader = new PacketStreamReader(
-				inputStream, relayDataHandler, sessionSettings.getMode(),
+				inputStream, relayDataHandler, sessionSettings.getRelayMode(),
 				ForwardingType.COMMAND);
 		PacketStreamWriter commandStreamWriter = new PacketStreamWriter(
-				outputStream, relayDataHandler, sessionSettings.getMode(),
+				outputStream, relayDataHandler, sessionSettings.getRelayMode(),
 				ForwardingType.COMMAND);
-	
+
 		commandStreamWriter.setTrapListener(sessionSettings);
-	
+
 		threadPool.execute(commandStreamReader);
 		threadPool.execute(commandStreamWriter);
 	}
@@ -134,14 +140,14 @@ public class GonzoRelayService implements RelayService {
 		OutputStream outputStream = new BufferedOutputStream(
 				initiator.getOutputStream());
 		PacketStreamReader responseStreamReader = new PacketStreamReader(
-				inputStream, relayDataHandler, sessionSettings.getMode(),
+				inputStream, relayDataHandler, sessionSettings.getRelayMode(),
 				ForwardingType.RESPONSE);
 		PacketStreamWriter responseStreamWriter = new PacketStreamWriter(
-				outputStream, relayDataHandler, sessionSettings.getMode(),
+				outputStream, relayDataHandler, sessionSettings.getRelayMode(),
 				ForwardingType.RESPONSE);
-	
+
 		responseStreamWriter.setTrapListener(sessionSettings);
-	
+
 		threadPool.execute(responseStreamReader);
 		threadPool.execute(responseStreamWriter);
 	}
@@ -152,7 +158,7 @@ public class GonzoRelayService implements RelayService {
 		} catch (InterruptedException e) {
 			closeRelayComponents();
 		}
-	
+
 	}
 
 	public void stopSession() {
@@ -164,11 +170,11 @@ public class GonzoRelayService implements RelayService {
 		stopDataProcessing();
 		closeSockets();
 		shutdownConsumerProducer();
-		
+
 	}
 
 	private void stopDataProcessing() {
-		if(relayDataHandler.isHandlingData()) {
+		if (relayDataHandler.isProcessingData()) {
 			relayDataHandler.offer(PacketUtils.getEosPacket());
 		}
 	}
@@ -187,7 +193,7 @@ public class GonzoRelayService implements RelayService {
 				sessionSettings.setSessionState(SessionState.DISCONNECTED);
 			}
 		}
-	
+
 		if (socketIsOpen(target)) {
 			try {
 				target.close();
@@ -195,7 +201,7 @@ public class GonzoRelayService implements RelayService {
 				sessionSettings.setSessionState(SessionState.DISCONNECTED);
 			}
 		}
-		if(serverSocket != null) {
+		if (serverSocket != null) {
 			try {
 				serverSocket.close();
 			} catch (IOException e) {
@@ -208,11 +214,11 @@ public class GonzoRelayService implements RelayService {
 		return socket != null && !socket.isClosed();
 	}
 
-	public void setConnectionParameters(String portListen,
-			String remoteHost, String remotePort, String mode) {
-		sessionSettings.setConnectionParameter(Integer.parseInt(portListen), remoteHost,
-				Integer.parseInt(remotePort));
-		sessionSettings.setMode(mode);
+	public void setConnectionParameters(String portListen, String remoteHost,
+			String remotePort, String mode) {
+		sessionSettings.setConnectionParameter(Integer.parseInt(portListen),
+				remoteHost, Integer.parseInt(remotePort));
+		sessionSettings.setRelayMode(mode);
 		relayDataHandler.clearSessionData();
 	}
 

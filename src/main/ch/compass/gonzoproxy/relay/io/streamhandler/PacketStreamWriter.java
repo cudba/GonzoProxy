@@ -28,7 +28,7 @@ public class PacketStreamWriter implements Runnable {
 
 	private OutputStream outputStream;
 	private State state = State.FORWARDING;
-	private String mode;
+	private String relayMode;
 
 	private RelayDataHandler relayDataHandler;
 
@@ -39,7 +39,7 @@ public class PacketStreamWriter implements Runnable {
 			ForwardingType type) {
 		this.outputStream = outputStream;
 		this.relayDataHandler = relayDataHandler;
-		this.mode = mode;
+		this.relayMode = mode;
 		this.forwardingType = type;
 	}
 
@@ -136,7 +136,7 @@ public class PacketStreamWriter implements Runnable {
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();
 			if (key.contains(helper)
-					&& key.contains(mode)) {
+					&& key.contains(relayMode)) {
 				try {
 					return cl.loadClass(bundle.getString(key))
 							.newInstance();
@@ -151,7 +151,7 @@ public class PacketStreamWriter implements Runnable {
 	}
 
 	private void loadWrapper() {
-		ClassLoader cl = getClassloader(mode);
+		ClassLoader cl = getClassloader(relayMode);
 		if((wrapper = (PacketWrapper) selectMode(cl, "wrapper")) == null) {
 			relayDataHandler.offer(PacketUtils.getModeFailurePacket());
 			Thread.currentThread().interrupt();

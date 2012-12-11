@@ -2,16 +2,16 @@ package ch.compass.gonzoproxy.model;
 
 import java.util.ArrayList;
 
-import ch.compass.gonzoproxy.listener.SessionListener;
+import ch.compass.gonzoproxy.listener.DataListener;
 
 public class SessionModel {
 
-	private ArrayList<SessionListener> sessionListeners = new ArrayList<SessionListener>();
+	private ArrayList<DataListener> dataListeners = new ArrayList<DataListener>();
 	private ArrayList<Packet> sessionData = new ArrayList<Packet>();
 
 
-	public void addSessionListener(SessionListener listener) {
-		sessionListeners.add(listener);
+	public void addDataListener(DataListener listener) {
+		dataListeners.add(listener);
 	}
 
 	public void addPacket(Packet data) {
@@ -23,30 +23,30 @@ public class SessionModel {
 		return sessionData;
 	}
 
+	public void setPacketList(ArrayList<Packet> packetList) {
+		this.sessionData = packetList;
+		notifyNewPacketList();
+	}
+
 	public void clearData() {
 		sessionData.clear();
 		notifyDataCleared();
 	}
 
 	private void notifyDataCleared() {
-		for (SessionListener listener : sessionListeners) {
-			listener.packetCleared();
+		for (DataListener listener : dataListeners) {
+			listener.packetsCleared();
 		}
 	}
 
 	private void notifyPacketReceived(Packet receivedPacket) {
-		for (SessionListener listener : sessionListeners) {
+		for (DataListener listener : dataListeners) {
 			listener.packetReceived(receivedPacket);
 		}
 	}
 
-	public void addList(ArrayList<Packet> readObject) {
-		this.sessionData = readObject;
-		notifyNewPacketList();
-	}
-
 	private void notifyNewPacketList() {
-		for (SessionListener listener : sessionListeners) {
+		for (DataListener listener : dataListeners) {
 			listener.newList();
 		}		
 	}

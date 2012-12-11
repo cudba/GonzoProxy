@@ -41,7 +41,7 @@ public class RelaySettings {
 	private ArrayList<StateListener> stateListeners = new ArrayList<StateListener>();
 	private ArrayList<TrapListener> trapListeners = new ArrayList<TrapListener>();
 	
-	private String mode;
+	private String relayMode;
 	
 	public void setConnectionParameter(int listenPort, String remoteHost, int remotePort) {
 		sessionPrefs.putInt("listenPort", listenPort);
@@ -70,12 +70,12 @@ public class RelaySettings {
 		notifySendOneResponse();
 	}
 
-	public void setMode(String mode) {
-		this.mode = mode;
+	public void setRelayMode(String mode) {
+		this.relayMode = mode;
 	}
 	
-	public String getMode() {
-		return mode;
+	public String getRelayMode() {
+		return relayMode;
 	}
 
 	public void addTrapListener(TrapListener trapListener) {

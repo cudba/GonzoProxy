@@ -4,9 +4,9 @@ import ch.compass.gonzoproxy.model.Packet;
 
 
 
-public interface SessionListener {
+public interface DataListener {
 
-	public void packetCleared();
+	public void packetsCleared();
 
 	public void packetReceived(Packet receivedPacket);
 
