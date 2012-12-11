@@ -3,6 +3,7 @@ package ch.compass.gonzoproxy.utils;
 import java.util.ArrayList;
 
 import ch.compass.gonzoproxy.model.Field;
+import ch.compass.gonzoproxy.model.Packet;
 
 public class PacketUtils {
 
@@ -89,13 +90,13 @@ public class PacketUtils {
 
 	public static boolean isIdentifyingContent(ArrayList<Field> templateFields,
 			int offset, Field processingField) {
-		return processingField.getName().contains(PacketUtils.CONTENT_IDENTIFIER)
+		return processingField.getName().contains(CONTENT_IDENTIFIER)
 				&& templateFields.size() > offset + 1;
 	}
 
 	public static int getContentIdentifierLength(Field processingField) {
 		String value = processingField.getValue().replaceAll("\\s", "");
-		return value.length() / PacketUtils.ENCODING_OFFSET;
+		return value.length() / ENCODING_OFFSET;
 	}
 
 	public static boolean isNextFieldContentIdentifier(
@@ -105,6 +106,18 @@ public class PacketUtils {
 					.get(offset + 1));
 		}
 		return false;
+	}
+
+	public static Packet getModeFailurePacket() {
+		Packet modeFailurePacket = new Packet();
+		modeFailurePacket.setDescription(MODE_FAILURE_PACKET);
+		return modeFailurePacket;
+	}
+
+	public static Packet getEosPacket() {
+		Packet eosPacket = new Packet();
+		eosPacket.setDescription(EOS_PACKET);
+		return eosPacket;
 	}
 
 }

@@ -10,7 +10,6 @@ import java.util.Enumeration;
 import java.util.ResourceBundle;
 
 import ch.compass.gonzoproxy.model.ForwardingType;
-import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.extractor.PacketExtractor;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
@@ -20,8 +19,6 @@ public class PacketStreamReader implements Runnable {
 	
 	private static final int BUFFER_SIZE = 1024;
 
-	private static final String EOS = "End Of Stream\n";
-	
 	private PacketExtractor extractor;
 
 	private InputStream inputStream;
@@ -89,14 +86,11 @@ public class PacketStreamReader implements Runnable {
 	}
 	
 	private void sendEosPacket() {
-		Packet eosPacket = new Packet();
-		eosPacket.setDescription(PacketUtils.EOS_PACKET);
-		relayDataHandler.offer(eosPacket);
+		relayDataHandler.offer(PacketUtils.getEosPacket());
 	}
 	
 	private void sendModeFailurePacket() {
-		Packet modeFailurePacket = new Packet();
-		modeFailurePacket.setDescription(PacketUtils.MODE_FAILURE_PACKET);
+		relayDataHandler.offer(PacketUtils.getModeFailurePacket());
 	}
 
 	private void loadExtractor() {

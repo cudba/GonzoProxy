@@ -43,7 +43,7 @@ public class RelaySettings {
 	
 	private String mode;
 	
-	public void setSession(int listenPort, String remoteHost, int remotePort) {
+	public void setConnectionParameter(int listenPort, String remoteHost, int remotePort) {
 		sessionPrefs.putInt("listenPort", listenPort);
 		sessionPrefs.put("remoteHost", remoteHost);
 		sessionPrefs.putInt("remotePort", remotePort);

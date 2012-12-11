@@ -12,49 +12,49 @@ import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public interface RelayService extends Runnable {
 
-	public abstract void run();
+	public void run();
 
-	public abstract void stopSession();
+	public void stopSession();
 
-	public abstract void generateNewSessionParameters(String portListen,
+	public void setConnectionParameters(String portListen,
 			String remoteHost, String remotePort, String mode);
 
-	public abstract void commandTrapChanged();
+	public void commandTrapChanged();
 
-	public abstract void responseTrapChanged();
+	public void responseTrapChanged();
 
-	public abstract void sendOneCmd();
+	public void sendOneCmd();
 
-	public abstract void sendOneRes();
+	public void sendOneRes();
 
-	public abstract int getCurrentListenPort();
+	public int getCurrentListenPort();
 
-	public abstract String getCurrentRemoteHost();
+	public String getCurrentRemoteHost();
 
-	public abstract int getCurrentRemotePort();
+	public int getCurrentRemotePort();
 
-	public abstract void addSessionStateListener(StateListener stateListener);
+	public void addSessionStateListener(StateListener stateListener);
 
-	public abstract SessionModel getSessionModel();
+	public SessionModel getSessionModel();
 
-	public abstract void reParse();
+	public void reparse();
 
-	public abstract void persistSessionData(File file) throws IOException;
+	public void persistSessionData(File file) throws IOException;
 
-	public abstract void loadPacketsFromFile(File file)
-			throws ClassNotFoundException, IOException;
+	public void loadPacketsFromFile(File file) throws ClassNotFoundException,
+			IOException;
 
-	public abstract ArrayList<PacketRule> getPacketRules();
+	public ArrayList<PacketRule> getPacketRules();
 
-	public abstract ArrayList<PacketRegex> getPacketRegex();
+	public ArrayList<PacketRegex> getPacketRegex();
 
-	public abstract void addRule(String packetName, FieldRule fieldRule,
+	public void addRule(String packetName, FieldRule fieldRule,
 			Boolean updateLength);
 
-	public abstract void addRegex(PacketRegex packetRegex, boolean isActive);
+	public void addRegex(PacketRegex packetRegex, boolean isActive);
 
-	public abstract void persistRules() throws IOException;
+	public void persistRules() throws IOException;
 
-	public abstract void persistRegex() throws IOException;
+	public void persistRegex() throws IOException;
 
 }

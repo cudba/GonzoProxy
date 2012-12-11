@@ -16,6 +16,7 @@ import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.wrapper.PacketWrapper;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings.SessionState;
+import ch.compass.gonzoproxy.utils.PacketUtils;
 
 public class PacketStreamWriter implements Runnable {
 
@@ -156,7 +157,7 @@ public class PacketStreamWriter implements Runnable {
 	private void loadWrapper() {
 		ClassLoader cl = getClassloader(mode);
 		if((wrapper = (PacketWrapper) selectMode(cl, "wrapper")) == null) {
-			relayDataHandler.failedToLoadRelayMode();
+			relayDataHandler.offer(PacketUtils.getModeFailurePacket());
 			Thread.currentThread().interrupt();
 		}
 	}
@@ -173,7 +174,7 @@ public class PacketStreamWriter implements Runnable {
 					try {
 						url = extractorJar.toURI().toURL();
 					} catch (MalformedURLException e) {
-						relayDataHandler.failedToLoadRelayMode();
+						relayDataHandler.offer(PacketUtils.getModeFailurePacket());
 						Thread.currentThread().interrupt();
 					}
 					 URL[] urls = new URL[]{url};

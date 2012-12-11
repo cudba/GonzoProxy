@@ -21,8 +21,6 @@ import ch.compass.gonzoproxy.utils.PersistingUtils;
 
 public class RelayDataHandler {
 
-	private boolean morePacketsAvailable = true;
-
 	private LinkedTransferQueue<Packet> receiverQueue = new LinkedTransferQueue<Packet>();
 
 	private LinkedTransferQueue<Packet> commandSenderQueue = new LinkedTransferQueue<Packet>();
@@ -41,7 +39,8 @@ public class RelayDataHandler {
 	}
 
 	public void processRelayData() throws InterruptedException {
-
+		clearQueues();
+		boolean morePacketsAvailable = true;
 		while (morePacketsAvailable) {
 			Packet receivedPacket = receiverQueue.poll(200,
 					TimeUnit.MILLISECONDS);
@@ -57,6 +56,12 @@ public class RelayDataHandler {
 			}
 		}
 
+	}
+
+	private void clearQueues() {
+		receiverQueue.clear();
+		commandSenderQueue.clear();
+		responseSenderQueue.clear();
 	}
 
 	private boolean streamFailure(Packet receivedPacket) {
@@ -133,11 +138,6 @@ public class RelayDataHandler {
 		return sessionModel;
 	}
 
-	public void failedToLoadRelayMode() {
-		sessionSettings.setSessionState(SessionState.MODE_FAILURE);
-		morePacketsAvailable = false;
-	}
-
 	@SuppressWarnings("unchecked")
 	public void loadPacketsFromFile(File file) throws ClassNotFoundException,
 			IOException {
@@ -176,10 +176,6 @@ public class RelayDataHandler {
 
 	public void reset() {
 		sessionModel.clearData();
-		morePacketsAvailable = true;
 	}
 	
-	public void stopDataHandling() {
-		morePacketsAvailable = false;
-	}
 }

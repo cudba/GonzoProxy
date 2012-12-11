@@ -16,8 +16,6 @@ import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class RelayController {
 
-	private boolean sessionIsActive = false;
-
 	private String[] relayModes;
 
 	private Thread relayServiceThread;
@@ -30,11 +28,10 @@ public class RelayController {
 	public void newSession(String portListen, String remoteHost,
 			String remotePort, String mode, boolean runLocally) {
 		stopRunningSession();
-		relayService.generateNewSessionParameters(portListen, remoteHost,
+		relayService.setConnectionParameters(portListen, remoteHost,
 				remotePort, mode);
 		relayServiceThread = new Thread(relayService);
 		relayServiceThread.start();
-		sessionIsActive = true;
 		if(runLocally){
 			runLocally();
 		}
@@ -107,7 +104,7 @@ public class RelayController {
 	}
 
 	public void reparsePackets() {
-		relayService.reParse();
+		relayService.reparse();
 	}
 
 	public void persistSessionData(File file) {
