@@ -15,8 +15,8 @@ public class TemplateValidator {
 		int contentStartIndex = 0;
 		int contentLength = PacketUtils.DEFAULT_FIELDLENGTH;
 
-		int fieldLength = PacketUtils.DEFAULT_FIELDLENGTH;
 		int offset = 0;
+		int fieldLength = PacketUtils.getFieldLength(templateFields, offset);
 
 		for (int i = 0; i < templateFields.size(); i++) {
 			if (!packetContainsMoreFields(packet, fieldLength, offset)) {
@@ -104,7 +104,7 @@ public class TemplateValidator {
 					break;
 				}
 			} else {
-				fieldLength = PacketUtils.DEFAULT_FIELDLENGTH;
+				fieldLength = PacketUtils.getFieldLength(templateFields, i + 1);
 			}
 		}
 		return offset - PacketUtils.WHITESPACE_OFFSET == packet.length;
@@ -121,16 +121,10 @@ public class TemplateValidator {
 
 	private boolean fieldIsVerified(byte[] packet, int fieldLength, int offset,
 			Field processingField) {
-		byte[] idByte;
 		int encodedFieldLength = PacketUtils.getEncodedFieldLength(fieldLength,
 				false);
-		if (fieldLength > PacketUtils.DEFAULT_FIELDLENGTH) {
-			idByte = PacketUtils.extractField(packet, encodedFieldLength,
-					offset);
-		} else {
-			idByte = PacketUtils.extractField(packet, encodedFieldLength,
-					offset);
-		}
+		byte[] idByte = PacketUtils.extractField(packet, encodedFieldLength,
+				offset);
 		if (!valueMatches(idByte, processingField)) {
 			return false;
 		}

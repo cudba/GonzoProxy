@@ -120,4 +120,17 @@ public class PacketUtils {
 		return eosPacket;
 	}
 
+	public static int getFieldLength(ArrayList<Field> templateFields, int offset) {
+		int fieldLength = DEFAULT_FIELDLENGTH;
+		if(templateFields.size() > offset){
+			Field field = templateFields.get(offset);
+			if(field.getValue() != null) {
+				String value = field.getValue().replaceAll("\\s", "");
+				fieldLength = value.length() / ENCODING_OFFSET;
+				System.out.println("field length:" + fieldLength);
+			}
+		}
+		return fieldLength;
+	}
+
 }

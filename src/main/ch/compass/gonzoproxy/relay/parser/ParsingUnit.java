@@ -16,8 +16,8 @@ public class ParsingUnit {
 		int contentStartIndex = 0;
 		int contentLength = PacketUtils.DEFAULT_FIELDLENGTH;
 
-		int fieldLength = PacketUtils.DEFAULT_FIELDLENGTH;
 		int offset = 0;
+		int fieldLength = PacketUtils.getFieldLength(templateFields, offset);
 
 		for (int i = 0; i < templateFields.size(); i++) {
 			Field processingField = templateFields.get(i).clone();
@@ -92,7 +92,7 @@ public class ParsingUnit {
 					break;
 				}
 			} else {
-				fieldLength = PacketUtils.DEFAULT_FIELDLENGTH;
+				fieldLength = PacketUtils.getFieldLength(templateFields, i + 1);
 			}
 		}
 		return true;

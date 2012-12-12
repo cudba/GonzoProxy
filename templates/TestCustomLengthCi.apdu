@@ -1,7 +1,9 @@
 packetDescription: Test ci length
 fields:
+- name: Blubb
+  value: a5 7f
 - name: RMT
-  value: 77
+  value: hallo
   description: Response Message Template
 - name: Lc
   description: Content Length
