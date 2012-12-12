@@ -30,7 +30,7 @@ public class PacketDetailTableModel extends AbstractTableModel {
 			
 			@Override
 			public void packetsCleared() {
-				setApdu(new Packet());
+				setPacket(new Packet());
 			}
 
 			@Override
@@ -70,8 +70,8 @@ public class PacketDetailTableModel extends AbstractTableModel {
 
 	}
 
-	public void setApdu(Packet editApdu) {
-		this.packet = editApdu;
+	public void setPacket(Packet editPacket) {
+		this.packet = editPacket;
 		fireTableDataChanged();
 	}
 

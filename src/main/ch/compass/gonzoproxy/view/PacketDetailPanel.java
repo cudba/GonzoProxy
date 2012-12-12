@@ -76,7 +76,7 @@ public class PacketDetailPanel extends JPanel {
 	}
 
 	private void initGui() {
-		setBorder(new TitledBorder(null, "APDU Detail", TitledBorder.LEADING,
+		setBorder(new TitledBorder(null, "Packet Detail", TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 300, 0, 0 };
@@ -241,9 +241,9 @@ public class PacketDetailPanel extends JPanel {
 		textPane_hex.setText("");
 	}
 
-	public void setApdu(Packet editApdu) {
-		this.editPacket = editApdu;
-		this.detailTableModel.setApdu(editApdu);
+	public void setPacket(Packet editPacket) {
+		this.editPacket = editPacket;
+		this.detailTableModel.setPacket(editPacket);
 		clearFields();
 	}
 

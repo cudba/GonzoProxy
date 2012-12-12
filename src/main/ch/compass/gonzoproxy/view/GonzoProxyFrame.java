@@ -198,12 +198,12 @@ public class GonzoProxyFrame extends JFrame {
 
 				if (index == -1) {
 					GonzoProxyFrame.this.panelDetail.clearFields();
-					GonzoProxyFrame.this.panelDetail.setApdu(new Packet());
+					GonzoProxyFrame.this.panelDetail.setPacket(new Packet());
 				} else {
 					GonzoProxyFrame.this.editPacket = ((Packet) GonzoProxyFrame.this.data
 							.getPacketList().get(index));
 					GonzoProxyFrame.this.panelDetail
-							.setApdu(GonzoProxyFrame.this.editPacket);
+							.setPacket(GonzoProxyFrame.this.editPacket);
 				}
 
 			}
