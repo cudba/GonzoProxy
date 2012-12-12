@@ -54,7 +54,7 @@ public class Field implements Serializable, Cloneable {
 	}
 
 	public String toAscii() {
-		
+
 		StringBuffer sb = new StringBuffer("");
 		String hexPacketData = this.value.replaceAll("\\s", "");
 		String[] hexPacketValues = hexPacketData.split("(?<=\\G..)");
@@ -73,7 +73,16 @@ public class Field implements Serializable, Cloneable {
 	}
 
 	public void replaceValue(String originalValue, String replacedValue) {
-		value = value.replace(originalValue, replacedValue);
+		if (replacedValue.isEmpty() && !originalValue.isEmpty()) {
+			value += " ";
+			originalValue += " ";
+			value = value.replace(originalValue, replacedValue);
+			if(!value.isEmpty()){
+				value = value.substring(0, value.length() - 1);
+			}
+		} else {
+			value = value.replace(originalValue, replacedValue);
+		}
 	}
 
 }
