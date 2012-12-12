@@ -2,7 +2,7 @@ package ch.compass.gonzoproxy.model;
 
 import javax.swing.table.AbstractTableModel;
 
-import ch.compass.gonzoproxy.listener.SessionListener;
+import ch.compass.gonzoproxy.listener.DataListener;
 
 public class PacketTableModel extends AbstractTableModel {
 
@@ -15,11 +15,11 @@ public class PacketTableModel extends AbstractTableModel {
 
 	public PacketTableModel(SessionModel session) {
 		this.session = session;
-		this.session.addSessionListener(createListener());
+		this.session.addDataListener(createListener());
 	}
 
-	private SessionListener createListener() {
-		return new SessionListener() {
+	private DataListener createListener() {
+		return new DataListener() {
 			
 			@Override
 			public void packetReceived(Packet receivedPacket) {
@@ -27,7 +27,7 @@ public class PacketTableModel extends AbstractTableModel {
 			}
 			
 			@Override
-			public void packetCleared() {
+			public void packetsCleared() {
 				updateTable();
 			}
 

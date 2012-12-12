@@ -22,7 +22,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
-import ch.compass.gonzoproxy.listener.SessionListener;
+import ch.compass.gonzoproxy.listener.DataListener;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.PacketTableModel;
 import ch.compass.gonzoproxy.model.SessionModel;
@@ -52,16 +52,16 @@ public class PacketListPanel extends JPanel {
 			ListSelectionListener listSelectionListener) {
 		this.controller = controller;
 		currentSession = controller.getSessionModel();
-		currentSession.addSessionListener(createListener());
+		currentSession.addDataListener(createListener());
 		this.lsl = listSelectionListener;
 		initUi();
 	}
 
-	private SessionListener createListener() {
-		return new SessionListener() {
+	private DataListener createListener() {
+		return new DataListener() {
 
 			@Override
-			public void packetCleared() {
+			public void packetsCleared() {
 			}
 
 			@Override
@@ -265,7 +265,7 @@ public class PacketListPanel extends JPanel {
 		btnReparsePackets.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				controller.reparsePackets();
-				currentSession.addList(currentSession.getPacketList());
+				currentSession.setPacketList(currentSession.getPacketList());
 			}
 		});
 		GridBagConstraints gbc_btnReparsePackets = new GridBagConstraints();

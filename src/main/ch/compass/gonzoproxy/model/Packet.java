@@ -98,6 +98,10 @@ public class Packet implements Serializable, Cloneable {
 		return mergeFields();
 	}
 
+	public void updateOrigialDataFromFields() {
+		originalPacketData = mergeFields().getBytes();
+	}
+
 	@Override
 	public String toString() {
 		return new String(originalPacketData);
@@ -135,9 +139,5 @@ public class Packet implements Serializable, Cloneable {
 			}
 		}
 		return mergedFields.substring(0, mergedFields.length() - 1);
-	}
-
-	public void updateOrigialDataFromFields() {
-		originalPacketData = mergeFields().getBytes();
 	}
 }
