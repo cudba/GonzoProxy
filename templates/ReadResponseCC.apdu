@@ -6,21 +6,21 @@ fields:
   value: 81
 - name: Lc
   description: Content Length
-- name: Content
+- name: Content misc
 - name: Ci
   value: 42
   description: Number
-- name: Content
+- name: Content Number
   description: CC Number
 - name: Ci
   value: 5e
   description: Name
-- name: Content
+- name: Content Name
   description: CC name
 - name: Ci
   value: 5e
   description: expire
-- name: Content
+- name: Content Expire
   description: CC expire date + trailer
 - name: Status Byte 1
 - name: Status Byte 2

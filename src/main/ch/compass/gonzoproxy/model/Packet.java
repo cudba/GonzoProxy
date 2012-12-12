@@ -45,7 +45,7 @@ public class Packet implements Serializable, Cloneable {
 	public byte[] getOriginalPacketData() {
 		return originalPacketData;
 	}
-	
+
 	public void setOriginalPacketData(byte[] packet) {
 		this.originalPacketData = packet;
 	}
@@ -90,7 +90,7 @@ public class Packet implements Serializable, Cloneable {
 		fields.clear();
 	}
 
-	public byte[] getPacketDataAsBytes(){
+	public byte[] getPacketDataAsBytes() {
 		return mergeFields().getBytes();
 	}
 
@@ -105,17 +105,8 @@ public class Packet implements Serializable, Cloneable {
 
 	public String toAscii() {
 		StringBuffer sb = new StringBuffer("");
-		String hexPacketData = getPacketDataAsString().replaceAll("\\s", "");
-		String[] hexPacketValues = hexPacketData.split("(?<=\\G..)");
-	
-		for (String hexValue : hexPacketValues) {
-			try {
-				int decimalValue = Integer.parseInt(hexValue, 16);
-				char asciiValue = (char) decimalValue;
-				sb.append(asciiValue);
-			}catch (NumberFormatException e){
-				sb.append('?');
-			}
+		for(Field field : getFields()){
+			sb.append(field.toAscii());
 		}
 		return sb.toString();
 	}
@@ -137,9 +128,11 @@ public class Packet implements Serializable, Cloneable {
 
 	private String mergeFields() {
 		StringBuilder mergedFields = new StringBuilder();
-	
+
 		for (Field field : fields) {
-			mergedFields.append(field.getValue() + " ");
+			if (!field.getValue().isEmpty()) {
+				mergedFields.append(field.getValue() + " ");
+			}
 		}
 		return mergedFields.substring(0, mergedFields.length() - 1);
 	}

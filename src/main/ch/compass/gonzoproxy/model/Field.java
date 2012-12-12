@@ -54,17 +54,22 @@ public class Field implements Serializable, Cloneable {
 	}
 
 	public String toAscii() {
+		
 		StringBuffer sb = new StringBuffer("");
-		String ascii = this.value.replaceAll("\\s", "");
-		String[] strArr = ascii.split("(?<=\\G..)");
+		String hexPacketData = this.value.replaceAll("\\s", "");
+		String[] hexPacketValues = hexPacketData.split("(?<=\\G..)");
 
-		for (String a : strArr) {
-			int c = Integer.parseInt(a, 16);
-			char chr = (char) c;
-			sb.append(chr);
+		for (String hexValue : hexPacketValues) {
+			try {
+				int decimalValue = Integer.parseInt(hexValue, 16);
+				char asciiValue = (char) decimalValue;
+				sb.append(asciiValue);
+			} catch (NumberFormatException e) {
+				sb.append('?');
+			}
 		}
-
 		return sb.toString();
+
 	}
 
 	public void replaceValue(String originalValue, String replacedValue) {

@@ -18,9 +18,6 @@ public class PacketModifier {
 	private ArrayList<PacketRegex> packetsRegex = new ArrayList<PacketRegex>();
 
 	public PacketModifier() {
-
-		// freaks out with tests cause used same command and rules, have to fix
-		// it first ;)
 		loadModifiers();
 		loadRegex();
 	}
@@ -36,14 +33,13 @@ public class PacketModifier {
 	public void modifyByRegex(Packet packet) {
 		for (PacketRegex regex : packetsRegex) {
 			if (regex.isActive()) {
-				
+
 				String originalPacketData = new String(
 						packet.getOriginalPacketData());
 				String modifiedPacketData = originalPacketData.replaceAll(
 						regex.getRegex(), regex.getReplaceWith());
-				if(!originalPacketData.equals(modifiedPacketData)){
-					packet.setOriginalPacketData(modifiedPacketData
-							.getBytes());
+				if (!originalPacketData.equals(modifiedPacketData)) {
+					packet.setOriginalPacketData(modifiedPacketData.getBytes());
 					packet.setModified(true);
 				}
 			}
@@ -72,7 +68,7 @@ public class PacketModifier {
 	public ArrayList<PacketRule> getPacketRule() {
 		return packetRules;
 	}
-	
+
 	public ArrayList<PacketRegex> getPacketRegex() {
 		return packetsRegex;
 	}
@@ -87,7 +83,6 @@ public class PacketModifier {
 
 	private void applyRules(PacketRule modifier, Packet packet) {
 
-
 		for (Field field : packet.getFields()) {
 			FieldRule rule = modifier.findMatchingRule(field);
 
@@ -101,8 +96,7 @@ public class PacketModifier {
 					updatePacketLenght(packet, fieldLengthDiff);
 
 					if (shouldUpdateContentLength(modifier, field)) {
-						updateContentLengthField(packet,
-								fieldLengthDiff);
+						updateContentLengthField(packet, fieldLengthDiff);
 					}
 					field.setValue(rule.getReplacedValue());
 
@@ -113,8 +107,7 @@ public class PacketModifier {
 					updatePacketLenght(packet, fieldLengthDiff);
 
 					if (shouldUpdateContentLength(modifier, field)) {
-						updateContentLengthField(packet,
-								fieldLengthDiff);
+						updateContentLengthField(packet, fieldLengthDiff);
 					}
 					field.replaceValue(rule.getOriginalValue(),
 							rule.getReplacedValue());
@@ -155,8 +148,10 @@ public class PacketModifier {
 
 	private int computeLengthDifference(String originalValue,
 			String replacedValue) {
-		int diff = (replacedValue.length() - originalValue.length())
-				/ (PacketUtils.ENCODING_OFFSET + PacketUtils.WHITESPACE_OFFSET);
+		String originalValueNoWhitespaces = originalValue.replaceAll("\\s", "");
+		String replacedValueNoWhitespaces = replacedValue.replaceAll("\\s", "");
+		int diff = (replacedValueNoWhitespaces.length() - originalValueNoWhitespaces
+				.length()) / PacketUtils.ENCODING_OFFSET;
 		return diff;
 	}
 
