@@ -175,7 +175,7 @@ public class GonzoRelayService implements RelayService {
 
 	private void stopDataProcessing() {
 		if (relayDataHandler.isProcessingData()) {
-			relayDataHandler.offer(PacketUtils.getEosPacket());
+			relayDataHandler.offer(PacketUtils.getEndOfStreamPacket());
 		}
 	}
 

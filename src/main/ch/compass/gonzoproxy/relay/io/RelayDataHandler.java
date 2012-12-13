@@ -83,10 +83,10 @@ public class RelayDataHandler {
 
 	private boolean streamFailure(Packet receivedPacket) {
 		String packetDescription = receivedPacket.getDescription();
-		if (PacketUtils.EOS_PACKET.equals(packetDescription)) {
+		if (PacketUtils.END_OF_STREAM_PACKET_DESCRIPTION.equals(packetDescription)) {
 			sessionSettings.setSessionState(SessionState.EOS);
 			return true;
-		} else if (PacketUtils.MODE_FAILURE_PACKET.equals(packetDescription)) {
+		} else if (PacketUtils.MODE_FAILURE_PACKET_DESCRIPTION.equals(packetDescription)) {
 			sessionSettings.setSessionState(SessionState.MODE_FAILURE);
 			return true;
 		}

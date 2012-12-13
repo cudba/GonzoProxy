@@ -86,7 +86,7 @@ public class PacketStreamReader implements Runnable {
 	}
 	
 	private void offerEosPacket() {
-		relayDataHandler.offer(PacketUtils.getEosPacket());
+		relayDataHandler.offer(PacketUtils.getEndOfStreamPacket());
 	}
 	
 	private void offerModeFailurePacket() {

@@ -16,7 +16,7 @@ public class TemplateValidator {
 		int contentLength = PacketUtils.DEFAULT_FIELDLENGTH;
 
 		int offset = 0;
-		int fieldLength = PacketUtils.getFieldLength(templateFields, offset);
+		int fieldLength = PacketUtils.computeFieldLength(templateFields, offset);
 
 		for (int i = 0; i < templateFields.size(); i++) {
 			if (!packetContainsMoreFields(packet, fieldLength, offset)) {
@@ -52,8 +52,7 @@ public class TemplateValidator {
 					contentLength = Integer.parseInt(new String(length), 16);
 					contentStartIndex = offset;
 					fieldLength = PacketUtils
-							.getContentIdentifierLength(templateFields
-									.get(i + 1));
+							.computeFieldLength(templateFields, i + 1);
 					break;
 
 				default:
@@ -72,9 +71,9 @@ public class TemplateValidator {
 				}
 
 			} else if (PacketUtils.isNextFieldContentIdentifier(templateFields,
-					i, processingField)) {
+					i)) {
 				fieldLength = PacketUtils
-						.getContentIdentifierLength(templateFields.get(i + 1));
+						.computeFieldLength(templateFields, i + 1);
 			} else if (PacketUtils.isIdentifyingContent(templateFields, i,
 					processingField)) {
 
@@ -88,8 +87,7 @@ public class TemplateValidator {
 					break;
 				case 1:
 					fieldLength = PacketUtils
-							.getContentIdentifierLength(templateFields
-									.get(i + 1));
+							.computeFieldLength(templateFields, i + 1);
 					break;
 				default:
 					int nextIdentifierIndex = PacketUtils
@@ -104,7 +102,7 @@ public class TemplateValidator {
 					break;
 				}
 			} else {
-				fieldLength = PacketUtils.getFieldLength(templateFields, i + 1);
+				fieldLength = PacketUtils.computeFieldLength(templateFields, i + 1);
 			}
 		}
 		return offset - PacketUtils.WHITESPACE_OFFSET == packet.length;
