@@ -11,7 +11,7 @@ public class ParsingUnit {
 	public boolean parseBy(PacketTemplate template, Packet processingPacket) {
 		processingPacket.setDescription(template.getPacketDescription());
 		ArrayList<Field> templateFields = template.getFields();
-		byte[] packet = processingPacket.getOriginalPacketData();
+		byte[] packet = processingPacket.getPacketData();
 
 		int contentStartIndex = 0;
 		int contentLength = 0;
@@ -140,7 +140,7 @@ public class ParsingUnit {
 	public void parseByDefault(Packet processingPacket) {
 		String packetDescription = "Unknown Packet";
 		String fieldName = "unknown";
-		String fieldValue = new String(processingPacket.getOriginalPacketData());
+		String fieldValue = new String(processingPacket.getPacketData());
 		String fieldDescription = "Unknown Packet, parsed by default template";
 
 		Field defaultField = new Field(fieldName, fieldValue, fieldDescription);

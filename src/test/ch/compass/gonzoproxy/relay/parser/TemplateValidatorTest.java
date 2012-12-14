@@ -17,7 +17,7 @@ public class TemplateValidatorTest {
 		
 		String processingApduFake = "00 a4 04 00 07 d2 76 00 00 85 01 01 00";
 		Packet apdu = new Packet();
-		apdu.setOriginalPacketData(processingApduFake.getBytes());
+		apdu.setPacketData(processingApduFake.getBytes());
 		
 		PacketTemplate templateFake = new PacketTemplate();
 		templateFake.getFields().add(new Field("testFieldName", "00", "testDescription"));
@@ -32,7 +32,7 @@ public class TemplateValidatorTest {
 		
 		String processingApduFake = "00 a4 04 00 07 d2 76 00 00 85 01 01 00";
 		Packet apdu = new Packet();
-		apdu.setOriginalPacketData(processingApduFake.getBytes());
+		apdu.setPacketData(processingApduFake.getBytes());
 		
 		PacketTemplate templateFake = new PacketTemplate();
 		templateFake.getFields().add(new Field("idField2", "00", "testDescription"));

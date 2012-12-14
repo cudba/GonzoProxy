@@ -11,7 +11,7 @@ public class Packet implements Serializable, Cloneable {
 
 	private boolean isModified = false;
 
-	private byte[] originalPacketData = new byte[0];
+	private byte[] packetData = new byte[0];
 	private byte[] preamble = new byte[0];
 	private byte[] trailer = new byte[0];
 	private ArrayList<Field> fields = new ArrayList<Field>();
@@ -44,12 +44,13 @@ public class Packet implements Serializable, Cloneable {
 		this.preamble = preamble;
 	}
 
-	public byte[] getOriginalPacketData() {
-		return originalPacketData;
+	public byte[] getPacketData() {
+		updatePacketDataFromFields();
+		return packetData;
 	}
 
-	public void setOriginalPacketData(byte[] packet) {
-		this.originalPacketData = packet;
+	public void setPacketData(byte[] asciiHexPacketData) {
+		this.packetData = asciiHexPacketData;
 	}
 
 	public byte[] getTrailer() {
@@ -100,13 +101,13 @@ public class Packet implements Serializable, Cloneable {
 		return mergeFields();
 	}
 
-	public void updateOrigialDataFromFields() {
-		originalPacketData = mergeFields().getBytes();
+	public void updatePacketDataFromFields() {
+		packetData = mergeFields().getBytes();
 	}
 
 	@Override
 	public String toString() {
-		return new String(originalPacketData);
+		return new String(packetData);
 	}
 
 	public String toAscii() {
@@ -122,7 +123,7 @@ public class Packet implements Serializable, Cloneable {
 		Packet clonedPacket = new Packet();
 		clonedPacket.setDescription(description);
 		clonedPacket.setPreamble(preamble);
-		clonedPacket.setOriginalPacketData(originalPacketData);
+		clonedPacket.setPacketData(packetData);
 		clonedPacket.setTrailer(trailer);
 		clonedPacket.setSize(size);
 		clonedPacket.setType(type);

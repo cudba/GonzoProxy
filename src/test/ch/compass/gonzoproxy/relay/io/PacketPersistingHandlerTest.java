@@ -27,7 +27,7 @@ public class PacketPersistingHandlerTest {
 		
 		String fakePlainApdu = "77 07 82 00 07 94 76 00 0a 85";
 		Packet apdu = new Packet();
-		apdu.setOriginalPacketData(fakePlainApdu.getBytes());
+		apdu.setPacketData(fakePlainApdu.getBytes());
 
 		parserHanlder.tryParse(apdu);
 		

@@ -47,7 +47,7 @@ public class AsciiExtractor implements PacketExtractor {
 		System.out.println(new String(packetData));
 		byte[] trailer = new byte[] {END_OF_PACKET};
 		Packet packet = new Packet();
-		packet.setOriginalPacketData(packetData);
+		packet.setPacketData(packetData);
 		packet.setTrailer(trailer);
 		packet.setType(forwardingType);
 		return packet;

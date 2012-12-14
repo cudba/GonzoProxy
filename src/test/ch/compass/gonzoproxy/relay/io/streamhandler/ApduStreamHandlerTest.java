@@ -1,3 +1,4 @@
+package ch.compass.gonzoproxy.relay.io.streamhandler;
 //package ch.compass.gonzoproxy.relay.io;
 //import java.io.ByteArrayInputStream;
 //import java.io.IOException;

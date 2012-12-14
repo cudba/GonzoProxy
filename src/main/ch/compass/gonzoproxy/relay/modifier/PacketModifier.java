@@ -35,11 +35,11 @@ public class PacketModifier {
 			if (regex.isActive()) {
 
 				String originalPacketData = new String(
-						packet.getOriginalPacketData());
+						packet.getPacketData());
 				String modifiedPacketData = originalPacketData.replaceAll(
 						regex.getRegex(), regex.getReplaceWith());
 				if (!originalPacketData.equals(modifiedPacketData)) {
-					packet.setOriginalPacketData(modifiedPacketData.getBytes());
+					packet.setPacketData(modifiedPacketData.getBytes());
 					packet.setModified(true);
 				}
 			}

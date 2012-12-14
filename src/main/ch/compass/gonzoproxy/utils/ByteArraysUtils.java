@@ -58,4 +58,28 @@ public class ByteArraysUtils {
 	private static boolean validInput(byte[] array, int fromIndex, int length) {
 		return array.length >= fromIndex + length && length >= 0;
 	}
+	
+	public static byte[] byteToParsableAsciiHex(byte[] preamble) {
+	    StringBuilder sb = new StringBuilder();
+	    for (byte b : preamble) {
+	        sb.append(String.format("%02X ", b));
+	        sb.append(" ");
+	    }
+	    
+	    String hexRepresentation = sb.toString();
+	    
+	    hexRepresentation = hexRepresentation.substring(0, hexRepresentation.length() -1);
+	    	
+		return hexRepresentation.getBytes();
+	}
+	
+	public static byte[] asciiHexToByteArray(String hexString) {
+	    int len = hexString.length();
+	    byte[] data = new byte[len / 2];
+	    for (int i = 0; i < len; i += 2) {
+	        data[i / 2] = (byte) ((Character.digit(hexString.charAt(i), 16) << 4)
+	                             + Character.digit(hexString.charAt(i+1), 16));
+	    }
+	    return data;
+	}
 }

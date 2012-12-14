@@ -125,7 +125,7 @@ public class RelayDataHandler {
 	public void reparse() {
 		parsingHandler.loadTemplates();
 		for (Packet packet : sessionModel.getPacketList()) {
-			packet.updateOrigialDataFromFields();
+			packet.updatePacketDataFromFields();
 			packet.clearFields();
 			parsingHandler.tryParse(packet);
 		}
