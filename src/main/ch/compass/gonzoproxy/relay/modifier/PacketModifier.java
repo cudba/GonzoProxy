@@ -46,7 +46,15 @@ public class PacketModifier {
 		}
 	}
 
-	public void addRule(String packetName, FieldRule fieldRule,
+	public void addRule(String packetName, String fieldName,
+			String originalValue, String replacedValue, Boolean updateLength) {
+		FieldRule fieldRule = new FieldRule(fieldName, originalValue,
+				replacedValue);
+		createRule(packetName, fieldRule, updateLength);
+		
+	}
+
+	private void createRule(String packetName, FieldRule fieldRule,
 			Boolean updateLength) {
 		PacketRule existingRuleSet = findRuleSet(packetName);
 		if (existingRuleSet != null) {
@@ -60,9 +68,10 @@ public class PacketModifier {
 		}
 	}
 
-	public void addRegex(PacketRegex regex, Boolean isActive) {
-		regex.setActive(isActive);
-		packetsRegex.add(regex);
+	public void addRegex(String regex, String replaceWith, boolean isActive) {
+		PacketRegex packetRegex = new PacketRegex(regex, replaceWith);
+		packetRegex.setActive(isActive);
+		packetsRegex.add(packetRegex);
 	}
 
 	public ArrayList<PacketRule> getPacketRule() {
@@ -137,12 +146,20 @@ public class PacketModifier {
 	}
 
 	private void updateContentLengthField(Packet packet, int fieldLengthDiff) {
-
 		Field contentLengthField = findContentLengthField(packet);
-		int currentContentLength = Integer.parseInt(
-				contentLengthField.getValue(), 16);
-		int newContentLength = currentContentLength + fieldLengthDiff;
-		contentLengthField.setValue(toHexString(newContentLength));
+		if(contentLengthField.getValue() != null) {
+			try {
+				int currentContentLength = Integer.parseInt(
+						contentLengthField.getValue(), 16);
+				int newContentLength = currentContentLength + fieldLengthDiff;
+				contentLengthField.setValue(toHexString(newContentLength));
+			} catch(NumberFormatException e){
+				//TODO: wrong template syntax, contentLength not a hex value
+			}
+			
+		}else {
+			//TODO: wrong template syntax, no contentLength field found
+		}
 
 	}
 
@@ -202,5 +219,6 @@ public class PacketModifier {
 		File modifierFile = new File(RULE_FILE);
 		PersistingUtils.saveFile(modifierFile, packetRules);
 	}
+
 
 }

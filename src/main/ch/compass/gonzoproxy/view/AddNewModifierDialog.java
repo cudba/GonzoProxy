@@ -145,7 +145,7 @@ public class AddNewModifierDialog extends JDialog {
 							oldValue = "";
 						}
 						
-						controller.addModifierRule(packet.getDescription(), field.getName(), oldValue, textFieldNewValue.getText(), chckbxUpdateLengthAutomatically.isSelected());
+						controller.addRule(packet.getDescription(), field.getName(), oldValue, textFieldNewValue.getText(), chckbxUpdateLengthAutomatically.isSelected());
 						AddNewModifierDialog.this.dispose();
 					}
 					

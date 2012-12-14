@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import ch.compass.gonzoproxy.model.ForwardingType;
 import ch.compass.gonzoproxy.model.Packet;
 import ch.compass.gonzoproxy.model.SessionModel;
-import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
@@ -155,13 +154,13 @@ public class RelayDataHandler {
 		return packetModifier.getPacketRegex();
 	}
 
-	public void addRule(String packetName, FieldRule fieldRule,
-			Boolean updateLength) {
-		packetModifier.addRule(packetName, fieldRule, updateLength);
+	public void addRule(String packetName, String fieldName,
+			String originalValue, String replacedValue, Boolean updateLength) {
+		packetModifier.addRule(packetName, fieldName, originalValue, replacedValue, updateLength);
 	}
 
-	public void addRegex(PacketRegex packetRegex, boolean isActive) {
-		packetModifier.addRegex(packetRegex, isActive);
+	public void addRegex(String regex, String replaceWith, boolean isActive) {
+		packetModifier.addRegex(regex, replaceWith, isActive);
 	}
 
 	public void persistRules() throws IOException {
@@ -175,5 +174,6 @@ public class RelayDataHandler {
 	public void clearSessionData() {
 		sessionModel.clearData();
 	}
+
 	
 }

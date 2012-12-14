@@ -14,13 +14,21 @@ public class ParsingUnit {
 		byte[] packet = processingPacket.getOriginalPacketData();
 
 		int contentStartIndex = 0;
-		int contentLength = PacketUtils.DEFAULT_FIELDLENGTH;
+		int contentLength = 0;
 
 		int offset = 0;
-		int fieldLength = PacketUtils.computeFieldLength(templateFields, offset);
+		int fieldLength = PacketUtils
+				.computeFieldLength(templateFields, offset);
 
 		for (int i = 0; i < templateFields.size(); i++) {
 			Field processingField = templateFields.get(i).clone();
+
+			if (PacketUtils.isLastField(templateFields, i)
+					&& !PacketUtils.isContentField(processingField)) {
+				fieldLength = PacketUtils.getRemainingPacketSize(packet.length,
+						offset);
+			}
+
 			parseField(packet, fieldLength, offset, processingField);
 			processingPacket.addField(processingField);
 
@@ -40,8 +48,8 @@ public class ParsingUnit {
 					contentLength = Integer.parseInt(
 							processingField.getValue(), 16);
 					contentStartIndex = offset;
-					fieldLength = PacketUtils
-							.computeFieldLength(templateFields, i + 1);
+					fieldLength = PacketUtils.computeFieldLength(
+							templateFields, i + 1);
 
 					break;
 				default:
@@ -54,15 +62,15 @@ public class ParsingUnit {
 									offset,
 									templateFields.get(i
 											+ nextContentIdentifierField));
-					fieldLength = PacketUtils.calculateSubContentLength(offset,
+					fieldLength = PacketUtils.getSubContentLength(offset,
 							nextIdentifierIndex);
 					break;
 				}
 
 			} else if (PacketUtils.isNextFieldContentIdentifier(templateFields,
 					i)) {
-				fieldLength = PacketUtils
-						.computeFieldLength(templateFields, i + 1);
+				fieldLength = PacketUtils.computeFieldLength(templateFields,
+						i + 1);
 			} else if (PacketUtils.isIdentifyingContent(templateFields, i,
 					processingField)) {
 				int nextContentIdentifierPosition = PacketUtils
@@ -70,12 +78,17 @@ public class ParsingUnit {
 
 				switch (nextContentIdentifierPosition) {
 				case 0:
-					fieldLength = PacketUtils.getRemainingContentSize(
-							contentStartIndex, contentLength, offset);
+					if (contentLength == 0) {
+						fieldLength = PacketUtils.getRemainingPacketSize(
+								packet.length, offset);
+					} else {
+						fieldLength = PacketUtils.getRemainingContentSize(
+								contentStartIndex, contentLength, offset);
+					}
 					break;
 				case 1:
-					fieldLength = PacketUtils
-							.computeFieldLength(templateFields, i + 1);
+					fieldLength = PacketUtils.computeFieldLength(
+							templateFields, i + 1);
 
 					break;
 				default:
@@ -85,12 +98,13 @@ public class ParsingUnit {
 									offset,
 									templateFields.get(i
 											+ nextContentIdentifierPosition));
-					fieldLength = PacketUtils.calculateSubContentLength(offset,
+					fieldLength = PacketUtils.getSubContentLength(offset,
 							nextIdentifierIndex);
 					break;
 				}
 			} else {
-				fieldLength = PacketUtils.computeFieldLength(templateFields, i + 1);
+				fieldLength = PacketUtils.computeFieldLength(templateFields,
+						i + 1);
 			}
 		}
 		return true;

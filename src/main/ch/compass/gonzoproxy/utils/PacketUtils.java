@@ -13,18 +13,18 @@ public class PacketUtils {
 	public static final String CONTENT_LENGTH_FIELD = "Lc";
 	public static final String CONTENT_IDENTIFIER = "Ci";
 	public static final String CONTENT_DATA = "CONTENT";
-	
+
 	public static final int DEFAULT_FIELDLENGTH = 1;
 	public static final int ENCODING_OFFSET = 2;
 	public static final int WHITESPACE_OFFSET = 1;
 
-	
 	public static byte[] extractField(byte[] plainPacket, int fieldLength,
 			int currentOffset) {
 		return ByteArraysUtils.trim(plainPacket, currentOffset, fieldLength);
 	}
 
-	public static int getEncodedFieldLength(int fieldLength, boolean withWhitespace) {
+	public static int getEncodedFieldLength(int fieldLength,
+			boolean withWhitespace) {
 		if (withWhitespace) {
 			return fieldLength * (ENCODING_OFFSET + WHITESPACE_OFFSET);
 		} else {
@@ -37,16 +37,15 @@ public class PacketUtils {
 			Field field) {
 		byte[] nextContentIdentifier = field.getValue().getBytes();
 
-		
 		for (int i = offset; i < plainPacket.length
 				- nextContentIdentifier.length; i++) {
-			
+
 			boolean matches = true;
 			for (int j = 0; j < nextContentIdentifier.length; j++) {
-				if (nextContentIdentifier[j] != plainPacket[i + j]) 
+				if (nextContentIdentifier[j] != plainPacket[i + j])
 					matches = false;
 			}
-			if(matches)
+			if (matches)
 				return i;
 		}
 		return 0;
@@ -54,9 +53,9 @@ public class PacketUtils {
 
 	public static int computeFieldLength(ArrayList<Field> fields, int offset) {
 		int fieldLength = DEFAULT_FIELDLENGTH;
-		if(fields.size() > offset){
+		if (fields.size() > offset) {
 			Field field = fields.get(offset);
-			if(field.getValue() != null) {
+			if (field.getValue() != null) {
 				String value = field.getValue().replaceAll("\\s", "");
 				fieldLength = value.length() / ENCODING_OFFSET;
 			}
@@ -70,19 +69,23 @@ public class PacketUtils {
 				- ((offset - contentStartIndex) / (ENCODING_OFFSET + WHITESPACE_OFFSET));
 	}
 
+	public static int getSubContentLength(int offset, int nextIdentifier) {
+		return (nextIdentifier - offset)
+				/ (ENCODING_OFFSET + WHITESPACE_OFFSET);
+	}
+	
+	public static int getRemainingPacketSize(int packetLength, int offset) {
+		return (packetLength - offset) / ENCODING_OFFSET;
+	}
+
 	public static boolean isContentLengthField(Field processingField) {
 		return processingField.getName() != null
 				&& processingField.getName().equals(CONTENT_LENGTH_FIELD);
 	}
 
-	public static int calculateSubContentLength(int offset, int nextIdentifier) {
-		return (nextIdentifier - offset)
-				/ (ENCODING_OFFSET + WHITESPACE_OFFSET);
-	}
-
 	public static int findNextContentIdentifierField(int offset,
 			ArrayList<Field> templateFields) {
-	
+
 		int fieldIndex = 1;
 		for (int i = offset; i < templateFields.size(); i++) {
 			if (isContentIdentifierField(templateFields.get(i))) {
@@ -94,14 +97,15 @@ public class PacketUtils {
 	}
 
 	public static boolean isContentIdentifierField(Field processingField) {
-		return processingField.getName().contains(CONTENT_IDENTIFIER);
+		if (processingField.getName() != null)
+			return processingField.getName().contains(CONTENT_IDENTIFIER);
+		return false;
 	}
 
-	public static boolean isNextFieldContentIdentifier(
-			ArrayList<Field> fields, int offset) {
+	public static boolean isNextFieldContentIdentifier(ArrayList<Field> fields,
+			int offset) {
 		if (fields.size() > offset + 1) {
-			return PacketUtils.isContentIdentifierField(fields
-					.get(offset + 1));
+			return PacketUtils.isContentIdentifierField(fields.get(offset + 1));
 		}
 		return false;
 	}
@@ -112,8 +116,10 @@ public class PacketUtils {
 
 	public static boolean isIdentifyingContent(ArrayList<Field> templateFields,
 			int offset, Field processingField) {
-		return processingField.getName().contains(CONTENT_IDENTIFIER)
-				&& templateFields.size() > offset + 1;
+		if (processingField.getName() != null)
+			return processingField.getName().contains(CONTENT_IDENTIFIER)
+					&& templateFields.size() > offset + 1;
+		return false;
 	}
 
 	public static Packet getModeFailurePacket() {
@@ -126,6 +132,17 @@ public class PacketUtils {
 		Packet eosPacket = new Packet();
 		eosPacket.setDescription(END_OF_STREAM_PACKET_DESCRIPTION);
 		return eosPacket;
+	}
+
+	public static boolean isLastField(ArrayList<Field> templateFields, int i) {
+		return templateFields.size() - 1 == i;
+	}
+
+	public static boolean isContentField(Field processingField) {
+		if (processingField.getName() != null)
+			return processingField.getName().toUpperCase()
+					.contains(CONTENT_DATA);
+		return false;
 	}
 
 }

@@ -18,7 +18,6 @@ import ch.compass.gonzoproxy.model.SessionModel;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamReader;
 import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamWriter;
-import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings;
@@ -311,14 +310,15 @@ public class GonzoRelayService implements RelayService {
 		return relayDataHandler.getPacketRegex();
 	}
 
-	public void addRule(String packetName, FieldRule fieldRule,
-			Boolean updateLength) {
-		relayDataHandler.addRule(packetName, fieldRule, updateLength);
+	public void addRule(String packetName, String fieldName,
+			String originalValue, String replacedValue, Boolean updateLength) {
+		relayDataHandler.addRule(packetName, fieldName, originalValue,
+				replacedValue, updateLength);
 
 	}
 
-	public void addRegex(PacketRegex packetRegex, boolean isActive) {
-		relayDataHandler.addRegex(packetRegex, isActive);
+	public void addRegex(String regex, String replaceWith, boolean isActive) {
+		relayDataHandler.addRegex(regex, replaceWith, isActive);
 	}
 
 	public void persistRules() throws IOException {

@@ -42,14 +42,16 @@ public class ByteArraysTest {
 	public void testGetDelimiterIndices() {
 		ArrayList<Integer> expectedIndices = new ArrayList<Integer>();
 		expectedIndices.add(0);
-		expectedIndices.add(2);
-		expectedIndices.add(4);
+		expectedIndices.add(18);
+		expectedIndices.add(33);
 		
-		String delimiter = "#";
-		
-		byte[] testArray = new byte[]{'#', 'A', '#', 'B', '#', 'C'};
+		String delimiter = "aa aa aa";
+		String testStream = "aa aa aa 0e af 73 aa aa aa ef 03 aa aa aa";
+		byte[] testArray = testStream.getBytes();
 		ArrayList<Integer> indices = ByteArraysUtils.getDelimiterIndices(testArray, delimiter.getBytes());
-		assertEquals(expectedIndices.get(0), indices.get(0));
+		for (int i = 0; i < indices.size(); i++) {
+			assertEquals(expectedIndices.get(i), indices.get(i));	
+		}
 	}
 	
 	@Test
@@ -59,5 +61,22 @@ public class ByteArraysTest {
 		byte[] testArray = new byte[initSize];
 		testArray = ByteArraysUtils.enlarge(testArray, enlargedSize);
 		assertEquals(enlargedSize, testArray.length);
+	}
+	
+	@Test
+	public void testMerge(){
+		String sourceInput = "How much wood would a woodchuck chuck if a woodchuck could chuck wood?";
+		String appendInput = "Ohhh shut up";
+		String mergedInput = sourceInput + appendInput;
+		
+		byte[] source = sourceInput.getBytes();
+		byte[] append = appendInput.getBytes();
+		
+		byte[] expectedValue = mergedInput.getBytes();
+		
+		byte[] merged = ByteArraysUtils.merge(source, append);
+		
+		assertArrayEquals(expectedValue, merged);
+		
 	}
 }

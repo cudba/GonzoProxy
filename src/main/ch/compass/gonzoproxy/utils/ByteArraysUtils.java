@@ -1,6 +1,7 @@
 package ch.compass.gonzoproxy.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ByteArraysUtils {
 
@@ -15,9 +16,9 @@ public class ByteArraysUtils {
 
 	public static ArrayList<Integer> getDelimiterIndices(byte[] buffer,
 			byte[] delimiter) {
-		boolean matches = true;
 		ArrayList<Integer> indices = new ArrayList<Integer>();
-		for (int i = 0; i < buffer.length - delimiter.length; i++) {
+		for (int i = 0; i <= buffer.length - delimiter.length;) {
+			boolean matches = true;
 			int currentIndex = i;
 			for (int j = 0; j < delimiter.length; j++) {
 				if (buffer[currentIndex] != delimiter[j])
@@ -27,6 +28,8 @@ public class ByteArraysUtils {
 			if(matches) {
 				indices.add(i);
 				i = currentIndex;
+			} else {
+				i++;
 			}
 
 		}
@@ -43,6 +46,13 @@ public class ByteArraysUtils {
 		byte[] newArray = new byte[size];
 		System.arraycopy(array, 0, newArray, 0, array.length);
 		return newArray;
+	}
+	
+	public static byte[] merge(byte[] source, byte[] append) {
+		byte[] merged = Arrays.copyOf(source, source.length + append.length);
+		
+		System.arraycopy(append, 0, merged, source.length , append.length);
+		return merged;
 	}
 
 	private static boolean validInput(byte[] array, int fromIndex, int length) {

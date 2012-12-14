@@ -3,6 +3,8 @@ package ch.compass.gonzoproxy.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import ch.compass.gonzoproxy.utils.PacketUtils;
+
 public class Packet implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = -4766720932383072042L;
@@ -109,7 +111,7 @@ public class Packet implements Serializable, Cloneable {
 
 	public String toAscii() {
 		StringBuffer sb = new StringBuffer("");
-		for(Field field : getFields()){
+		for (Field field : getFields()) {
 			sb.append(field.toAscii());
 		}
 		return sb.toString();
@@ -135,9 +137,14 @@ public class Packet implements Serializable, Cloneable {
 
 		for (Field field : fields) {
 			if (!field.getValue().isEmpty()) {
-				mergedFields.append(field.getValue() + " ");
+				mergedFields.append(field.getValue());
+				for (int i = 0; i < PacketUtils.WHITESPACE_OFFSET; i++) {
+					mergedFields.append(" ");
+				}
 			}
 		}
-		return mergedFields.substring(0, mergedFields.length() - 1);
+		if (mergedFields.length() > 0)
+			return mergedFields.substring(0, mergedFields.length() - PacketUtils.WHITESPACE_OFFSET);
+		return "";
 	}
 }

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.SessionModel;
-import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
@@ -48,10 +47,10 @@ public interface RelayService extends Runnable {
 
 	public ArrayList<PacketRegex> getPacketRegex();
 
-	public void addRule(String packetName, FieldRule fieldRule,
-			Boolean updateLength);
+	public void addRule(String packetName, String fieldName,
+			String originalValue, String replacedValue, Boolean updateLength);
 
-	public void addRegex(PacketRegex packetRegex, boolean isActive);
+	public void addRegex(String regex, String replaceWith, boolean isActive);
 
 	public void persistRules() throws IOException;
 

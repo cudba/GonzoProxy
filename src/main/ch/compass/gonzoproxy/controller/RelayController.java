@@ -10,7 +10,6 @@ import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.SessionModel;
 import ch.compass.gonzoproxy.relay.GonzoRelayService;
 import ch.compass.gonzoproxy.relay.RelayService;
-import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
@@ -57,17 +56,14 @@ public class RelayController {
 		return relayService.getPacketRegex();
 	}
 
-	public void addModifierRule(String packetName, String fieldName,
+	public void addRule(String packetName, String fieldName,
 			String originalValue, String replacedValue, Boolean updateLength) {
-		FieldRule fieldRule = new FieldRule(fieldName, originalValue,
-				replacedValue);
-		relayService.addRule(packetName, fieldRule, updateLength);
+		relayService.addRule(packetName,fieldName, originalValue, replacedValue, updateLength);
 		persistRules();
 	}
 
 	public void addRegex(String regex, String replaceWith, boolean isActive) {
-		PacketRegex packetRegex = new PacketRegex(regex, replaceWith);
-		relayService.addRegex(packetRegex, isActive);
+		relayService.addRegex(regex,replaceWith, isActive);
 		persistRegex();
 	}
 
