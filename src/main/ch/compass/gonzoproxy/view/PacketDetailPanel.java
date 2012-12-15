@@ -231,9 +231,6 @@ public class PacketDetailPanel extends JPanel {
 		gbc_label_5.gridx = 6;
 		gbc_label_5.gridy = 0;
 		panelStatus2.add(lblRPort, gbc_label_5);
-
-		// textPane_ascii.setEnabled(false);
-		// textPane_hex.setEnabled(false);
 	}
 
 	public void clearFields() {
