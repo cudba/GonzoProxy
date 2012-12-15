@@ -1,6 +1,6 @@
 package ch.compass.gonzoproxy.relay.io.extractor;
 
-import ch.compass.gonzoproxy.model.ForwardingType;
+import ch.compass.gonzoproxy.model.packet.PacketType;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 
 public interface PacketExtractor {
@@ -17,7 +17,7 @@ public interface PacketExtractor {
 	 */
 	
 	public byte[] extractPacketsToHandler(byte[] buffer, RelayDataHandler relayDataHandler,
-			int readBytes, ForwardingType forwardingType);
+			int readBytes, PacketType forwardingType);
 
 	public String getName();
 

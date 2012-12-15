@@ -7,7 +7,7 @@ import java.util.Enumeration;
 import java.util.ResourceBundle;
 
 import ch.compass.gonzoproxy.listener.StateListener;
-import ch.compass.gonzoproxy.model.SessionModel;
+import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 import ch.compass.gonzoproxy.relay.GonzoRelayService;
 import ch.compass.gonzoproxy.relay.RelayService;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
@@ -40,7 +40,7 @@ public class RelayController {
 		relayService.stopSession();
 	}
 
-	public SessionModel getSessionModel() {
+	public RelayDataModel getSessionModel() {
 		return relayService.getSessionModel();
 	}
 

@@ -1,13 +1,13 @@
 package ch.compass.gonzoproxy.relay.io.wrapper;
 
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
 
 public class AsciiWrapper implements PacketWrapper {
 
 	@Override
-	public byte[] wrap(Packet apdu) {
-		byte[] wrappedPacket = preparePacketForStream(apdu);
+	public byte[] wrap(Packet packet) {
+		byte[] wrappedPacket = preparePacketForStream(packet);
 		return wrappedPacket;
 	}
 

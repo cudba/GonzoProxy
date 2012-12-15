@@ -1,6 +1,6 @@
 package ch.compass.gonzoproxy.relay.io.wrapper;
 
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
 
 public class ByteWrapper implements PacketWrapper {
@@ -10,12 +10,12 @@ public class ByteWrapper implements PacketWrapper {
 	 */
 
 	@Override
-	public byte[] wrap(Packet apdu) {
-		byte[] wrappedPacket = apdu.getPreamble();
-		byte[] packetData = ByteArraysUtils.asciiHexToByteArray(apdu.getPacketDataAsString());
+	public byte[] wrap(Packet packet) {
+		byte[] wrappedPacket = packet.getPreamble();
+		byte[] packetData = ByteArraysUtils.asciiHexToByteArray(packet.getPacketDataAsString());
 		
 		wrappedPacket = ByteArraysUtils.merge(wrappedPacket, packetData);
-		wrappedPacket = ByteArraysUtils.merge(wrappedPacket, apdu.getTrailer());
+		wrappedPacket = ByteArraysUtils.merge(wrappedPacket, packet.getTrailer());
 		
 		return wrappedPacket;
 	}

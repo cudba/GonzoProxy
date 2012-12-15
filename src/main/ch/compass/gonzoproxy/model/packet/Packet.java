@@ -1,9 +1,8 @@
-package ch.compass.gonzoproxy.model;
+package ch.compass.gonzoproxy.model.packet;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import ch.compass.gonzoproxy.utils.PacketUtils;
 
 public class Packet implements Serializable, Cloneable {
 
@@ -17,7 +16,7 @@ public class Packet implements Serializable, Cloneable {
 	private ArrayList<Field> fields = new ArrayList<Field>();
 
 	private String description = "";
-	private ForwardingType type;
+	private PacketType type;
 	private int size = 0;
 
 	public String getDescription() {
@@ -45,7 +44,8 @@ public class Packet implements Serializable, Cloneable {
 	}
 
 	public byte[] getPacketData() {
-		updatePacketDataFromFields();
+		if (fields.size() > 0)
+			updatePacketDataFromFields();
 		return packetData;
 	}
 
@@ -69,11 +69,11 @@ public class Packet implements Serializable, Cloneable {
 		this.fields = fields;
 	}
 
-	public ForwardingType getType() {
+	public PacketType getType() {
 		return type;
 	}
 
-	public void setType(ForwardingType type) {
+	public void setType(PacketType type) {
 		this.type = type;
 	}
 
@@ -139,13 +139,14 @@ public class Packet implements Serializable, Cloneable {
 		for (Field field : fields) {
 			if (!field.getValue().isEmpty()) {
 				mergedFields.append(field.getValue());
-				for (int i = 0; i < PacketUtils.WHITESPACE_OFFSET; i++) {
+				for (int i = 0; i < PacketDataSettings.WHITESPACE_OFFSET; i++) {
 					mergedFields.append(" ");
 				}
 			}
 		}
 		if (mergedFields.length() > 0)
-			return mergedFields.substring(0, mergedFields.length() - PacketUtils.WHITESPACE_OFFSET);
+			return mergedFields.substring(0, mergedFields.length()
+					- PacketDataSettings.WHITESPACE_OFFSET);
 		return "";
 	}
 }

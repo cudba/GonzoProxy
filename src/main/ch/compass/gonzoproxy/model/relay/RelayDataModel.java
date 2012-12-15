@@ -1,10 +1,11 @@
-package ch.compass.gonzoproxy.model;
+package ch.compass.gonzoproxy.model.relay;
 
 import java.util.ArrayList;
 
 import ch.compass.gonzoproxy.listener.DataListener;
+import ch.compass.gonzoproxy.model.packet.Packet;
 
-public class SessionModel {
+public class RelayDataModel {
 
 	private ArrayList<DataListener> dataListeners = new ArrayList<DataListener>();
 	private ArrayList<Packet> sessionData = new ArrayList<Packet>();

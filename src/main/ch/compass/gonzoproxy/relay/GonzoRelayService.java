@@ -13,8 +13,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ch.compass.gonzoproxy.listener.StateListener;
-import ch.compass.gonzoproxy.model.ForwardingType;
-import ch.compass.gonzoproxy.model.SessionModel;
+import ch.compass.gonzoproxy.model.packet.PacketType;
+import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamReader;
 import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamWriter;
@@ -122,10 +122,10 @@ public class GonzoRelayService implements RelayService {
 				target.getOutputStream());
 		PacketStreamReader commandStreamReader = new PacketStreamReader(
 				inputStream, relayDataHandler, sessionSettings.getRelayMode(),
-				ForwardingType.COMMAND);
+				PacketType.COMMAND);
 		PacketStreamWriter commandStreamWriter = new PacketStreamWriter(
 				outputStream, relayDataHandler, sessionSettings.getRelayMode(),
-				ForwardingType.COMMAND);
+				PacketType.COMMAND);
 
 		commandStreamWriter.setTrapListener(sessionSettings);
 
@@ -140,10 +140,10 @@ public class GonzoRelayService implements RelayService {
 				initiator.getOutputStream());
 		PacketStreamReader responseStreamReader = new PacketStreamReader(
 				inputStream, relayDataHandler, sessionSettings.getRelayMode(),
-				ForwardingType.RESPONSE);
+				PacketType.RESPONSE);
 		PacketStreamWriter responseStreamWriter = new PacketStreamWriter(
 				outputStream, relayDataHandler, sessionSettings.getRelayMode(),
-				ForwardingType.RESPONSE);
+				PacketType.RESPONSE);
 
 		responseStreamWriter.setTrapListener(sessionSettings);
 
@@ -285,7 +285,7 @@ public class GonzoRelayService implements RelayService {
 		sessionSettings.addSessionStateListener(stateListener);
 	}
 
-	public SessionModel getSessionModel() {
+	public RelayDataModel getSessionModel() {
 		return relayDataHandler.getSessionModel();
 	}
 

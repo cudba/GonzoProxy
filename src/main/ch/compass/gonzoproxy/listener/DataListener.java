@@ -1,6 +1,6 @@
 package ch.compass.gonzoproxy.listener;
 
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.packet.Packet;
 
 
 

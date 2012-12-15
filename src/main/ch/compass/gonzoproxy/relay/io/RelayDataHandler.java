@@ -6,16 +6,16 @@ import java.util.ArrayList;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TimeUnit;
 
-import ch.compass.gonzoproxy.model.ForwardingType;
-import ch.compass.gonzoproxy.model.Packet;
-import ch.compass.gonzoproxy.model.SessionModel;
+import ch.compass.gonzoproxy.model.packet.Packet;
+import ch.compass.gonzoproxy.model.packet.PacketDataSettings;
+import ch.compass.gonzoproxy.model.packet.PacketType;
+import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.relay.parser.ParsingHandler;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings.SessionState;
-import ch.compass.gonzoproxy.utils.PacketUtils;
 import ch.compass.gonzoproxy.utils.PersistingUtils;
 
 public class RelayDataHandler {
@@ -30,7 +30,7 @@ public class RelayDataHandler {
 	private ParsingHandler parsingHandler = new ParsingHandler();
 	private PacketModifier packetModifier = new PacketModifier();
 
-	private SessionModel sessionModel = new SessionModel();
+	private RelayDataModel sessionModel = new RelayDataModel();
 
 	private RelaySettings sessionSettings;
 
@@ -62,7 +62,7 @@ public class RelayDataHandler {
 		receiverQueue.offer(packet);
 	}
 
-	public Packet poll(ForwardingType type) throws InterruptedException {
+	public Packet poll(PacketType type) throws InterruptedException {
 		Packet sendingPacket = null;
 		switch (type) {
 		case COMMAND:
@@ -82,10 +82,10 @@ public class RelayDataHandler {
 
 	private boolean streamFailure(Packet receivedPacket) {
 		String packetDescription = receivedPacket.getDescription();
-		if (PacketUtils.END_OF_STREAM_PACKET_DESCRIPTION.equals(packetDescription)) {
+		if (PacketDataSettings.END_OF_STREAM_PACKET_DESCRIPTION.equals(packetDescription)) {
 			sessionSettings.setSessionState(SessionState.EOS);
 			return true;
-		} else if (PacketUtils.MODE_FAILURE_PACKET_DESCRIPTION.equals(packetDescription)) {
+		} else if (PacketDataSettings.MODE_FAILURE_PACKET_DESCRIPTION.equals(packetDescription)) {
 			sessionSettings.setSessionState(SessionState.MODE_FAILURE);
 			return true;
 		}
@@ -131,7 +131,7 @@ public class RelayDataHandler {
 		}
 	}
 
-	public SessionModel getSessionModel() {
+	public RelayDataModel getSessionModel() {
 		return sessionModel;
 	}
 

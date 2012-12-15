@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import ch.compass.gonzoproxy.model.FieldRuleModel;
+import ch.compass.gonzoproxy.model.ui.FieldRuleTableModel;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
@@ -25,13 +25,13 @@ public class EditModifierDialog extends JDialog {
 	private JTextField textFieldOldValue;
 	private JTextField textFieldNewValue;
 	private JTextField textFieldFieldname;
-	private FieldRuleModel fieldRuleModel;
+	private FieldRuleTableModel fieldRuleModel;
 	private JCheckBox chckbxReplaceWhole;
 	private JCheckBox chckbxUpdateLengthAutomatically;
 	private PacketRule packetRule;
 	private FieldRule fieldRule;
 
-	public EditModifierDialog(PacketRule packetRule, FieldRule fieldRule, FieldRuleModel fieldRuleModel) {
+	public EditModifierDialog(PacketRule packetRule, FieldRule fieldRule, FieldRuleTableModel fieldRuleModel) {
 		this.fieldRuleModel = fieldRuleModel;
 		this.packetRule = packetRule;
 		this.fieldRule = fieldRule;

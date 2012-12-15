@@ -21,9 +21,9 @@ import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.listener.StateListener;
-import ch.compass.gonzoproxy.model.Field;
-import ch.compass.gonzoproxy.model.Packet;
-import ch.compass.gonzoproxy.model.PacketDetailTableModel;
+import ch.compass.gonzoproxy.model.packet.Field;
+import ch.compass.gonzoproxy.model.packet.Packet;
+import ch.compass.gonzoproxy.model.ui.PacketDetailTableModel;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings.SessionState;
 
 public class PacketDetailPanel extends JPanel {

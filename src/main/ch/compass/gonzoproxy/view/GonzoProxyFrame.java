@@ -21,8 +21,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import ch.compass.gonzoproxy.controller.RelayController;
-import ch.compass.gonzoproxy.model.Packet;
-import ch.compass.gonzoproxy.model.SessionModel;
+import ch.compass.gonzoproxy.model.packet.Packet;
+import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 
 public class GonzoProxyFrame extends JFrame {
 
@@ -46,7 +46,7 @@ public class GonzoProxyFrame extends JFrame {
 	private PacketListPanel panelList;
 	private PacketDetailPanel panelDetail;
 	private Packet editPacket;
-	private SessionModel data;
+	private RelayDataModel data;
 	final JFileChooser fc;
 
 	public GonzoProxyFrame(RelayController controller) {

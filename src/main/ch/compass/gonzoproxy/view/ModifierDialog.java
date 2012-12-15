@@ -25,8 +25,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
-import ch.compass.gonzoproxy.model.FieldRuleModel;
-import ch.compass.gonzoproxy.model.PacketRuleModel;
+import ch.compass.gonzoproxy.model.ui.FieldRuleTableModel;
+import ch.compass.gonzoproxy.model.ui.PacketRuleListModel;
 import ch.compass.gonzoproxy.relay.modifier.FieldRule;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
@@ -36,14 +36,14 @@ public class ModifierDialog extends JDialog {
 	private JPanel contentPane;
 	private JTable tableRules;
 	private JList<String> listPacketRule;
-	private FieldRuleModel fieldRuleModel;
+	private FieldRuleTableModel fieldRuleModel;
 	protected PacketRule editPacketRule;
 	private JCheckBox chckbxUpdateLengthAutomatically;
 	protected FieldRule editFieldRule;
 	private JPanel panel;
 	private JButton btnDeleteSelectedFieldRule;
 	private JButton btnDeleteSelectedPacketRule;
-	private PacketRuleModel packetRuleModel;
+	private PacketRuleListModel packetRuleModel;
 	private FieldRule dummyFieldRule;
 	private PacketRule dummyPacketRule;
 	private ArrayList<PacketRule> packetRules;
@@ -85,7 +85,7 @@ public class ModifierDialog extends JDialog {
 		gbc_scrollPane_1.gridy = 0;
 		contentPane.add(scrollPane_1, gbc_scrollPane_1);
 
-		packetRuleModel = new PacketRuleModel(packetRules);
+		packetRuleModel = new PacketRuleListModel(packetRules);
 		listPacketRule = new JList<String>(packetRuleModel);
 		listPacketRule.addListSelectionListener(new ListSelectionListener() {
 
@@ -113,7 +113,7 @@ public class ModifierDialog extends JDialog {
 		gbc_scrollPane.gridy = 0;
 		contentPane.add(scrollPane, gbc_scrollPane);
 
-		fieldRuleModel = new FieldRuleModel();
+		fieldRuleModel = new FieldRuleTableModel();
 		tableRules = new JTable(fieldRuleModel);
 		tableRules.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {

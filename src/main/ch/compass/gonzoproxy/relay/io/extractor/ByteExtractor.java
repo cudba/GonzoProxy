@@ -3,10 +3,11 @@ package ch.compass.gonzoproxy.relay.io.extractor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import ch.compass.gonzoproxy.model.ForwardingType;
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.packet.Packet;
+import ch.compass.gonzoproxy.model.packet.PacketType;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
+import ch.compass.gonzoproxy.utils.PacketUtils;
 
 public class ByteExtractor implements PacketExtractor {
 
@@ -18,7 +19,7 @@ public class ByteExtractor implements PacketExtractor {
 	@Override
 	public byte[] extractPacketsToHandler(byte[] buffer,
 			RelayDataHandler relayDataHandler, int readBytes,
-			ForwardingType forwardingType) {
+			PacketType packetType) {
 
 		ArrayList<Integer> delimiterIndices = ByteArraysUtils
 				.getDelimiterIndices(buffer, DELIMITER);
@@ -35,7 +36,7 @@ public class ByteExtractor implements PacketExtractor {
 			endIndex = delimiterIndices.get(i + 1);
 			int size = endIndex - startIndex;
 			byte[] plainpacket = ByteArraysUtils.trim(buffer, startIndex, size);
-			Packet packet = splitPacket(forwardingType, plainpacket);
+			Packet packet = extractPacket(packetType, plainpacket);
 			relayDataHandler.offer(packet);
 		}
 
@@ -50,7 +51,7 @@ public class ByteExtractor implements PacketExtractor {
 				lastPacketInStream.length - END_OF_COMMAND.length,
 				END_OF_COMMAND.length);
 		if (packetIsComplete(endOfCommand)) {
-			Packet packet = splitPacket(forwardingType, lastPacketInStream);
+			Packet packet = extractPacket(packetType, lastPacketInStream);
 			relayDataHandler.offer(packet);
 			return new byte[0];
 		} else {
@@ -62,9 +63,11 @@ public class ByteExtractor implements PacketExtractor {
 	/*
 	 * The Packet class offers multiple fields for usage. See Packet class
 	 * documentation for further information
+	 * 
+	 * Note: 	originalPacketData field & PacketType are mandatory 
 	 */
 
-	private Packet splitPacket(ForwardingType forwardingType, byte[] plainpacket) {
+	private Packet extractPacket(PacketType packetType, byte[] plainpacket) {
 		byte[] preamble = ByteArraysUtils
 				.trim(plainpacket, 0, DELIMITER.length);
 		byte[] packetData = ByteArraysUtils.trim(plainpacket, DELIMITER.length,
@@ -72,30 +75,25 @@ public class ByteExtractor implements PacketExtractor {
 		byte[] trailer = ByteArraysUtils.trim(plainpacket, plainpacket.length
 				- END_OF_COMMAND.length, END_OF_COMMAND.length);
 
-		Packet asciiPacket = createPacket(preamble, packetData, trailer);
+		Packet packet = createPacket(preamble, packetData, trailer, packetType);
 
-		asciiPacket.setType(forwardingType);
-		return asciiPacket;
+		return packet;
 	}
 	
 
 	/*
 	 * Parser expects an ascii representation of the packet data 
 	 * Example of an parsable originalPacketData input: "0f a4 72".getBytes()
-
-	 * Note: 	originalPacketData field mandatory (see parser documentation for
-	 * 			further details)
-	 */
+	*/
+	
 
 	private Packet createPacket(byte[] preamble, byte[] packetData,
-			byte[] trailer) {
+			byte[] trailer, PacketType packetType) {
 
-		Packet packet = new Packet();
 		byte[] asciiHexPacketData = ByteArraysUtils
 				.byteToParsableAsciiHex(packetData);
-
+		Packet packet = PacketUtils.createPacket(asciiHexPacketData, packetType);
 		packet.setPreamble(preamble);
-		packet.setPacketData(asciiHexPacketData);
 		packet.setTrailer(trailer);
 
 		return packet;

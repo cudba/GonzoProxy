@@ -23,9 +23,9 @@ import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
 import ch.compass.gonzoproxy.listener.DataListener;
-import ch.compass.gonzoproxy.model.Packet;
-import ch.compass.gonzoproxy.model.PacketTableModel;
-import ch.compass.gonzoproxy.model.SessionModel;
+import ch.compass.gonzoproxy.model.packet.Packet;
+import ch.compass.gonzoproxy.model.relay.RelayDataModel;
+import ch.compass.gonzoproxy.model.ui.PacketTableModel;
 
 public class PacketListPanel extends JPanel {
 
@@ -37,7 +37,7 @@ public class PacketListPanel extends JPanel {
 	private JToggleButton btnTrapCmd;
 	private JToggleButton btnTrapRes;
 
-	private SessionModel currentSession;
+	private RelayDataModel currentSession;
 	private RelayController controller;
 	private JPanel panel_table;
 	private JScrollPane scrollPane_0;

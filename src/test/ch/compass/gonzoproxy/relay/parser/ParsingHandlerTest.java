@@ -6,8 +6,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.compass.gonzoproxy.model.Field;
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.packet.Field;
+import ch.compass.gonzoproxy.model.packet.Packet;
 
 public class ParsingHandlerTest {
 	ParsingHandler parserHanlder;

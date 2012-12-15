@@ -1,6 +1,6 @@
 package ch.compass.gonzoproxy.relay.io;
 
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings;
 
 public class MockedRelayDataHandler extends RelayDataHandler {

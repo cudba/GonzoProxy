@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import ch.compass.gonzoproxy.controller.RelayController;
-import ch.compass.gonzoproxy.model.RegexTableModel;
+import ch.compass.gonzoproxy.model.ui.RegexTableModel;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 
 public class EditRegexDialog extends JDialog {

@@ -2,9 +2,11 @@ package ch.compass.gonzoproxy.relay.parser;
 
 import java.util.ArrayList;
 
-import ch.compass.gonzoproxy.model.Field;
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.packet.Field;
+import ch.compass.gonzoproxy.model.packet.Packet;
+import ch.compass.gonzoproxy.model.template.PacketTemplate;
 import ch.compass.gonzoproxy.utils.PacketUtils;
+import ch.compass.gonzoproxy.utils.TemplateUtils;
 
 public class ParsingUnit {
 
@@ -23,8 +25,8 @@ public class ParsingUnit {
 		for (int i = 0; i < templateFields.size(); i++) {
 			Field processingField = templateFields.get(i).clone();
 
-			if (PacketUtils.isLastField(templateFields, i)
-					&& !PacketUtils.isContentField(processingField)) {
+			if (TemplateUtils.isLastField(templateFields, i)
+					&& !TemplateUtils.isContentField(processingField)) {
 				fieldLength = PacketUtils.getRemainingPacketSize(packet.length,
 						offset);
 			}
@@ -34,9 +36,9 @@ public class ParsingUnit {
 
 			offset += PacketUtils.getEncodedFieldLength(fieldLength, true);
 
-			if (PacketUtils.isContentLengthField(processingField)) {
+			if (TemplateUtils.isContentLengthField(processingField)) {
 
-				int nextContentIdentifierField = PacketUtils
+				int nextContentIdentifierField = TemplateUtils
 						.findNextContentIdentifierField(i + 1, templateFields);
 
 				switch (nextContentIdentifierField) {
@@ -48,7 +50,7 @@ public class ParsingUnit {
 					contentLength = Integer.parseInt(
 							processingField.getValue(), 16);
 					contentStartIndex = offset;
-					fieldLength = PacketUtils.computeFieldLength(
+					fieldLength = TemplateUtils.computeFieldLength(
 							templateFields, i + 1);
 
 					break;
@@ -56,7 +58,7 @@ public class ParsingUnit {
 					contentLength = Integer.parseInt(
 							processingField.getValue(), 16);
 					contentStartIndex = offset;
-					int nextIdentifierIndex = PacketUtils
+					int nextIdentifierIndex = TemplateUtils
 							.findFieldInPlainPacket(
 									packet,
 									offset,
@@ -67,13 +69,13 @@ public class ParsingUnit {
 					break;
 				}
 
-			} else if (PacketUtils.isNextFieldContentIdentifier(templateFields,
+			} else if (TemplateUtils.isNextFieldContentIdentifier(templateFields,
 					i)) {
-				fieldLength = PacketUtils.computeFieldLength(templateFields,
+				fieldLength = TemplateUtils.computeFieldLength(templateFields,
 						i + 1);
-			} else if (PacketUtils.isIdentifyingContent(templateFields, i,
+			} else if (TemplateUtils.isIdentifyingContent(templateFields, i,
 					processingField)) {
-				int nextContentIdentifierPosition = PacketUtils
+				int nextContentIdentifierPosition = TemplateUtils
 						.findNextContentIdentifierField(i + 1, templateFields);
 
 				switch (nextContentIdentifierPosition) {
@@ -87,12 +89,12 @@ public class ParsingUnit {
 					}
 					break;
 				case 1:
-					fieldLength = PacketUtils.computeFieldLength(
+					fieldLength = TemplateUtils.computeFieldLength(
 							templateFields, i + 1);
 
 					break;
 				default:
-					int nextIdentifierIndex = PacketUtils
+					int nextIdentifierIndex = TemplateUtils
 							.findFieldInPlainPacket(
 									packet,
 									offset,
@@ -103,7 +105,7 @@ public class ParsingUnit {
 					break;
 				}
 			} else {
-				fieldLength = PacketUtils.computeFieldLength(templateFields,
+				fieldLength = TemplateUtils.computeFieldLength(templateFields,
 						i + 1);
 			}
 		}
@@ -127,7 +129,7 @@ public class ParsingUnit {
 	private void parseValueToField(byte[] payload, int offset, int fieldLength,
 			Field field) {
 		if ((offset + fieldLength) <= payload.length) {
-			byte[] value = PacketUtils.extractField(payload, fieldLength,
+			byte[] value = TemplateUtils.extractField(payload, fieldLength,
 					offset);
 			setFieldValue(field, value);
 		}

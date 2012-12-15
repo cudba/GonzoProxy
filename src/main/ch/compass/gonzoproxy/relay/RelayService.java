@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import ch.compass.gonzoproxy.listener.StateListener;
-import ch.compass.gonzoproxy.model.SessionModel;
+import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
@@ -34,7 +34,7 @@ public interface RelayService extends Runnable {
 
 	public void addSessionStateListener(StateListener stateListener);
 
-	public SessionModel getSessionModel();
+	public RelayDataModel getSessionModel();
 
 	public void reparse();
 

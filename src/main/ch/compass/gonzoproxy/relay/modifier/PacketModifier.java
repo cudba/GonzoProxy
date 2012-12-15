@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import ch.compass.gonzoproxy.model.Field;
-import ch.compass.gonzoproxy.model.Packet;
-import ch.compass.gonzoproxy.utils.PacketUtils;
+import ch.compass.gonzoproxy.model.packet.Field;
+import ch.compass.gonzoproxy.model.packet.Packet;
+import ch.compass.gonzoproxy.model.packet.PacketDataSettings;
+import ch.compass.gonzoproxy.model.template.TemplateSettings;
 import ch.compass.gonzoproxy.utils.PersistingUtils;
+import ch.compass.gonzoproxy.utils.TemplateUtils;
 
 public class PacketModifier {
 
@@ -129,15 +131,7 @@ public class PacketModifier {
 	private boolean shouldUpdateContentLength(PacketRule modifier, Field field) {
 		return modifier.shouldUpdateContentLength()
 				&& field.getName().toUpperCase()
-						.contains(PacketUtils.CONTENT_DATA);
-	}
-
-	private Field findContentLengthField(Packet packet) {
-		for (Field field : packet.getFields()) {
-			if (field.getName().equals(PacketUtils.CONTENT_LENGTH_FIELD))
-				return field;
-		}
-		return new Field();
+						.contains(TemplateSettings.CONTENT_DATA);
 	}
 
 	private void updatePacketLenght(Packet modifiedPacket, int fieldLengthDiff) {
@@ -146,7 +140,7 @@ public class PacketModifier {
 	}
 
 	private void updateContentLengthField(Packet packet, int fieldLengthDiff) {
-		Field contentLengthField = findContentLengthField(packet);
+		Field contentLengthField = TemplateUtils.findContentLengthField(packet);
 		if(contentLengthField.getValue() != null) {
 			try {
 				int currentContentLength = Integer.parseInt(
@@ -168,7 +162,7 @@ public class PacketModifier {
 		String originalValueNoWhitespaces = originalValue.replaceAll("\\s", "");
 		String replacedValueNoWhitespaces = replacedValue.replaceAll("\\s", "");
 		int diff = (replacedValueNoWhitespaces.length() - originalValueNoWhitespaces
-				.length()) / PacketUtils.ENCODING_OFFSET;
+				.length()) / PacketDataSettings.ENCODING_OFFSET;
 		return diff;
 	}
 

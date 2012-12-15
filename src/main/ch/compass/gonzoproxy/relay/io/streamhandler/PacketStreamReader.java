@@ -9,7 +9,7 @@ import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
-import ch.compass.gonzoproxy.model.ForwardingType;
+import ch.compass.gonzoproxy.model.packet.PacketType;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.extractor.PacketExtractor;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
@@ -22,14 +22,14 @@ public class PacketStreamReader implements Runnable {
 	private PacketExtractor extractor;
 
 	private InputStream inputStream;
-	private ForwardingType forwardingType;
+	private PacketType forwardingType;
 	private String relayMode;
 
 	private RelayDataHandler relayDataHandler;
 
 	public PacketStreamReader(InputStream inputStream,
 			RelayDataHandler relayDataHandler, String mode,
-			ForwardingType forwardingType) {
+			PacketType forwardingType) {
 		this.inputStream = inputStream;
 		this.relayDataHandler = relayDataHandler;
 		this.relayMode = mode;

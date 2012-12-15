@@ -3,7 +3,7 @@ package ch.compass.gonzoproxy.relay.modifier;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import ch.compass.gonzoproxy.model.Field;
+import ch.compass.gonzoproxy.model.packet.Field;
 
 public class PacketRule implements Serializable {
 

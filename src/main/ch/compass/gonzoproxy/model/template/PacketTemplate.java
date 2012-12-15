@@ -1,8 +1,8 @@
-package ch.compass.gonzoproxy.relay.parser;
+package ch.compass.gonzoproxy.model.template;
 
 import java.util.ArrayList;
 
-import ch.compass.gonzoproxy.model.Field;
+import ch.compass.gonzoproxy.model.packet.Field;
 
 public class PacketTemplate {
 

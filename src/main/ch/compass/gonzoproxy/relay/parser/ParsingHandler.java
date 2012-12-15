@@ -10,7 +10,8 @@ import java.util.TreeMap;
 
 import org.yaml.snakeyaml.Yaml;
 
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.packet.Packet;
+import ch.compass.gonzoproxy.model.template.PacketTemplate;
 
 public class ParsingHandler {
 

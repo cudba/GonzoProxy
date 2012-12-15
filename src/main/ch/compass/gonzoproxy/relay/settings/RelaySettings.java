@@ -5,7 +5,7 @@ import java.util.prefs.Preferences;
 
 import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.listener.TrapListener;
-import ch.compass.gonzoproxy.model.ForwardingType;
+import ch.compass.gonzoproxy.model.packet.PacketType;
 
 public class RelaySettings {
 	
@@ -110,13 +110,13 @@ public class RelaySettings {
 
 	private void notifySendOneResponse() {
 		for (TrapListener trapListener : trapListeners) {
-			trapListener.sendOnePacket(ForwardingType.RESPONSE);
+			trapListener.sendOnePacket(PacketType.RESPONSE);
 		}
 	}
 
 	private void notifySendOneCommand() {
 		for (TrapListener trapListener : trapListeners) {
-			trapListener.sendOnePacket(ForwardingType.COMMAND);
+			trapListener.sendOnePacket(PacketType.COMMAND);
 		}
 	}
 

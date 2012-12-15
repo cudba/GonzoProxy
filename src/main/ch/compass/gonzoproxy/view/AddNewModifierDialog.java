@@ -15,8 +15,8 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import ch.compass.gonzoproxy.controller.RelayController;
-import ch.compass.gonzoproxy.model.Field;
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.packet.Field;
+import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class AddNewModifierDialog extends JDialog {

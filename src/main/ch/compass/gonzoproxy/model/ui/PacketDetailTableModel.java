@@ -1,8 +1,11 @@
-package ch.compass.gonzoproxy.model;
+package ch.compass.gonzoproxy.model.ui;
 
 import javax.swing.table.AbstractTableModel;
 
 import ch.compass.gonzoproxy.listener.DataListener;
+import ch.compass.gonzoproxy.model.packet.Field;
+import ch.compass.gonzoproxy.model.packet.Packet;
+import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 
 public class PacketDetailTableModel extends AbstractTableModel {
 
@@ -11,10 +14,10 @@ public class PacketDetailTableModel extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = -1437358812481945385L;
 	private Packet packet;
-	private SessionModel session;
+	private RelayDataModel session;
 	private String[] columnNames = { "Field", "Value", "Description" };
 	  
-	public PacketDetailTableModel(Packet packet, SessionModel session) {
+	public PacketDetailTableModel(Packet packet, RelayDataModel session) {
 		this.packet = packet;
 		this.session = session;
 		this.session.addDataListener(createListener());

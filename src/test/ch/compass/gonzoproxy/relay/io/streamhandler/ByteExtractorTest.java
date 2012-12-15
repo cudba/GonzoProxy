@@ -4,8 +4,8 @@ import static org.junit.Assert.assertArrayEquals;
 
 import org.junit.Test;
 
-import ch.compass.gonzoproxy.model.ForwardingType;
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.packet.Packet;
+import ch.compass.gonzoproxy.model.packet.PacketType;
 import ch.compass.gonzoproxy.relay.io.MockedRelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.extractor.ByteExtractor;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings;
@@ -27,7 +27,7 @@ public class ByteExtractorTest {
 				(byte) 0xbb };
 
 		byteExtractor.extractPacketsToHandler(inputStream, dataHandler,
-				inputStream.length, ForwardingType.COMMAND);
+				inputStream.length, PacketType.COMMAND);
 
 		byte[] expectedPreamble = new byte[] { (byte) 0xaa, (byte) 0xaa,
 				(byte) 0xaa, (byte) 0xaa };

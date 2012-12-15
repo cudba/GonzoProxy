@@ -10,8 +10,8 @@ import java.util.Enumeration;
 import java.util.ResourceBundle;
 
 import ch.compass.gonzoproxy.listener.TrapListener;
-import ch.compass.gonzoproxy.model.ForwardingType;
-import ch.compass.gonzoproxy.model.Packet;
+import ch.compass.gonzoproxy.model.packet.Packet;
+import ch.compass.gonzoproxy.model.packet.PacketType;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.wrapper.PacketWrapper;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings;
@@ -32,11 +32,11 @@ public class PacketStreamWriter implements Runnable {
 
 	private RelayDataHandler relayDataHandler;
 
-	private ForwardingType forwardingType;
+	private PacketType forwardingType;
 
 	public PacketStreamWriter(OutputStream outputStream,
 			RelayDataHandler relayDataHandler, String mode,
-			ForwardingType type) {
+			PacketType type) {
 		this.outputStream = outputStream;
 		this.relayDataHandler = relayDataHandler;
 		this.relayMode = mode;
@@ -88,7 +88,7 @@ public class PacketStreamWriter implements Runnable {
 		sessionSettings.addTrapListener(new TrapListener() {
 
 			@Override
-			public void sendOnePacket(ForwardingType type) {
+			public void sendOnePacket(PacketType type) {
 				if (forwardingType == type) {
 					state = State.SEND_ONE;
 				}
@@ -107,14 +107,14 @@ public class PacketStreamWriter implements Runnable {
 			state = State.TRAP;
 			break;
 		case RESPONSE_TRAP:
-			if (forwardingType == ForwardingType.RESPONSE) {
+			if (forwardingType == PacketType.RESPONSE) {
 				state = State.TRAP;
 			} else {
 				state = State.FORWARDING;
 			}
 			break;
 		case COMMAND_TRAP:
-			if (forwardingType == ForwardingType.COMMAND) {
+			if (forwardingType == PacketType.COMMAND) {
 				state = State.TRAP;
 			} else {
 				state = State.FORWARDING;

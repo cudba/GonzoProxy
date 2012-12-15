@@ -1,11 +1,11 @@
-package ch.compass.gonzoproxy.model;
+package ch.compass.gonzoproxy.model.packet;
 
-public enum ForwardingType {
+public enum PacketType {
 	COMMAND("COM"), 
 	RESPONSE("RES");
 	
 	private String id;
-	private ForwardingType(String id) {
+	private PacketType(String id) {
 		this.id = id;
 	}
 	
