@@ -11,7 +11,6 @@ import java.util.ResourceBundle;
 
 import ch.compass.gonzoproxy.model.packet.PacketType;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
-import ch.compass.gonzoproxy.relay.io.extractor.AsciiExtractor;
 import ch.compass.gonzoproxy.relay.io.extractor.PacketExtractor;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
 import ch.compass.gonzoproxy.utils.PacketUtils;
@@ -95,12 +94,11 @@ public class PacketStreamReader implements Runnable {
 	}
 
 	private void loadExtractor() {
-		extractor = new AsciiExtractor();
-//		ClassLoader cl = getClassloader(relayMode);
-//		if((extractor = (PacketExtractor) selectMode(cl, "extractor")) == null) {
-//			offerModeFailurePacket();
-//			Thread.currentThread().interrupt();
-//		}
+		ClassLoader cl = getClassloader(relayMode);
+		if((extractor = (PacketExtractor) selectMode(cl, "extractor")) == null) {
+			offerModeFailurePacket();
+			Thread.currentThread().interrupt();
+		}
 	}
 	
 	private URLClassLoader getClassloader(String mode) {
