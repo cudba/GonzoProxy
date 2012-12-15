@@ -91,7 +91,7 @@ public class ByteExtractor implements PacketExtractor {
 			byte[] trailer, PacketType packetType) {
 
 		byte[] asciiHexPacketData = ByteArraysUtils
-				.byteToParsableAsciiHex(packetData);
+				.byteHexToAsciiHex(packetData);
 		Packet packet = PacketUtils.createPacket(asciiHexPacketData, packetType);
 		packet.setPreamble(preamble);
 		packet.setTrailer(trailer);

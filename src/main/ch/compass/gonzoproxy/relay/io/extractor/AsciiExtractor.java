@@ -31,6 +31,7 @@ public class AsciiExtractor implements PacketExtractor {
 		byte[] packetData = ByteArraysUtils.trim(plainpacket, 0, plainpacket.length - 1);
 		byte[] trailer = new byte[] {END_OF_PACKET};
 		Packet packet = PacketUtils.createPacket(packetData, packetType);
+		packet.setDescription("Ascii Packet");
 		packet.setTrailer(trailer);
 		return packet;
 	}

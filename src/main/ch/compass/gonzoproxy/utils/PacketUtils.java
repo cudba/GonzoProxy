@@ -68,13 +68,13 @@ public class PacketUtils {
 	
 	public static Packet getModeFailurePacket() {
 		Packet modeFailurePacket = new Packet();
-		modeFailurePacket.setDescription(PacketDataSettings.MODE_FAILURE_PACKET_DESCRIPTION);
+		modeFailurePacket.setPacketData(PacketDataSettings.MODE_FAILURE_PACKET);
 		return modeFailurePacket;
 	}
 
 	public static Packet getEndOfStreamPacket() {
 		Packet eosPacket = new Packet();
-		eosPacket.setDescription(PacketDataSettings.END_OF_STREAM_PACKET_DESCRIPTION);
+		eosPacket.setPacketData(PacketDataSettings.END_OF_STREAM_PACKET);
 		return eosPacket;
 	}
 	

@@ -8,6 +8,7 @@ public class Packet implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = -4766720932383072042L;
 
+	private PacketType type = PacketType.COMMAND;
 	private boolean isModified = false;
 
 	private byte[] packetData = new byte[0];
@@ -16,7 +17,6 @@ public class Packet implements Serializable, Cloneable {
 	private ArrayList<Field> fields = new ArrayList<Field>();
 
 	private String description = "";
-	private PacketType type;
 	private int size = 0;
 
 	public String getDescription() {

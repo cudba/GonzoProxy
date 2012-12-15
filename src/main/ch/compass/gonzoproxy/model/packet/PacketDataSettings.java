@@ -6,7 +6,7 @@ public class PacketDataSettings {
 	public static final int ENCODING_OFFSET = 2;
 	public static final int WHITESPACE_OFFSET = 1;
 	
-	public static final String END_OF_STREAM_PACKET_DESCRIPTION = "End Of Stream";
-	public static final String MODE_FAILURE_PACKET_DESCRIPTION = "Mode loading error";
+	public static final byte[] END_OF_STREAM_PACKET = "End Of Stream".getBytes();
+	public static final byte[] MODE_FAILURE_PACKET = "Mode loading error".getBytes();
 
 }

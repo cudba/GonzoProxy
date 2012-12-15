@@ -59,7 +59,7 @@ public class ByteArraysUtils {
 		return array.length >= fromIndex + length && length >= 0;
 	}
 	
-	public static byte[] byteToParsableAsciiHex(byte[] preamble) {
+	public static byte[] byteHexToAsciiHex(byte[] preamble) {
 	    StringBuilder sb = new StringBuilder();
 	    for (byte b : preamble) {
 	        sb.append(String.format("%02X ", b));

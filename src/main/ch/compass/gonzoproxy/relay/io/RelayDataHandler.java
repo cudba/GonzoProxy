@@ -3,6 +3,7 @@ package ch.compass.gonzoproxy.relay.io;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -81,11 +82,10 @@ public class RelayDataHandler {
 	}
 
 	private boolean streamFailure(Packet receivedPacket) {
-		String packetDescription = receivedPacket.getDescription();
-		if (PacketDataSettings.END_OF_STREAM_PACKET_DESCRIPTION.equals(packetDescription)) {
+		if (Arrays.equals(receivedPacket.getPacketData(), PacketDataSettings.END_OF_STREAM_PACKET)) {
 			sessionSettings.setSessionState(SessionState.EOS);
 			return true;
-		} else if (PacketDataSettings.MODE_FAILURE_PACKET_DESCRIPTION.equals(packetDescription)) {
+		} else if (Arrays.equals(receivedPacket.getPacketData(), PacketDataSettings.MODE_FAILURE_PACKET)) {
 			sessionSettings.setSessionState(SessionState.MODE_FAILURE);
 			return true;
 		}

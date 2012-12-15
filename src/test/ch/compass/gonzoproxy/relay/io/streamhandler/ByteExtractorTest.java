@@ -35,7 +35,7 @@ public class ByteExtractorTest {
 		byte[] packetData = new byte[] { (byte) 0xa4, 0x74, (byte) 0x93,
 				(byte) 0xab };
 		byte[] expectedPacketData = ByteArraysUtils
-				.byteToParsableAsciiHex(packetData);
+				.byteHexToAsciiHex(packetData);
 
 		byte[] expectedTrailer = new byte[] { (byte) 0xbb, (byte) 0xbb,
 				(byte) 0xbb, (byte) 0xbb};

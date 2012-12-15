@@ -13,6 +13,7 @@ import ch.compass.gonzoproxy.listener.TrapListener;
 import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.model.packet.PacketType;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
+import ch.compass.gonzoproxy.relay.io.wrapper.AsciiWrapper;
 import ch.compass.gonzoproxy.relay.io.wrapper.PacketWrapper;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings.SessionState;
@@ -151,11 +152,12 @@ public class PacketStreamWriter implements Runnable {
 	}
 
 	private void loadWrapper() {
-		ClassLoader cl = getClassloader(relayMode);
-		if((wrapper = (PacketWrapper) selectMode(cl, "wrapper")) == null) {
-			relayDataHandler.offer(PacketUtils.getModeFailurePacket());
-			Thread.currentThread().interrupt();
-		}
+		wrapper = new AsciiWrapper();
+//		ClassLoader cl = getClassloader(relayMode);
+//		if((wrapper = (PacketWrapper) selectMode(cl, "wrapper")) == null) {
+//			relayDataHandler.offer(PacketUtils.getModeFailurePacket());
+//			Thread.currentThread().interrupt();
+//		}
 	}
 	
 	private URLClassLoader getClassloader(String mode) {

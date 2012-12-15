@@ -140,10 +140,21 @@ public class ParsingUnit {
 	}
 
 	public void parseByDefault(Packet processingPacket) {
-		String packetDescription = "Unknown Packet";
-		String fieldName = "unknown";
+		
+		String packetDescription = processingPacket.getDescription();
+		String fieldName;
 		String fieldValue = new String(processingPacket.getPacketData());
-		String fieldDescription = "Unknown Packet, parsed by default template";
+		String fieldDescription;
+		
+		if(packetDescription.isEmpty()) {
+			packetDescription = "Unknown Packet";
+			fieldName = "unknown";
+			fieldDescription = "Unknown Packet, parsed by default template";
+			
+		}else {
+			fieldName = packetDescription;
+			fieldDescription = packetDescription;
+		}
 
 		Field defaultField = new Field(fieldName, fieldValue, fieldDescription);
 		processingPacket.addField(defaultField);
