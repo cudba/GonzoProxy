@@ -11,10 +11,11 @@ import ch.compass.gonzoproxy.model.packet.Packet;
 
 public class ParsingHandlerTest {
 	ParsingHandler parserHanlder;
-	
-	@Before public void initialize() {
+
+	@Before
+	public void initialize() {
 		parserHanlder = new ParsingHandler();
-	    }
+	}
 
 	@Test
 	public void testProcessKnownLibNfcPacket() {
@@ -75,7 +76,8 @@ public class ParsingHandlerTest {
 
 		assertEquals(1, packet.getFields().size());
 		assertArrayEquals(fakePlainPacket.getBytes(), packet.getPacketData());
-		assertEquals(new String(fakePlainPacket), packet.getFields().get(0).getValue());
+		assertEquals(new String(fakePlainPacket), packet.getFields().get(0)
+				.getValue());
 
 	}
 
@@ -127,7 +129,7 @@ public class ParsingHandlerTest {
 		assertEquals(trimmedPacket, mergedFields.toString());
 
 	}
-	
+
 	@Test
 	public void testEqualContentIdentifiers() {
 		String fakePlainPacket = "66 07 83 00 07 83 ff 83 00";

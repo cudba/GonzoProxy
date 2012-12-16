@@ -1,0 +1,20 @@
+packetDescription: Http GET Command
+fields:
+- name: Ci GET
+  value: GET\s
+  description: GET Command
+- name: URL
+  description: URL of the Requested Page
+- name: Ci Accept
+  value: \n
+- name: RS
+  description: Requested Site
+- name: Ci Mod
+  value: \n
+  description: Modified-Since
+- name: date
+- name: Ci UA
+  value: \n
+  description: User-Agent
+- name: UA Info
+  description: User Agent Browser Info
