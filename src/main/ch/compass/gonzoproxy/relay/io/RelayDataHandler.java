@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import ch.compass.gonzoproxy.model.packet.Packet;
@@ -23,10 +23,10 @@ public class RelayDataHandler {
 	
 	private boolean isProcessingData = false;
 
-	private LinkedTransferQueue<Packet> receiverQueue = new LinkedTransferQueue<Packet>();
+	private LinkedBlockingQueue<Packet> receiverQueue = new LinkedBlockingQueue<Packet>();
 
-	private LinkedTransferQueue<Packet> commandSenderQueue = new LinkedTransferQueue<Packet>();
-	private LinkedTransferQueue<Packet> responseSenderQueue = new LinkedTransferQueue<Packet>();
+	private LinkedBlockingQueue<Packet> commandSenderQueue = new LinkedBlockingQueue<Packet>();
+	private LinkedBlockingQueue<Packet> responseSenderQueue = new LinkedBlockingQueue<Packet>();
 
 	private ParsingHandler parsingHandler = new ParsingHandler();
 	private PacketModifier packetModifier = new PacketModifier();

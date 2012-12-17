@@ -39,9 +39,7 @@ public class GonzoProxyFrame extends JFrame {
 	private JMenuItem mntmExit;
 	private JMenu mnTools;
 	private JMenuItem mntmPostMod;
-//	private JMenu mnHelp;
 	private JMenuItem mntmPreMod;
-//	private JMenuItem mntmAbout;
 	private JSplitPane splitPane;
 	private PacketListPanel panelList;
 	private PacketDetailPanel panelDetail;
@@ -136,6 +134,7 @@ public class GonzoProxyFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				controller.stopRunningSession();
 				dispose();
 			}
 		});
@@ -165,12 +164,6 @@ public class GonzoProxyFrame extends JFrame {
 			}
 		});
 		mnTools.add(mntmPreMod);
-
-//		mnHelp = new JMenu("Help");
-//		menuBar.add(mnHelp);
-//
-//		mntmAbout = new JMenuItem("About");
-//		mnHelp.add(mntmAbout);
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
