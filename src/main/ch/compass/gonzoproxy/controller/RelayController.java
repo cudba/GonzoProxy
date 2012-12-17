@@ -115,8 +115,8 @@ public class RelayController {
 	public void loadPacketsFromFile(File file) {
 		try {
 			relayService.loadPacketsFromFile(file);
-		} catch (ClassNotFoundException | IOException e) {
-			// notify user
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -138,7 +138,7 @@ public class RelayController {
 	}
 
 	private void loadPossibleRelayModes() {
-		ArrayList<String> inputModes = new ArrayList<>();
+		ArrayList<String> inputModes = new ArrayList<String>();
 
 		ResourceBundle bundle = ResourceBundle.getBundle("plugin");
 

@@ -188,8 +188,8 @@ public class PacketModifier {
 			packetRules = (ArrayList<PacketRule>) PersistingUtils
 					.loadFile(modifierFile);
 
-		} catch (ClassNotFoundException | IOException e) {
-			// TODO: LOG FILE LOAD PROB
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -199,8 +199,8 @@ public class PacketModifier {
 		try {
 			packetsRegex = (ArrayList<PacketRegex>) PersistingUtils
 					.loadFile(regexFile);
-		} catch (ClassNotFoundException | IOException e) {
-			// TODO: LOG FILE LOAD PROB
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

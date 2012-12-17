@@ -36,12 +36,24 @@ public class ParsingHandler {
 		findTemplates(TEMPLATE_ROOT_FOLDER);
 
 		for (File templateFile : templateFiles) {
-			try (InputStream fileInput = new FileInputStream(templateFile)) {
+			InputStream fileInput = null;
+			try {
+				fileInput = new FileInputStream(templateFile);
+
 				Yaml beanLoader = new Yaml();
 				PacketTemplate template = beanLoader.loadAs(fileInput,
 						PacketTemplate.class);
 				templates.add(template);
 			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (fileInput != null)
+						fileInput.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
 			}
 		}
 	}
@@ -63,8 +75,7 @@ public class ParsingHandler {
 	}
 
 	private boolean isTemplateFile(File file) {
-		return file.getName().endsWith(
-				TemplateSettings.TEMPLATE_FILE_ENDING);
+		return file.getName().endsWith(TemplateSettings.TEMPLATE_FILE_ENDING);
 	}
 
 	private void parseByDefault(Packet processingPacket) {

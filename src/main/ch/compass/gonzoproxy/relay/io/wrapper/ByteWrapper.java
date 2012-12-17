@@ -12,7 +12,7 @@ public class ByteWrapper implements PacketWrapper {
 	@Override
 	public byte[] wrap(Packet packet) {
 		byte[] wrappedPacket = packet.getPreamble();
-		byte[] packetData = ByteArraysUtils.asciiHexToByteArray(packet.getPacketDataAsString());
+		byte[] packetData = ByteArraysUtils.asciiHexToByteHex(packet.getPacketDataAsString());
 		
 		wrappedPacket = ByteArraysUtils.merge(wrappedPacket, packetData);
 		wrappedPacket = ByteArraysUtils.merge(wrappedPacket, packet.getTrailer());

@@ -73,7 +73,7 @@ public class FieldRuleTableModel extends AbstractTableModel{
 	}
 	
 	public void setValueAt(Object value, int row, int column) {
-		fieldRules.get(row).setActive((boolean) value);
+		fieldRules.get(row).setActive(((Boolean) value).booleanValue());
 	}
 
 	

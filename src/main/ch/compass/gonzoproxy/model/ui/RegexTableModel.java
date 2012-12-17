@@ -71,7 +71,7 @@ public class RegexTableModel extends AbstractTableModel {
 	}
 	
 	public void setValueAt(Object value, int row, int column) {
-		packetRegex.get(row).setActive((boolean) value);
+		packetRegex.get(row).setActive(((Boolean)value).booleanValue());
 	}
 	
 	public void regexChanged() {

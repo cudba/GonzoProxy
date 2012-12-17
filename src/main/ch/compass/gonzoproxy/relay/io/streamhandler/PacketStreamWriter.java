@@ -70,7 +70,7 @@ public class PacketStreamWriter implements Runnable {
 					state = State.TRAP;
 					break;
 				}
-			} catch (InterruptedException | IOException e) {
+			} catch (Exception e) {
 				Thread.currentThread().interrupt();
 			}
 		}
@@ -140,9 +140,7 @@ public class PacketStreamWriter implements Runnable {
 				try {
 					return cl.loadClass(bundle.getString(key))
 							.newInstance();
-				} catch (InstantiationException | IllegalAccessException
-						| ClassNotFoundException e) {
-					//TODO 
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

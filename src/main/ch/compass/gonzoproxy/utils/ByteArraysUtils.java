@@ -59,9 +59,9 @@ public class ByteArraysUtils {
 		return array.length >= fromIndex + length && length >= 0;
 	}
 	
-	public static byte[] byteHexToAsciiHex(byte[] preamble) {
+	public static byte[] byteHexToAsciiHex(byte[] byteData) {
 	    StringBuilder sb = new StringBuilder();
-	    for (byte b : preamble) {
+	    for (byte b : byteData) {
 	        sb.append(String.format("%02X ", b));
 	        sb.append(" ");
 	    }
@@ -73,7 +73,7 @@ public class ByteArraysUtils {
 		return hexRepresentation.getBytes();
 	}
 	
-	public static byte[] asciiHexToByteArray(String hexString) {
+	public static byte[] asciiHexToByteHex(String hexString) {
 	    int len = hexString.length();
 	    byte[] data = new byte[len / 2];
 	    for (int i = 0; i < len; i += 2) {

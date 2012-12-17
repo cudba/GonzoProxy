@@ -135,8 +135,7 @@ public class PacketStreamReader implements Runnable {
 				try {
 					return (PacketExtractor) cl.loadClass(bundle.getString(key))
 							.newInstance();
-				} catch (InstantiationException | IllegalAccessException
-						| ClassNotFoundException e) {
+				} catch (Exception e) {
 					offerModeFailurePacket();
 					Thread.currentThread().interrupt();
 				}
