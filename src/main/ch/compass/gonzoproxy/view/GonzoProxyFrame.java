@@ -141,9 +141,11 @@ public class GonzoProxyFrame extends JFrame {
 		mnFile.add(mntmExit);
 
 		mnTools = new JMenu("Tools");
+		mnTools.setMnemonic(KeyEvent.VK_T);
 		menuBar.add(mnTools);
 
 		mntmPostMod = new JMenuItem("Post-Parse Modifier");
+		mntmPostMod.setMnemonic(KeyEvent.VK_M);
 		mntmPostMod.addActionListener(new ActionListener() {
 
 			@Override
@@ -155,6 +157,7 @@ public class GonzoProxyFrame extends JFrame {
 		mnTools.add(mntmPostMod);
 
 		mntmPreMod = new JMenuItem("Pre-Parse Modifier (Regex)");
+		mntmPreMod.setMnemonic(KeyEvent.VK_R);
 		mntmPreMod.addActionListener(new ActionListener() {
 			
 			@Override

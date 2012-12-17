@@ -7,7 +7,7 @@ import javax.swing.AbstractListModel;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 
-public class PacketRuleListModel extends AbstractListModel<String>{
+public class PacketRuleListModel extends AbstractListModel{
 	
 	private static final long serialVersionUID = 8749844876110276715L;
 	private ArrayList<PacketRule> packetRules;

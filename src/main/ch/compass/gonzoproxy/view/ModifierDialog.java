@@ -35,7 +35,7 @@ public class ModifierDialog extends JDialog {
 	private static final long serialVersionUID = 9047578530331858262L;
 	private JPanel contentPane;
 	private JTable tableRules;
-	private JList<String> listPacketRule;
+	private JList listPacketRule;
 	private FieldRuleTableModel fieldRuleModel;
 	protected PacketRule editPacketRule;
 	private JCheckBox chckbxUpdateLengthAutomatically;
@@ -86,7 +86,7 @@ public class ModifierDialog extends JDialog {
 		contentPane.add(scrollPane_1, gbc_scrollPane_1);
 
 		packetRuleModel = new PacketRuleListModel(packetRules);
-		listPacketRule = new JList<String>(packetRuleModel);
+		listPacketRule = new JList(packetRuleModel);
 		listPacketRule.addListSelectionListener(new ListSelectionListener() {
 
 			@Override

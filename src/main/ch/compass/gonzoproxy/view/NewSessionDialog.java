@@ -31,16 +31,18 @@ public class NewSessionDialog extends JDialog {
 	private JTextField textFieldPortListen;
 	private JTextField textFieldForwardIP;
 	private JTextField textFieldForwardPort;
-	private JComboBox<String> comboBoxMode;
+	private JComboBox comboBoxMode;
 
 	private RelayController controller;
 	private JCheckBox chckbxRunLocally;
+	private JButton btnStart;
 
 	public NewSessionDialog(RelayController controller) {
 		this.controller = controller;
 		initGui();
 		loadFields();
 	}
+	
 
 	private void loadFields() {
 		textFieldPortListen.setText(Integer.toString(controller
@@ -75,8 +77,8 @@ public class NewSessionDialog extends JDialog {
 		gbc_lblSelectInputMethod.gridy = 0;
 		contentPane.add(lblSelectInputMethod, gbc_lblSelectInputMethod);
 
-		comboBoxMode = new JComboBox<String>();
-		comboBoxMode.setModel(new DefaultComboBoxModel<String>(controller
+		comboBoxMode = new JComboBox();
+		comboBoxMode.setModel(new DefaultComboBoxModel(controller
 				.getPossibleRelayModes()));
 		comboBoxMode.addActionListener(new ActionListener() {
 
@@ -150,7 +152,8 @@ public class NewSessionDialog extends JDialog {
 		contentPane.add(textFieldForwardPort, gbc_textFieldForwardPort);
 		textFieldForwardPort.setColumns(10);
 
-		JButton btnStart = new JButton("Start new session");
+		btnStart = new JButton("Start new session");
+		this.getRootPane().setDefaultButton(btnStart);
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				NewSessionDialog.this.dispose();
