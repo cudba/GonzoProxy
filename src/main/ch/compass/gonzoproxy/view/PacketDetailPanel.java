@@ -50,7 +50,6 @@ public class PacketDetailPanel extends JPanel {
 		this.detailTableModel = new PacketDetailTableModel(editPacket,
 				controller.getSessionModel());
 		initGui();
-		updateSessionPrefs();
 		registerSessionStateNotifier();
 	}
 
@@ -162,7 +161,7 @@ public class PacketDetailPanel extends JPanel {
 		textPane_ascii = new JTextPane();
 		scrollPane_ascii.setViewportView(textPane_ascii);
 
-		lblStatus = new JLabel("");
+		lblStatus = new JLabel("Disconnected");
 		lblStatus.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblStatus = new GridBagConstraints();
 		gbc_lblStatus.anchor = GridBagConstraints.WEST;
