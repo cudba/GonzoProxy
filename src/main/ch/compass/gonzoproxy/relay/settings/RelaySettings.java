@@ -9,31 +9,34 @@ import ch.compass.gonzoproxy.model.packet.PacketType;
 
 public class RelaySettings {
 	
-	public enum SessionState {
-		DISCONNECTED("Disconnected"),
-		CONNECTION_REFUSED("Could not connect to target"),
-		CONNECTING("Waiting for initiator ..."),
-		FORWARDING("Forwarding"),
-		TRAP("Trapped"),
-		COMMAND_TRAP("Command trapped"),
-		RESPONSE_TRAP("Response trapped"), 
-		CONNECTED("Connection established"), 
-		CONNECTION_LOST("Connection lost"), 
-		EOS("End of stream reached"), 
-		MODE_FAILURE("Failed to instantiate chosen relay mode");
-		
-		private String description;
-
-		private SessionState(String description) {
-			this.description = description;
-		}
-		
-		public String getDescription() {
-			return description;
-		}
-	}
+//	public enum SessionState {
+//		DISCONNECTED("Disconnected"),
+//		CONNECTION_REFUSED("Could not connect to target"),
+//		CONNECTING("Waiting for initiator ..."),
+//		FORWARDING("Forwarding"),
+//		TRAP("Trapped"),
+//		COMMAND_TRAP("Command trapped"),
+//		RESPONSE_TRAP("Response trapped"), 
+//		CONNECTED("Connection established"), 
+//		CONNECTION_LOST("Connection lost"), 
+//		EOS("End of stream reached"), 
+//		MODE_FAILURE("Failed to instantiate chosen relay mode");
+//		
+//		private String description;
+//
+//		private SessionState(String description) {
+//			this.description = description;
+//		}
+//		
+//		public String getDescription() {
+//			return description;
+//		}
+//	}
 	
-	private SessionState sessionState = SessionState.DISCONNECTED;
+	
+	
+	private TrapState trapState = TrapState.FORWARDING;
+	private ConnectionState connectionState = ConnectionState.DISCONNECTED;
 	
 	private Preferences sessionPrefs = Preferences.userRoot().node(
 			this.getClass().getName());
@@ -47,7 +50,7 @@ public class RelaySettings {
 		sessionPrefs.putInt("listenPort", listenPort);
 		sessionPrefs.put("remoteHost", remoteHost);
 		sessionPrefs.putInt("remotePort", remotePort);
-		notifyStateListeners();
+		notifyStateChanged(connectionState);
 	}
 
 	public int getListenPort() {
@@ -82,29 +85,47 @@ public class RelaySettings {
 		trapListeners.add(trapListener);
 	}
 	
-	public SessionState getSessionState() {
-		return sessionState;
-	}
+//	public SessionState getSessionState() {
+//		return sessionState;
+//	}
+//	
+//	
+//	public void setConnectionState(SessionState sessionState) {
+//		this.sessionState = sessionState;
+//		notifyStateChanged();
+//	}
 	
-	public void setSessionState(SessionState sessionState) {
-		this.sessionState = sessionState;
-		notifyStateListeners();
+	public void setConnectionState(ConnectionState state) {
+		connectionState = state;
+		notifyStateChanged(state);
 	}
 
-	public void addSessionStateListener(
+	public void addStateListener(
 			StateListener stateListener) {
 		stateListeners.add(stateListener);
 	}
 	
-	public void setTrapState(SessionState sessionState) {
-		this.sessionState = sessionState;
-		notifyStateListeners();
-		notifyTrapChanged();
+//	public void setTrapState(SessionState sessionState) {
+//		this.sessionState = sessionState;
+//		notifyStateChanged();
+//		notifyTrapChanged();
+//	}
+	
+	
+	public void setTrapState(TrapState state) {
+		trapState = state;
+		notifyStateChanged(state);
+		notifyTrapState();
 	}
+	
+	public TrapState getTrapState() {
+		return trapState;
+	}
+	
 
-	private void notifyStateListeners() {
+	private void notifyStateChanged(RelayState state) {
 		for (StateListener stateListener : stateListeners) {
-			stateListener.sessionStateChanged(sessionState);
+			stateListener.sessionStateChanged(state);
 		}
 	}
 
@@ -120,9 +141,18 @@ public class RelaySettings {
 		}
 	}
 
-	private void notifyTrapChanged() {
+	private void notifyTrapState() {
 		for (TrapListener trapListener : trapListeners) {
-			trapListener.checkTrapChanged(sessionState);
+			trapListener.trapStateChanged(trapState);
 		}
+	}
+
+	public void updateForwardingMode() {
+		notifyTrapState();
+		notifyStateChanged(trapState);
+	}
+
+	public ConnectionState getConnectionState() {
+		return connectionState;
 	}
 }

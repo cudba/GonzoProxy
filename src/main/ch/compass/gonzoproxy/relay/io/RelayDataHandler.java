@@ -15,12 +15,12 @@ import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.relay.parser.ParsingHandler;
+import ch.compass.gonzoproxy.relay.settings.ConnectionState;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings;
-import ch.compass.gonzoproxy.relay.settings.RelaySettings.SessionState;
 import ch.compass.gonzoproxy.utils.PersistingUtils;
 
 public class RelayDataHandler {
-	
+
 	private boolean isProcessingData = false;
 
 	private LinkedBlockingQueue<Packet> receiverQueue = new LinkedBlockingQueue<Packet>();
@@ -31,7 +31,7 @@ public class RelayDataHandler {
 	private ParsingHandler parsingHandler = new ParsingHandler();
 	private PacketModifier packetModifier = new PacketModifier();
 
-	private RelayDataModel sessionModel = new RelayDataModel();
+	private RelayDataModel relayDataModel = new RelayDataModel();
 
 	private RelaySettings sessionSettings;
 
@@ -43,20 +43,24 @@ public class RelayDataHandler {
 	public void processRelayData() throws InterruptedException {
 		isProcessingData = true;
 		while (isProcessingData) {
-			Packet receivedPacket = receiverQueue.poll(200,
-					TimeUnit.MILLISECONDS);
+			Packet receivedPacket = receiverQueue.take();
 
-			if (receivedPacket != null) {
-				if (!streamFailure(receivedPacket)) {
-					Packet sendingPacket = processPacket(receivedPacket);
-					addToSenderQueue(sendingPacket);
-				} else {
-					isProcessingData = false;
-					throw new InterruptedException();
-				}
+			if (!streamFailure(receivedPacket)) {
+				Packet sendingPacket = processPacket(receivedPacket);
+				addToSenderQueue(sendingPacket);
+			} else {
+				isProcessingData = false;
+				clearQueues();
+				throw new InterruptedException();
 			}
 		}
 
+	}
+
+	private void clearQueues() {
+		receiverQueue.clear();
+		commandSenderQueue.clear();
+		responseSenderQueue.clear();
 	}
 
 	public void offer(Packet packet) {
@@ -82,11 +86,16 @@ public class RelayDataHandler {
 	}
 
 	private boolean streamFailure(Packet receivedPacket) {
-		if (Arrays.equals(receivedPacket.getPacketData(), PacketDataSettings.END_OF_STREAM_PACKET)) {
-			sessionSettings.setSessionState(SessionState.EOS);
+		if (Arrays.equals(receivedPacket.getPacketData(),
+				PacketDataSettings.END_OF_STREAM_PACKET)) {
+			sessionSettings.setConnectionState(ConnectionState.EOS);
 			return true;
-		} else if (Arrays.equals(receivedPacket.getPacketData(), PacketDataSettings.MODE_FAILURE_PACKET)) {
-			sessionSettings.setSessionState(SessionState.MODE_FAILURE);
+		} else if (Arrays.equals(receivedPacket.getPacketData(),
+				PacketDataSettings.MODE_FAILURE_PACKET)) {
+			sessionSettings.setConnectionState(ConnectionState.MODE_FAILURE);
+			return true;
+		} else if (Arrays.equals(receivedPacket.getPacketData(),
+				PacketDataSettings.STOP_PACKET)) {
 			return true;
 		}
 		return false;
@@ -95,11 +104,11 @@ public class RelayDataHandler {
 	private Packet processPacket(Packet packet) {
 		Packet sendingPacket = packet.clone();
 		parsingHandler.tryParse(packet);
-		sessionModel.addPacket(packet);
+		relayDataModel.addPacket(packet);
 		tryModifyPacket(sendingPacket);
 
 		if (sendingPacket.isModified())
-			sessionModel.addPacket(sendingPacket);
+			relayDataModel.addPacket(sendingPacket);
 
 		return sendingPacket;
 	}
@@ -124,7 +133,7 @@ public class RelayDataHandler {
 
 	public void reparse() {
 		parsingHandler.loadTemplates();
-		for (Packet packet : sessionModel.getPacketList()) {
+		for (Packet packet : relayDataModel.getPacketList()) {
 			packet.updatePacketDataFromFields();
 			packet.clearFields();
 			parsingHandler.tryParse(packet);
@@ -132,18 +141,18 @@ public class RelayDataHandler {
 	}
 
 	public RelayDataModel getSessionModel() {
-		return sessionModel;
+		return relayDataModel;
 	}
 
 	@SuppressWarnings("unchecked")
 	public void loadPacketsFromFile(File file) throws ClassNotFoundException,
 			IOException {
-		sessionModel
-				.setPacketList((ArrayList<Packet>) PersistingUtils.loadFile(file));
+		relayDataModel.setPacketList((ArrayList<Packet>) PersistingUtils
+				.loadFile(file));
 	}
 
 	public void persistSessionData(File file) throws IOException {
-		PersistingUtils.saveFile(file, sessionModel.getPacketList());
+		PersistingUtils.saveFile(file, relayDataModel.getPacketList());
 	}
 
 	public ArrayList<PacketRule> getPacketRules() {
@@ -156,7 +165,8 @@ public class RelayDataHandler {
 
 	public void addRule(String packetName, String fieldName,
 			String originalValue, String replacedValue, Boolean updateLength) {
-		packetModifier.addRule(packetName, fieldName, originalValue, replacedValue, updateLength);
+		packetModifier.addRule(packetName, fieldName, originalValue,
+				replacedValue, updateLength);
 	}
 
 	public void addRegex(String regex, String replaceWith, boolean isActive) {
@@ -172,8 +182,7 @@ public class RelayDataHandler {
 	}
 
 	public void clearSessionData() {
-		sessionModel.clearData();
+		relayDataModel.clearData();
 	}
 
-	
 }

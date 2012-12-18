@@ -78,6 +78,12 @@ public class PacketUtils {
 		return eosPacket;
 	}
 	
+	public static Packet getStopPacket() {
+		Packet stopPacket = new Packet();
+		stopPacket.setPacketData(PacketDataSettings.STOP_PACKET);	
+		return stopPacket;
+	}
+
 	public static int getEncodedFieldLength(int fieldLength,
 			boolean withWhitespace) {
 		if (withWhitespace) {

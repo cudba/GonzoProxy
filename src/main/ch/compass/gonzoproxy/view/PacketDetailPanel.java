@@ -24,7 +24,8 @@ import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.packet.Field;
 import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.model.ui.PacketDetailTableModel;
-import ch.compass.gonzoproxy.relay.settings.RelaySettings.SessionState;
+import ch.compass.gonzoproxy.relay.settings.ConnectionState;
+import ch.compass.gonzoproxy.relay.settings.RelayState;
 
 public class PacketDetailPanel extends JPanel {
 
@@ -58,8 +59,8 @@ public class PacketDetailPanel extends JPanel {
 				new StateListener() {
 
 					@Override
-					public void sessionStateChanged(SessionState state) {
-						if(state.equals(SessionState.MODE_FAILURE)){
+					public void sessionStateChanged(RelayState state) {
+						if(state.equals(ConnectionState.MODE_FAILURE)){
 							lblStatus.setForeground(Color.RED);
 						}
 						lblStatus.setText(state.getDescription());

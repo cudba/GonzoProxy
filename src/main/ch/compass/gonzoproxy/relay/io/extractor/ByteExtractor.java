@@ -13,6 +13,7 @@ public class ByteExtractor implements PacketExtractor {
 
 	private static final byte[] DELIMITER = new byte[] { (byte) 0xaa,
 			(byte) 0xaa, (byte) 0xaa, (byte) 0xaa };
+	
 	private static final byte[] END_OF_COMMAND = new byte[] { (byte) 0xbb,
 			(byte) 0xbb, (byte) 0xbb, (byte) 0xbb };
 
@@ -28,7 +29,7 @@ public class ByteExtractor implements PacketExtractor {
 		int endIndex = 0;
 
 		/*
-		 * If buffer contains more packets, packets are extracted by delimiter
+		 * If buffer contains multiple packets, packets are extracted by delimiter
 		 */
 
 		for (int i = 0; i < delimiterIndices.size() - 1; i++) {

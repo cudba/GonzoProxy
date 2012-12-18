@@ -8,5 +8,6 @@ public class PacketDataSettings {
 	
 	public static final byte[] END_OF_STREAM_PACKET = "End Of Stream".getBytes();
 	public static final byte[] MODE_FAILURE_PACKET = "Mode loading error".getBytes();
+	public static final byte[] STOP_PACKET = "Relay stopped".getBytes();
 
 }

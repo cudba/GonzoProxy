@@ -15,7 +15,7 @@ import ch.compass.gonzoproxy.model.packet.PacketType;
 import ch.compass.gonzoproxy.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.relay.io.wrapper.PacketWrapper;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings;
-import ch.compass.gonzoproxy.relay.settings.RelaySettings.SessionState;
+import ch.compass.gonzoproxy.relay.settings.TrapState;
 import ch.compass.gonzoproxy.utils.PacketUtils;
 
 public class PacketStreamWriter implements Runnable {
@@ -54,7 +54,7 @@ public class PacketStreamWriter implements Runnable {
 			try {
 				switch (state) {
 				case TRAP:
-					Thread.yield();
+					Thread.sleep(300);
 					break;
 				case FORWARDING:
 					Packet sendingPacket = relayDataHandler
@@ -95,14 +95,14 @@ public class PacketStreamWriter implements Runnable {
 			}
 
 			@Override
-			public void checkTrapChanged(SessionState sessionState) {
-				checkForTraps(sessionState);
+			public void trapStateChanged(TrapState trapState) {
+				checkForTraps(trapState);
 			}
 		});
 	}
 
-	private void checkForTraps(SessionState sessionState) {
-		switch (sessionState) {
+	private void checkForTraps(TrapState trapState) {
+		switch (trapState) {
 		case TRAP:
 			state = State.TRAP;
 			break;
@@ -122,8 +122,6 @@ public class PacketStreamWriter implements Runnable {
 			break;
 		case FORWARDING:
 			state = State.FORWARDING;
-			break;
-		default:
 			break;
 		}
 	}

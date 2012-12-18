@@ -20,8 +20,9 @@ import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamReader;
 import ch.compass.gonzoproxy.relay.io.streamhandler.PacketStreamWriter;
 import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
 import ch.compass.gonzoproxy.relay.modifier.PacketRule;
+import ch.compass.gonzoproxy.relay.settings.ConnectionState;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings;
-import ch.compass.gonzoproxy.relay.settings.RelaySettings.SessionState;
+import ch.compass.gonzoproxy.relay.settings.TrapState;
 import ch.compass.gonzoproxy.utils.PacketUtils;
 
 public class GonzoRelayService implements RelayService {
@@ -48,33 +49,39 @@ public class GonzoRelayService implements RelayService {
 		threadPool = Executors.newFixedThreadPool(4);
 		if (connectionEstablished()) {
 			initProducerConsumer();
+			checkTraps();
 			startDataProcessing();
 		}
 	}
 
+	private void checkTraps() {
+
+	}
+
 	private boolean connectionEstablished() {
 		try {
-			sessionSettings.setSessionState(SessionState.CONNECTING);
+			sessionSettings.setConnectionState(ConnectionState.CONNECTING);
 
 			if (initiatorConnected()) {
 				if (connectedToTarget()) {
-					sessionSettings.setSessionState(SessionState.CONNECTED);
+					sessionSettings
+							.setConnectionState(ConnectionState.CONNECTED);
 					return true;
 				} else {
 					sessionSettings
-							.setSessionState(SessionState.CONNECTION_REFUSED);
+							.setConnectionState(ConnectionState.CONNECTION_REFUSED);
 					return false;
 				}
 			} else {
-				sessionSettings.setSessionState(SessionState.DISCONNECTED);
+				sessionSettings
+						.setConnectionState(ConnectionState.DISCONNECTED);
 				return false;
 			}
 		} finally {
 			try {
 				serverSocket.close();
 			} catch (IOException e) {
-				// is this code reached? :>
-				// log server socket not closed ?
+				e.printStackTrace();
 			}
 		}
 	}
@@ -108,10 +115,11 @@ public class GonzoRelayService implements RelayService {
 			initCommandStreamHandlers();
 			initResponseStreamHandlers();
 		} catch (IOException e) {
-			sessionSettings.setSessionState(SessionState.CONNECTION_REFUSED);
+			sessionSettings
+					.setConnectionState(ConnectionState.CONNECTION_REFUSED);
 			closeRelayComponents();
 		}
-		sessionSettings.setSessionState(SessionState.FORWARDING);
+		sessionSettings.updateForwardingMode();
 	}
 
 	private void initCommandStreamHandlers() throws IOException {
@@ -155,14 +163,22 @@ public class GonzoRelayService implements RelayService {
 		try {
 			relayDataHandler.processRelayData();
 		} catch (InterruptedException e) {
+
 			closeRelayComponents();
+			if (shouldRestartRelay())
+				startRelaySession();
 		}
 
 	}
 
+	private boolean shouldRestartRelay() {
+		return sessionSettings.getConnectionState() != ConnectionState.DISCONNECTED
+				&& sessionSettings.getConnectionState() != ConnectionState.MODE_FAILURE;
+	}
+
 	public void stopSession() {
 		closeRelayComponents();
-		sessionSettings.setSessionState(SessionState.DISCONNECTED);
+		sessionSettings.setConnectionState(ConnectionState.DISCONNECTED);
 	}
 
 	private void closeRelayComponents() {
@@ -174,7 +190,7 @@ public class GonzoRelayService implements RelayService {
 
 	private void stopDataProcessing() {
 		if (relayDataHandler.isProcessingData()) {
-			relayDataHandler.offer(PacketUtils.getEndOfStreamPacket());
+			relayDataHandler.offer(PacketUtils.getStopPacket());
 		}
 	}
 
@@ -188,8 +204,7 @@ public class GonzoRelayService implements RelayService {
 			try {
 				initiator.close();
 			} catch (IOException e) {
-				// TODO : state -> socket closing error
-				sessionSettings.setSessionState(SessionState.DISCONNECTED);
+				e.printStackTrace();
 			}
 		}
 
@@ -197,14 +212,14 @@ public class GonzoRelayService implements RelayService {
 			try {
 				target.close();
 			} catch (IOException e) {
-				sessionSettings.setSessionState(SessionState.DISCONNECTED);
+				e.printStackTrace();
 			}
 		}
 		if (serverSocket != null) {
 			try {
 				serverSocket.close();
 			} catch (IOException e) {
-				sessionSettings.setSessionState(SessionState.DISCONNECTED);
+				e.printStackTrace();
 			}
 		}
 	}
@@ -222,41 +237,35 @@ public class GonzoRelayService implements RelayService {
 	}
 
 	public void commandTrapChanged() {
-		switch (sessionSettings.getSessionState()) {
+		switch (sessionSettings.getTrapState()) {
 		case COMMAND_TRAP:
-			sessionSettings.setTrapState(SessionState.FORWARDING);
+			sessionSettings.setTrapState(TrapState.FORWARDING);
 			break;
 		case FORWARDING:
-			sessionSettings.setTrapState(SessionState.COMMAND_TRAP);
+			sessionSettings.setTrapState(TrapState.COMMAND_TRAP);
 			break;
 		case RESPONSE_TRAP:
-			sessionSettings.setTrapState(SessionState.TRAP);
+			sessionSettings.setTrapState(TrapState.TRAP);
 			break;
 		case TRAP:
-			sessionSettings.setTrapState(SessionState.RESPONSE_TRAP);
-			break;
-		default:
-			sessionSettings.setTrapState(SessionState.COMMAND_TRAP);
+			sessionSettings.setTrapState(TrapState.RESPONSE_TRAP);
 			break;
 		}
 	}
 
 	public void responseTrapChanged() {
-		switch (sessionSettings.getSessionState()) {
+		switch (sessionSettings.getTrapState()) {
 		case RESPONSE_TRAP:
-			sessionSettings.setTrapState(SessionState.FORWARDING);
+			sessionSettings.setTrapState(TrapState.FORWARDING);
 			break;
 		case FORWARDING:
-			sessionSettings.setTrapState(SessionState.RESPONSE_TRAP);
+			sessionSettings.setTrapState(TrapState.RESPONSE_TRAP);
 			break;
 		case COMMAND_TRAP:
-			sessionSettings.setTrapState(SessionState.TRAP);
+			sessionSettings.setTrapState(TrapState.TRAP);
 			break;
 		case TRAP:
-			sessionSettings.setTrapState(SessionState.COMMAND_TRAP);
-			break;
-		default:
-			sessionSettings.setTrapState(SessionState.RESPONSE_TRAP);
+			sessionSettings.setTrapState(TrapState.COMMAND_TRAP);
 			break;
 		}
 	}
@@ -282,7 +291,7 @@ public class GonzoRelayService implements RelayService {
 	}
 
 	public void addSessionStateListener(StateListener stateListener) {
-		sessionSettings.addSessionStateListener(stateListener);
+		sessionSettings.addStateListener(stateListener);
 	}
 
 	public RelayDataModel getSessionModel() {
