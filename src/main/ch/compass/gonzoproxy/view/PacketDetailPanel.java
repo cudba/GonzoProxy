@@ -59,7 +59,7 @@ public class PacketDetailPanel extends JPanel {
 
 					@Override
 					public void sessionStateChanged(RelayState state) {
-						if(state.equals(ConnectionState.MODE_FAILURE)){
+						if(state == ConnectionState.MODE_FAILURE){
 							lblStatus.setForeground(Color.RED);
 						}else{
 							lblStatus.setForeground(Color.BLACK);
