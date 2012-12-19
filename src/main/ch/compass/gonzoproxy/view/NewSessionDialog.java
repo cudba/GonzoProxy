@@ -101,6 +101,8 @@ public class NewSessionDialog extends JDialog {
 		contentPane.add(lblListen, gbc_lblListen);
 
 		textFieldPortListen = new JTextField();
+		textFieldPortListen.setInputVerifier(new IntegerVerifier());
+		textFieldPortListen.addCaretListener(new IntegerVerifier());
 		textFieldPortListen.setHorizontalAlignment(SwingConstants.RIGHT);
 		textFieldPortListen.setText("1234");
 		GridBagConstraints gbc_textFieldPortListen = new GridBagConstraints();
@@ -139,6 +141,8 @@ public class NewSessionDialog extends JDialog {
 		contentPane.add(lblForwardToPort, gbc_lblForwardToPort);
 
 		textFieldForwardPort = new JTextField();
+		textFieldForwardPort.setInputVerifier(new IntegerVerifier());
+		textFieldForwardPort.addCaretListener(new IntegerVerifier());
 		textFieldForwardPort.setHorizontalAlignment(SwingConstants.RIGHT);
 		textFieldForwardPort.setText("1234");
 		GridBagConstraints gbc_textFieldForwardPort = new GridBagConstraints();
