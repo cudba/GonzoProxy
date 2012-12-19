@@ -11,8 +11,9 @@ public class Packet implements Serializable, Cloneable {
 	private PacketType type = PacketType.COMMAND;
 	private boolean isModified = false;
 
-	private byte[] packetData = new byte[0];
 	private byte[] preamble = new byte[0];
+
+	private byte[] packetData = new byte[0];
 	private byte[] trailer = new byte[0];
 	private ArrayList<Field> fields = new ArrayList<Field>();
 
@@ -139,14 +140,14 @@ public class Packet implements Serializable, Cloneable {
 		for (Field field : fields) {
 			if (!field.getValue().isEmpty()) {
 				mergedFields.append(field.getValue());
-				for (int i = 0; i < PacketDataSettings.WHITESPACE_OFFSET; i++) {
+				for (int i = 0; i < PacketDataFormat.WHITESPACE_OFFSET; i++) {
 					mergedFields.append(" ");
 				}
 			}
 		}
 		if (mergedFields.length() > 0)
 			return mergedFields.substring(0, mergedFields.length()
-					- PacketDataSettings.WHITESPACE_OFFSET);
+					- PacketDataFormat.WHITESPACE_OFFSET);
 		return "";
 	}
 }

@@ -29,9 +29,6 @@ import ch.compass.gonzoproxy.model.ui.PacketTableModel;
 
 public class PacketListPanel extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2478811834671649441L;
 	private JPanel panel_options;
 	private JToggleButton btnTrapCmd;

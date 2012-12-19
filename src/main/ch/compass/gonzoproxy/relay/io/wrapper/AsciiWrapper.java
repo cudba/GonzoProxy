@@ -12,7 +12,7 @@ public class AsciiWrapper implements PacketWrapper {
 	}
 
 	private byte[] preparePacketForStream(Packet apdu) {
-		byte[] packetData = apdu.getPacketDataAsBytes();
+		byte[] packetData = apdu.getPacketData();
 		byte[] trailer = apdu.getTrailer();
 		byte[] wrappedPacket = ByteArraysUtils.merge(packetData, trailer);
 		return wrappedPacket;

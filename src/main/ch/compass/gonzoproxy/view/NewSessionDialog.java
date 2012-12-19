@@ -23,9 +23,6 @@ import javax.swing.JCheckBox;
 
 public class NewSessionDialog extends JDialog {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7042508576478156546L;
 	private JPanel contentPane;
 	private JTextField textFieldPortListen;

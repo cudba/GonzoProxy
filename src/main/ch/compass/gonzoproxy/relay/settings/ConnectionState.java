@@ -3,9 +3,9 @@ package ch.compass.gonzoproxy.relay.settings;
 public enum ConnectionState implements RelayState {
 	
 	DISCONNECTED("Disconnected"),
-	CONNECTION_REFUSED("Could not connect to target"),
 	CONNECTING("Waiting for initiator ..."),
 	CONNECTED("Connection established"), 
+	CONNECTION_REFUSED("Could not connect to target"),
 	CONNECTION_LOST("Connection lost"), 
 	EOS("End of stream reached"), 
 	MODE_FAILURE("Failed to instantiate chosen relay mode");

@@ -50,7 +50,7 @@ public interface RelayService extends Runnable {
 	public void addRule(String packetName, String fieldName,
 			String originalValue, String replacedValue, Boolean updateLength);
 
-	public void addRegex(String regex, String replaceWith, boolean isActive);
+	public void addRegex(String regex, String replaceValue, boolean isActive);
 
 	public void persistRules() throws IOException;
 

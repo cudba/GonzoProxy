@@ -45,17 +45,25 @@ public class GonzoRelayService implements RelayService {
 		startRelaySession();
 	}
 
+	public void stopSession() {
+		closeRelayComponents();
+		sessionSettings.setConnectionState(ConnectionState.DISCONNECTED);
+	}
+
+	public void setConnectionParameters(String portListen, String remoteHost,
+			String remotePort, String mode) {
+		sessionSettings.setConnectionParameter(Integer.parseInt(portListen),
+				remoteHost, Integer.parseInt(remotePort));
+		sessionSettings.setRelayMode(mode);
+		relayDataHandler.clearSessionData();
+	}
+
 	private void startRelaySession() {
 		threadPool = Executors.newFixedThreadPool(4);
 		if (connectionEstablished()) {
 			initProducerConsumer();
-			checkTraps();
-			startDataProcessing();
+			processData();
 		}
-	}
-
-	private void checkTraps() {
-
 	}
 
 	private boolean connectionEstablished() {
@@ -159,26 +167,13 @@ public class GonzoRelayService implements RelayService {
 		threadPool.execute(responseStreamWriter);
 	}
 
-	private void startDataProcessing() {
+	private void processData() {
 		try {
 			relayDataHandler.processRelayData();
 		} catch (InterruptedException e) {
-
 			closeRelayComponents();
-			if (shouldRestartRelay())
-				startRelaySession();
 		}
 
-	}
-
-	private boolean shouldRestartRelay() {
-		return sessionSettings.getConnectionState() != ConnectionState.DISCONNECTED
-				&& sessionSettings.getConnectionState() != ConnectionState.MODE_FAILURE;
-	}
-
-	public void stopSession() {
-		closeRelayComponents();
-		sessionSettings.setConnectionState(ConnectionState.DISCONNECTED);
 	}
 
 	private void closeRelayComponents() {
@@ -226,14 +221,6 @@ public class GonzoRelayService implements RelayService {
 
 	private boolean socketIsOpen(Socket socket) {
 		return socket != null && !socket.isClosed();
-	}
-
-	public void setConnectionParameters(String portListen, String remoteHost,
-			String remotePort, String mode) {
-		sessionSettings.setConnectionParameter(Integer.parseInt(portListen),
-				remoteHost, Integer.parseInt(remotePort));
-		sessionSettings.setRelayMode(mode);
-		relayDataHandler.clearSessionData();
 	}
 
 	public void commandTrapChanged() {

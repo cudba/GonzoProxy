@@ -8,7 +8,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import ch.compass.gonzoproxy.model.packet.Packet;
-import ch.compass.gonzoproxy.model.packet.PacketDataSettings;
 import ch.compass.gonzoproxy.model.packet.PacketType;
 import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 import ch.compass.gonzoproxy.relay.modifier.PacketModifier;
@@ -17,6 +16,7 @@ import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.relay.parser.ParsingHandler;
 import ch.compass.gonzoproxy.relay.settings.ConnectionState;
 import ch.compass.gonzoproxy.relay.settings.RelaySettings;
+import ch.compass.gonzoproxy.utils.PacketUtils;
 import ch.compass.gonzoproxy.utils.PersistingUtils;
 
 public class RelayDataHandler {
@@ -57,6 +57,52 @@ public class RelayDataHandler {
 
 	}
 
+	private Packet processPacket(Packet packet) {
+		Packet sendingPacket = packet.clone();
+		parsingHandler.tryParse(packet);
+		relayDataModel.addPacket(packet);
+		tryModifyPacket(sendingPacket);
+	
+		if (sendingPacket.isModified())
+			relayDataModel.addPacket(sendingPacket);
+	
+		return sendingPacket;
+	}
+
+	private void tryModifyPacket(Packet packetToModify) {
+		packetModifier.modifyByRegex(packetToModify);
+		parsingHandler.tryParse(packetToModify);
+		packetModifier.modifyByRule(packetToModify);
+	}
+
+	private void addToSenderQueue(Packet sendingPacket) {
+		switch (sendingPacket.getType()) {
+		case COMMAND:
+			commandSenderQueue.offer(sendingPacket);
+			break;
+	
+		case RESPONSE:
+			responseSenderQueue.offer(sendingPacket);
+			break;
+		}
+	}
+
+	private boolean streamFailure(Packet receivedPacket) {
+		if (Arrays.equals(receivedPacket.getPacketData(),
+				PacketUtils.END_OF_STREAM_PACKET)) {
+			sessionSettings.setConnectionState(ConnectionState.EOS);
+			return true;
+		} else if (Arrays.equals(receivedPacket.getPacketData(),
+				PacketUtils.MODE_FAILURE_PACKET)) {
+			sessionSettings.setConnectionState(ConnectionState.MODE_FAILURE);
+			return true;
+		} else if (Arrays.equals(receivedPacket.getPacketData(),
+				PacketUtils.STOP_PACKET)) {
+			return true;
+		}
+		return false;
+	}
+
 	private void clearQueues() {
 		receiverQueue.clear();
 		commandSenderQueue.clear();
@@ -79,56 +125,6 @@ public class RelayDataHandler {
 			break;
 		}
 		return sendingPacket;
-	}
-
-	public boolean isProcessingData() {
-		return isProcessingData;
-	}
-
-	private boolean streamFailure(Packet receivedPacket) {
-		if (Arrays.equals(receivedPacket.getPacketData(),
-				PacketDataSettings.END_OF_STREAM_PACKET)) {
-			sessionSettings.setConnectionState(ConnectionState.EOS);
-			return true;
-		} else if (Arrays.equals(receivedPacket.getPacketData(),
-				PacketDataSettings.MODE_FAILURE_PACKET)) {
-			sessionSettings.setConnectionState(ConnectionState.MODE_FAILURE);
-			return true;
-		} else if (Arrays.equals(receivedPacket.getPacketData(),
-				PacketDataSettings.STOP_PACKET)) {
-			return true;
-		}
-		return false;
-	}
-
-	private Packet processPacket(Packet packet) {
-		Packet sendingPacket = packet.clone();
-		parsingHandler.tryParse(packet);
-		relayDataModel.addPacket(packet);
-		tryModifyPacket(sendingPacket);
-
-		if (sendingPacket.isModified())
-			relayDataModel.addPacket(sendingPacket);
-
-		return sendingPacket;
-	}
-
-	private void tryModifyPacket(Packet packetToModify) {
-		packetModifier.modifyByRegex(packetToModify);
-		parsingHandler.tryParse(packetToModify);
-		packetModifier.modifyByRule(packetToModify);
-	}
-
-	private void addToSenderQueue(Packet sendingPacket) {
-		switch (sendingPacket.getType()) {
-		case COMMAND:
-			commandSenderQueue.offer(sendingPacket);
-			break;
-
-		case RESPONSE:
-			responseSenderQueue.offer(sendingPacket);
-			break;
-		}
 	}
 
 	public void reparse() {
@@ -183,6 +179,11 @@ public class RelayDataHandler {
 
 	public void clearSessionData() {
 		relayDataModel.clearData();
+		clearQueues();
+	}
+
+	public boolean isProcessingData() {
+		return isProcessingData;
 	}
 
 }

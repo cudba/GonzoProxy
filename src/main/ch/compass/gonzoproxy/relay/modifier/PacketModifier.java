@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import ch.compass.gonzoproxy.model.packet.Field;
 import ch.compass.gonzoproxy.model.packet.Packet;
-import ch.compass.gonzoproxy.model.packet.PacketDataSettings;
+import ch.compass.gonzoproxy.model.packet.PacketDataFormat;
 import ch.compass.gonzoproxy.model.template.TemplateSettings;
 import ch.compass.gonzoproxy.utils.PersistingUtils;
 import ch.compass.gonzoproxy.utils.TemplateUtils;
@@ -84,6 +84,16 @@ public class PacketModifier {
 		return packetsRegex;
 	}
 
+	public void persistRules() throws IOException {
+		File modifierFile = new File(RULE_FILE);
+		PersistingUtils.saveFile(modifierFile, packetRules);
+	}
+
+	public void persistRegex() throws IOException {
+		File regexFile = new File(REGEX_FILE);
+		PersistingUtils.saveFile(regexFile, packetsRegex);
+	}
+
 	private PacketRule findRuleSet(String packetName) {
 		for (PacketRule existingModifier : packetRules) {
 			if (existingModifier.getCorrespondingPacket().equals(packetName))
@@ -148,11 +158,8 @@ public class PacketModifier {
 				int newContentLength = currentContentLength + fieldLengthDiff;
 				contentLengthField.setValue(toHexString(newContentLength));
 			} catch(NumberFormatException e){
-				//TODO: wrong template syntax, contentLength not a hex value
+				e.printStackTrace();
 			}
-			
-		}else {
-			//TODO: wrong template syntax, no contentLength field found
 		}
 
 	}
@@ -162,7 +169,7 @@ public class PacketModifier {
 		String originalValueNoWhitespaces = originalValue.replaceAll("\\s", "");
 		String replacedValueNoWhitespaces = replacedValue.replaceAll("\\s", "");
 		int diff = (replacedValueNoWhitespaces.length() - originalValueNoWhitespaces
-				.length()) / PacketDataSettings.ENCODING_OFFSET;
+				.length()) / PacketDataFormat.ENCODING_OFFSET;
 		return diff;
 	}
 
@@ -202,16 +209,6 @@ public class PacketModifier {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void persistRegex() throws IOException {
-		File regexFile = new File(REGEX_FILE);
-		PersistingUtils.saveFile(regexFile, packetsRegex);
-	}
-
-	public void persistRules() throws IOException {
-		File modifierFile = new File(RULE_FILE);
-		PersistingUtils.saveFile(modifierFile, packetRules);
 	}
 
 

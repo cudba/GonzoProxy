@@ -11,12 +11,17 @@ public class ByteWrapper implements PacketWrapper {
 
 	@Override
 	public byte[] wrap(Packet packet) {
+		byte[] wrappedPacket = generateByteStream(packet);
+		
+		return wrappedPacket;
+	}
+
+	private byte[] generateByteStream(Packet packet) {
 		byte[] wrappedPacket = packet.getPreamble();
 		byte[] packetData = ByteArraysUtils.asciiHexToByteHex(packet.getPacketDataAsString());
 		
 		wrappedPacket = ByteArraysUtils.merge(wrappedPacket, packetData);
 		wrappedPacket = ByteArraysUtils.merge(wrappedPacket, packet.getTrailer());
-		
 		return wrappedPacket;
 	}
 

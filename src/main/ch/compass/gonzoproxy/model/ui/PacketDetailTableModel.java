@@ -9,9 +9,6 @@ import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 
 public class PacketDetailTableModel extends AbstractTableModel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1437358812481945385L;
 	private Packet packet;
 	private RelayDataModel session;

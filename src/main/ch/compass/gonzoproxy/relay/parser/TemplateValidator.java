@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import ch.compass.gonzoproxy.model.packet.Field;
 import ch.compass.gonzoproxy.model.packet.Packet;
-import ch.compass.gonzoproxy.model.packet.PacketDataSettings;
 import ch.compass.gonzoproxy.model.template.PacketTemplate;
 import ch.compass.gonzoproxy.utils.PacketUtils;
 import ch.compass.gonzoproxy.utils.TemplateUtils;
@@ -23,7 +22,7 @@ public class TemplateValidator {
 				.computeFieldLength(templateFields, offset);
 
 		for (int i = 0; i < templateFields.size(); i++) {
-			if (!packetContainsMoreFields(packet, fieldLength, offset)) {
+			if (!PacketUtils.packetStreamContainsMoreFields(packet, fieldLength, offset)) {
 				return false;
 			}
 
@@ -120,11 +119,6 @@ public class TemplateValidator {
 			}
 		}
 		return templateFields.size() > 0;
-	}
-
-	private boolean packetContainsMoreFields(byte[] packet, int fieldLength,
-			int offset) {
-		return (offset + fieldLength * PacketDataSettings.ENCODING_OFFSET) <= packet.length;
 	}
 
 	private boolean shouldVerify(Field processingField) {

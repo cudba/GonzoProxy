@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import ch.compass.gonzoproxy.model.packet.Field;
 import ch.compass.gonzoproxy.model.packet.Packet;
-import ch.compass.gonzoproxy.model.packet.PacketDataSettings;
+import ch.compass.gonzoproxy.model.packet.PacketDataFormat;
 import ch.compass.gonzoproxy.model.template.TemplateSettings;
 
 public class TemplateUtils {
@@ -84,12 +84,12 @@ public class TemplateUtils {
 	}
 	
 	public static int computeFieldLength(ArrayList<Field> fields, int offset) {
-		int fieldLength = PacketDataSettings.DEFAULT_FIELDLENGTH;
+		int fieldLength = PacketDataFormat.DEFAULT_FIELDLENGTH;
 		if (fields.size() > offset) {
 			Field field = fields.get(offset);
 			if (field.getValue() != null) {
 				String value = field.getValue().replaceAll("\\s", "");
-				fieldLength = value.length() / PacketDataSettings.ENCODING_OFFSET;
+				fieldLength = value.length() / PacketDataFormat.ENCODING_OFFSET;
 			}
 		}
 		return fieldLength;

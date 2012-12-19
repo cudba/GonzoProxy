@@ -8,9 +8,6 @@ import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 
 public class PacketTableModel extends AbstractTableModel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1437358812481945385L;
 	private RelayDataModel session;
 	String[] columnNames = { "#", "Type", "Packet", "ASCII", "Description" };
@@ -22,12 +19,12 @@ public class PacketTableModel extends AbstractTableModel {
 
 	private DataListener createListener() {
 		return new DataListener() {
-			
+
 			@Override
 			public void packetReceived(Packet receivedPacket) {
 				updateTable();
 			}
-			
+
 			@Override
 			public void packetsCleared() {
 				updateTable();

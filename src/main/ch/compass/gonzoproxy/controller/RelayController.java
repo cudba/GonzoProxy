@@ -57,8 +57,8 @@ public class RelayController {
 	}
 
 	public void addRule(String packetName, String fieldName,
-			String originalValue, String replacedValue, Boolean updateLength) {
-		relayService.addRule(packetName,fieldName, originalValue, replacedValue, updateLength);
+			String originalValue, String replacedValue, Boolean updateContentLength) {
+		relayService.addRule(packetName,fieldName, originalValue, replacedValue, updateContentLength);
 		persistRules();
 	}
 
@@ -107,7 +107,6 @@ public class RelayController {
 		try {
 			relayService.persistSessionData(file);
 		} catch (IOException e) {
-			// notify user
 			e.printStackTrace();
 		}
 	}
@@ -124,7 +123,7 @@ public class RelayController {
 		try {
 			relayService.persistRules();
 		} catch (IOException e) {
-			// TODO: save failed notification
+			e.printStackTrace();
 		}
 
 	}
@@ -133,7 +132,7 @@ public class RelayController {
 		try {
 			relayService.persistRegex();
 		} catch (IOException e) {
-			// TODO: PERSISTNG FAIL
+			e.printStackTrace();
 		}
 	}
 
@@ -164,7 +163,6 @@ public class RelayController {
 			Runtime.getRuntime().exec(listenCmd);
 			Runtime.getRuntime().exec(connectCmd);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

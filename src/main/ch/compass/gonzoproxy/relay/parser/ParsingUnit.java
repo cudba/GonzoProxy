@@ -23,6 +23,10 @@ public class ParsingUnit {
 				.computeFieldLength(templateFields, offset);
 
 		for (int i = 0; i < templateFields.size(); i++) {
+			if (!PacketUtils.packetStreamContainsMoreFields(packet, fieldLength, offset)) {
+				return false;
+			}
+			
 			Field processingField = templateFields.get(i).clone();
 
 			if (TemplateUtils.isLastField(templateFields, i)
@@ -112,6 +116,28 @@ public class ParsingUnit {
 		return true;
 	}
 
+	public void parseByDefault(Packet processingPacket) {
+		
+		String packetDescription = processingPacket.getDescription();
+		String fieldName;
+		String fieldValue = new String(processingPacket.getPacketData());
+		String fieldDescription;
+		
+		if(packetDescription.isEmpty()) {
+			packetDescription = "Unknown Packet";
+			fieldName = "unknown";
+			fieldDescription = "Unknown Packet, parsed by default template";
+			
+		}else {
+			fieldName = packetDescription;
+			fieldDescription = packetDescription;
+		}
+	
+		Field defaultField = new Field(fieldName, fieldValue, fieldDescription);
+		processingPacket.addField(defaultField);
+		processingPacket.setDescription(packetDescription);
+	}
+
 	private void parseField(byte[] payload, int fieldLength, int offset,
 			Field processingField) {
 		if (PacketUtils.hasCustomLenght(fieldLength)) {
@@ -137,27 +163,5 @@ public class ParsingUnit {
 
 	private void setFieldValue(Field field, byte[] value) {
 		field.setValue(new String(value));
-	}
-
-	public void parseByDefault(Packet processingPacket) {
-		
-		String packetDescription = processingPacket.getDescription();
-		String fieldName;
-		String fieldValue = new String(processingPacket.getPacketData());
-		String fieldDescription;
-		
-		if(packetDescription.isEmpty()) {
-			packetDescription = "Unknown Packet";
-			fieldName = "unknown";
-			fieldDescription = "Unknown Packet, parsed by default template";
-			
-		}else {
-			fieldName = packetDescription;
-			fieldDescription = packetDescription;
-		}
-
-		Field defaultField = new Field(fieldName, fieldValue, fieldDescription);
-		processingPacket.addField(defaultField);
-		processingPacket.setDescription(packetDescription);
 	}
 }
