@@ -1,7 +1,7 @@
 package ch.compass.gonzoproxy.listener;
 
+import ch.compass.gonzoproxy.controller.relay.settings.TrapState;
 import ch.compass.gonzoproxy.model.packet.PacketType;
-import ch.compass.gonzoproxy.relay.settings.TrapState;
 
 public interface TrapListener {
 

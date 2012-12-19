@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
-import ch.compass.gonzoproxy.relay.modifier.FieldRule;
+import ch.compass.gonzoproxy.controller.relay.modifier.FieldRule;
 
 
 public class FieldRuleTableModel extends AbstractTableModel{

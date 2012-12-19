@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.compass.gonzoproxy.controller.relay.parser.ParsingHandler;
 import ch.compass.gonzoproxy.model.packet.Field;
 import ch.compass.gonzoproxy.model.packet.Packet;
 

@@ -4,11 +4,11 @@ import static org.junit.Assert.assertArrayEquals;
 
 import org.junit.Test;
 
+import ch.compass.gonzoproxy.controller.relay.io.extractor.ByteExtractor;
+import ch.compass.gonzoproxy.controller.relay.settings.RelaySettings;
 import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.model.packet.PacketType;
 import ch.compass.gonzoproxy.relay.io.MockedRelayDataHandler;
-import ch.compass.gonzoproxy.relay.io.extractor.ByteExtractor;
-import ch.compass.gonzoproxy.relay.settings.RelaySettings;
 import ch.compass.gonzoproxy.utils.ByteArraysUtils;
 
 public class ByteExtractorTest {

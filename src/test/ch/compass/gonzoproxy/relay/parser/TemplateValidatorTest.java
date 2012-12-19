@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import ch.compass.gonzoproxy.controller.relay.parser.TemplateValidator;
 import ch.compass.gonzoproxy.model.packet.Field;
 import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.model.template.PacketTemplate;

@@ -15,9 +15,9 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import ch.compass.gonzoproxy.controller.RelayController;
+import ch.compass.gonzoproxy.controller.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.model.packet.Field;
 import ch.compass.gonzoproxy.model.packet.Packet;
-import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class AddNewModifierDialog extends JDialog {
 	private static final long serialVersionUID = -1789866876175936281L;

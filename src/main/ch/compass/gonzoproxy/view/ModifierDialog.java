@@ -25,10 +25,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
+import ch.compass.gonzoproxy.controller.relay.modifier.FieldRule;
+import ch.compass.gonzoproxy.controller.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.model.ui.FieldRuleTableModel;
 import ch.compass.gonzoproxy.model.ui.PacketRuleListModel;
-import ch.compass.gonzoproxy.relay.modifier.FieldRule;
-import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class ModifierDialog extends JDialog {
 

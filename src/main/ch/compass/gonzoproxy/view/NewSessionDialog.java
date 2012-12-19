@@ -206,7 +206,7 @@ public class NewSessionDialog extends JDialog {
 	}
 
 	protected void enableCheckbox(String selectedItem) {
-		if (selectedItem.equals("libnfc")) {
+		if (selectedItem.equals("LibNfc")) {
 			chckbxRunLocally.setEnabled(true);
 		} else {
 			chckbxRunLocally.setEnabled(false);

@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
+import ch.compass.gonzoproxy.controller.relay.GonzoRelayService;
+import ch.compass.gonzoproxy.controller.relay.RelayService;
+import ch.compass.gonzoproxy.controller.relay.modifier.PacketRegex;
+import ch.compass.gonzoproxy.controller.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.listener.StateListener;
 import ch.compass.gonzoproxy.model.relay.RelayDataModel;
-import ch.compass.gonzoproxy.relay.GonzoRelayService;
-import ch.compass.gonzoproxy.relay.RelayService;
-import ch.compass.gonzoproxy.relay.modifier.PacketRegex;
-import ch.compass.gonzoproxy.relay.modifier.PacketRule;
 
 public class RelayController {
 
