@@ -15,14 +15,14 @@ import java.util.concurrent.Executors;
 import ch.compass.gonzoproxy.controller.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.controller.relay.io.streamhandler.PacketStreamReader;
 import ch.compass.gonzoproxy.controller.relay.io.streamhandler.PacketStreamWriter;
-import ch.compass.gonzoproxy.controller.relay.modifier.PacketRegex;
-import ch.compass.gonzoproxy.controller.relay.modifier.PacketRule;
-import ch.compass.gonzoproxy.controller.relay.settings.ConnectionState;
 import ch.compass.gonzoproxy.controller.relay.settings.RelaySettings;
-import ch.compass.gonzoproxy.controller.relay.settings.TrapState;
-import ch.compass.gonzoproxy.listener.StateListener;
+import ch.compass.gonzoproxy.model.listener.StateListener;
+import ch.compass.gonzoproxy.model.modifier.PacketRegex;
+import ch.compass.gonzoproxy.model.modifier.PacketRule;
 import ch.compass.gonzoproxy.model.packet.PacketType;
 import ch.compass.gonzoproxy.model.relay.RelayDataModel;
+import ch.compass.gonzoproxy.model.state.ConnectionState;
+import ch.compass.gonzoproxy.model.state.TrapState;
 import ch.compass.gonzoproxy.utils.PacketUtils;
 
 public class GonzoRelayService implements RelayService {

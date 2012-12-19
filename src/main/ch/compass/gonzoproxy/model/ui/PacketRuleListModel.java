@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractListModel;
 
-import ch.compass.gonzoproxy.controller.relay.modifier.PacketRule;
+import ch.compass.gonzoproxy.model.modifier.PacketRule;
 
 
 public class PacketRuleListModel extends AbstractListModel{

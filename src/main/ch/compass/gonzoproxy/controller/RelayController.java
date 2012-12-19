@@ -8,9 +8,9 @@ import java.util.ResourceBundle;
 
 import ch.compass.gonzoproxy.controller.relay.GonzoRelayService;
 import ch.compass.gonzoproxy.controller.relay.RelayService;
-import ch.compass.gonzoproxy.controller.relay.modifier.PacketRegex;
-import ch.compass.gonzoproxy.controller.relay.modifier.PacketRule;
-import ch.compass.gonzoproxy.listener.StateListener;
+import ch.compass.gonzoproxy.model.listener.StateListener;
+import ch.compass.gonzoproxy.model.modifier.PacketRegex;
+import ch.compass.gonzoproxy.model.modifier.PacketRule;
 import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 
 public class RelayController {

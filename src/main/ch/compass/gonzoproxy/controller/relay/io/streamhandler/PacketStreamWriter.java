@@ -12,10 +12,10 @@ import java.util.ResourceBundle;
 import ch.compass.gonzoproxy.controller.relay.io.RelayDataHandler;
 import ch.compass.gonzoproxy.controller.relay.io.wrapper.PacketWrapper;
 import ch.compass.gonzoproxy.controller.relay.settings.RelaySettings;
-import ch.compass.gonzoproxy.controller.relay.settings.TrapState;
-import ch.compass.gonzoproxy.listener.TrapListener;
+import ch.compass.gonzoproxy.model.listener.TrapListener;
 import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.model.packet.PacketType;
+import ch.compass.gonzoproxy.model.state.TrapState;
 import ch.compass.gonzoproxy.utils.PacketUtils;
 
 public class PacketStreamWriter implements Runnable {

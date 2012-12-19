@@ -20,11 +20,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
-import ch.compass.gonzoproxy.controller.relay.settings.ConnectionState;
-import ch.compass.gonzoproxy.controller.relay.settings.RelayState;
-import ch.compass.gonzoproxy.listener.StateListener;
+import ch.compass.gonzoproxy.model.listener.StateListener;
 import ch.compass.gonzoproxy.model.packet.Field;
 import ch.compass.gonzoproxy.model.packet.Packet;
+import ch.compass.gonzoproxy.model.state.ConnectionState;
+import ch.compass.gonzoproxy.model.state.RelayState;
 import ch.compass.gonzoproxy.model.ui.PacketDetailTableModel;
 
 public class PacketDetailPanel extends JPanel {

@@ -2,7 +2,7 @@ package ch.compass.gonzoproxy.model.ui;
 
 import javax.swing.table.AbstractTableModel;
 
-import ch.compass.gonzoproxy.listener.DataListener;
+import ch.compass.gonzoproxy.model.listener.DataListener;
 import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 

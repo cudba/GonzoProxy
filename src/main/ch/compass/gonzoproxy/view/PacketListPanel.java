@@ -22,7 +22,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
-import ch.compass.gonzoproxy.listener.DataListener;
+import ch.compass.gonzoproxy.model.listener.DataListener;
 import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 import ch.compass.gonzoproxy.model.ui.PacketTableModel;

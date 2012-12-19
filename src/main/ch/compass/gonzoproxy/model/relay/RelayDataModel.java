@@ -2,7 +2,7 @@ package ch.compass.gonzoproxy.model.relay;
 
 import java.util.ArrayList;
 
-import ch.compass.gonzoproxy.listener.DataListener;
+import ch.compass.gonzoproxy.model.listener.DataListener;
 import ch.compass.gonzoproxy.model.packet.Packet;
 
 public class RelayDataModel {

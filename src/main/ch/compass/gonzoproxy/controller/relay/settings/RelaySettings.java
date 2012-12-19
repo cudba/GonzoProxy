@@ -3,9 +3,12 @@ package ch.compass.gonzoproxy.controller.relay.settings;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
-import ch.compass.gonzoproxy.listener.StateListener;
-import ch.compass.gonzoproxy.listener.TrapListener;
+import ch.compass.gonzoproxy.model.listener.StateListener;
+import ch.compass.gonzoproxy.model.listener.TrapListener;
 import ch.compass.gonzoproxy.model.packet.PacketType;
+import ch.compass.gonzoproxy.model.state.ConnectionState;
+import ch.compass.gonzoproxy.model.state.RelayState;
+import ch.compass.gonzoproxy.model.state.TrapState;
 
 public class RelaySettings {
 	

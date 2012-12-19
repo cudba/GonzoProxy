@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import ch.compass.gonzoproxy.model.modifier.FieldRule;
+import ch.compass.gonzoproxy.model.modifier.PacketRegex;
+import ch.compass.gonzoproxy.model.modifier.PacketRule;
 import ch.compass.gonzoproxy.model.packet.Field;
 import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.model.packet.PacketDataFormat;

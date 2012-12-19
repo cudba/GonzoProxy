@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
-import ch.compass.gonzoproxy.controller.relay.modifier.PacketRegex;
+import ch.compass.gonzoproxy.model.modifier.PacketRegex;
 
 public class RegexTableModel extends AbstractTableModel {
 	

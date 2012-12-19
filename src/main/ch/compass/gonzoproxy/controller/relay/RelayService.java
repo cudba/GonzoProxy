@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import ch.compass.gonzoproxy.controller.relay.modifier.PacketRegex;
-import ch.compass.gonzoproxy.controller.relay.modifier.PacketRule;
-import ch.compass.gonzoproxy.listener.StateListener;
+import ch.compass.gonzoproxy.model.listener.StateListener;
+import ch.compass.gonzoproxy.model.modifier.PacketRegex;
+import ch.compass.gonzoproxy.model.modifier.PacketRule;
 import ch.compass.gonzoproxy.model.relay.RelayDataModel;
 
 public interface RelayService extends Runnable {

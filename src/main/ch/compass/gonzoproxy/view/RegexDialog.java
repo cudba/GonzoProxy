@@ -21,7 +21,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 
 import ch.compass.gonzoproxy.controller.RelayController;
-import ch.compass.gonzoproxy.controller.relay.modifier.PacketRegex;
+import ch.compass.gonzoproxy.model.modifier.PacketRegex;
 import ch.compass.gonzoproxy.model.ui.RegexTableModel;
 
 public class RegexDialog extends JDialog {

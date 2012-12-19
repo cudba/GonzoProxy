@@ -8,14 +8,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import ch.compass.gonzoproxy.controller.relay.modifier.PacketModifier;
-import ch.compass.gonzoproxy.controller.relay.modifier.PacketRegex;
-import ch.compass.gonzoproxy.controller.relay.modifier.PacketRule;
 import ch.compass.gonzoproxy.controller.relay.parser.ParsingHandler;
-import ch.compass.gonzoproxy.controller.relay.settings.ConnectionState;
 import ch.compass.gonzoproxy.controller.relay.settings.RelaySettings;
+import ch.compass.gonzoproxy.model.modifier.PacketRegex;
+import ch.compass.gonzoproxy.model.modifier.PacketRule;
 import ch.compass.gonzoproxy.model.packet.Packet;
 import ch.compass.gonzoproxy.model.packet.PacketType;
 import ch.compass.gonzoproxy.model.relay.RelayDataModel;
+import ch.compass.gonzoproxy.model.state.ConnectionState;
 import ch.compass.gonzoproxy.utils.PacketUtils;
 import ch.compass.gonzoproxy.utils.PersistingUtils;
 
